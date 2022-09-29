@@ -37,6 +37,7 @@ class ProductionController extends Controller
     {
         $products = Production::leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
             ->get(['product_images.image as image', 'product_images.status as statusImage', 'productions.*']);
+
         $infos = DB::table('production_attr_value')
             ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
             ->leftJoin('attribute_values', 'attribute_values.id', '=', 'production_attr_value.attribute_value_id')
@@ -46,7 +47,6 @@ class ProductionController extends Controller
             ->whereNull('production_attr_value.deleted_at')
             ->get();
         $groupSet = $infos->groupBy('product_id');
-
 
         $infoColor = DB::table('production_attr_value')
             ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
@@ -64,6 +64,7 @@ class ProductionController extends Controller
             $each['size'] = NameAttrEnum::getKeys(NameAttrEnum::SIZE)[0];
             $each['color'] = NameAttrEnum::getKeys(NameAttrEnum::COLOR)[0];
         }
+
 
         return view('backend.productions.index', [
             'products' => $products,
@@ -183,7 +184,6 @@ class ProductionController extends Controller
             foreach ($check_review as $value) {
                 $check['customer_id']["$value->id"] = $value->customer_id;
             }
-
             return view('frontend.product_detail.index', [
                 'each' => $product,
                 'menus' => $menus,

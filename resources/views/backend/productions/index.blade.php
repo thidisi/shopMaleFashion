@@ -119,7 +119,7 @@ $title = 'Production';
                                                 <a href="{{ route('admin.productions.edit', $value) }}" class="action-icon">
                                                     <i class="mdi mdi-square-edit-outline"></i>
                                                 </a>
-                                                <form class="d-inline-block ml-2"
+                                                <form class="d-inline-block ml-2 formd-submit"
                                                     action="{{ route('admin.productions.destroy', $value) }}" method="post">
                                                     @csrf
                                                     @method('DELETE')
@@ -146,4 +146,5 @@ $title = 'Production';
     <script src="{{ asset('backend/js/vendor/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
     <script src="{{ asset('backend/js/backend/demo.productions.js') }}"></script>
+    
 @endpush

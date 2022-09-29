@@ -84,7 +84,7 @@ $title = 'Attributes';
                                                     class="action-icon">
                                                     <i class="mdi mdi-square-edit-outline"></i>
                                                 </a>
-                                                <form class="d-inline-block ml-2"
+                                                <form class="d-inline-block ml-2 formd-submit"
                                                     action="{{ route('admin.attributeValues.destroy', $each) }}"
                                                     method="post">
                                                     @csrf
@@ -198,7 +198,7 @@ $title = 'Attributes';
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
     <script src="{{ asset('backend/js/backend/demo.attributes.js') }}"></script>
     <script src="{{ asset('backend/js/backend/demo.attribute-values.js') }}"></script>
-    <script type="text/javascript">
+    {{-- <script type="text/javascript">
         $(document).ready(function() {
             $('#delete-form').on('submit', function(e) {
                 e.preventDefault();
@@ -218,5 +218,5 @@ $title = 'Attributes';
                 });
             })
         });
-    </script>
+    </script> --}}
 @endpush

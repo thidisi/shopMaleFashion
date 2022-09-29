@@ -85,7 +85,7 @@ $title = 'Slide';
                                                 <a href="{{ route('admin.slides.edit', $value->id) }}" class="action-icon">
                                                     <i class="mdi mdi-square-edit-outline"></i>
                                                 </a>
-                                                <form class="d-inline-block ml-2"
+                                                <form class="d-inline-block ml-2 formd-submit"
                                                     action="{{ route('admin.slides.destroy', $value) }}" method="post">
                                                     @csrf
                                                     @method('DELETE')
