@@ -335,6 +335,14 @@ $title = 'Products';
                                                                         </div>
                                                                         <p class="date-time">{{ $value->created_at }}</p>
                                                                     </div>
+                                                                    @if ($value->images !== null)
+                                                                        @php $images_review = json_decode($value->images)['0'] @endphp
+
+                                                                        <div class="p-2" style="margin-left: 40px; width: 100px">
+                                                                            <img src="{{ asset("storage/$images_review") }}"
+                                                                                alt="" style="display: block; width:100%;height:100%">
+                                                                        </div>
+                                                                    @endif
                                                                     <div class="boxReview-comment-item-review my-2 p-2">
                                                                         <div
                                                                             class="item-review-rating d-flex align-items-center">
@@ -384,7 +392,8 @@ $title = 'Products';
                                                             <textarea
                                                                 placeholder="Please leave a question, ShopMaleFashion will reply in 1h, questions after 10pm - 8am will be answered the next morning"
                                                                 class="form-control" name="content"></textarea>
-                                                            <button class="button-comment @if (session('sessionIdCustomer') === null) signIn @endif"
+                                                            <button
+                                                                class="button-comment @if (session('sessionIdCustomer') === null) signIn @endif"
                                                                 @if (session('sessionIdCustomer') !== null) type="submit" 
                                                             @else type="button" data-toggle="modal" data-target="#loginModal" @endif>
                                                                 <div class="icon-paper-plane"><i class="fa fa-paper-plane"
@@ -507,7 +516,8 @@ $title = 'Products';
                                                                         <textarea
                                                                             placeholder="Please leave a question, ShopMaleFashion will reply in 1h, questions after 10pm - 8am will be answered the next morning"
                                                                             class="form-control" name="content"></textarea>
-                                                                        <button class="button-comment @if (session('sessionIdCustomer') === null) signIn @endif"
+                                                                        <button
+                                                                            class="button-comment @if (session('sessionIdCustomer') === null) signIn @endif"
                                                                             @if (session('sessionIdCustomer') !== null) type="submit" 
                                                                         @else type="button" data-toggle="modal" data-target="#loginModal" @endif>
                                                                             <div class="icon-paper-plane"><i
@@ -756,6 +766,7 @@ $title = 'Products';
                             3000);
                     e.preventDefault();
                 }
+                $('.btn-review').prop("disabled", true);
             });
 
             $('#comment-form').on('submit', function(e) {
@@ -781,6 +792,7 @@ $title = 'Products';
                         3000);
                     return false;
                 }
+                $('.button-comment').prop("disabled", true);
                 $.ajax({
                     type: "POST",
                     url: $(this).data('route'),
@@ -834,6 +846,7 @@ $title = 'Products';
                         3000);
                     return false;
                 }
+                $('.button-comment').prop("disabled", true);
                 $.ajax({
                     type: "POST",
                     url: $(this).data('route'),

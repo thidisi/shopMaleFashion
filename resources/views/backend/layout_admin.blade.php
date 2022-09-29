@@ -97,6 +97,17 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $('.formd-submit').on('submit', function(e) {
+                if (confirm('Are you sure you want to delete?')) {
+                    return true
+                } else {
+                    return false
+                }
+            })
+        });
+    </script>
     @stack('js')
 </body>
 

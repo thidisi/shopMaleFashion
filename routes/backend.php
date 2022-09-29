@@ -136,5 +136,5 @@ Route::prefix('admin')
         Route::post('contacts/seen-mail/{contact}', [ContactController::class, 'putSeenMail'])->name('contacts.putSeenMail');
 
         Route::get('comments', [CommentController::class, 'index'])->name('comments');
-        Route::post('comments/{commentId}', [CommentController::class, 'action'])->name('comments');
+        Route::post('comments/{comment}', [CommentController::class, 'action'])->name('comments');
     });

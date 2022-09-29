@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\Production;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -24,14 +25,22 @@ class CommentController extends Controller
             ->select('comments.*', 'customers.name as name')
             ->with('productions')
             ->get();
+        foreach ($comments as $each) {
+            if($each->parent_id !== null){
+                $each['name_comment'] = $this->model->where('comments.id', '=', $each->parent_id)->first()->name;
+                $each['parent_slug'] = $this->model->where('comments.id', '=', $each->parent_id)->with('productions')->first()->productions['0']->slug;
+            }
+        }
+
         return view('backend.comments.index', [
             'comments' => $comments,
         ]);
     }
 
-    public function action($comment_id, Request $request)
+    public function action(Comment $comment, Request $request)
     {
-        DB::table('comments')->where('id', $comment_id)->update(['status' => $request->action]);
+        $comment->status = $request->action;
+        $comment->save();
         return redirect()->back()->with('success', 'You evaluate the product successfully!!');
     }
 
@@ -118,6 +127,7 @@ class CommentController extends Controller
             )
             ->where('production_comments.production_id', '=', $product_id)
             ->whereNull('comments.parent_id')
+            ->whereNotNull('production_comments.review')
             ->whereNull('production_comments.deleted_at')
             ->whereNull('comments.deleted_at')
             ->get();
@@ -129,7 +139,8 @@ class CommentController extends Controller
         $comments = Comment::query()
             ->leftJoin('production_comments', 'comments.id', '=', 'production_comments.comment_id')
             ->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
-            ->where('production_comments.production_id', '=', $product_id)
+            ->where('production_comments.production_id', $product_id)
+            ->where('comments.status', '!=', CANCEL)
             ->select(
                 'comments.*',
                 'customers.name as name',
@@ -141,6 +152,7 @@ class CommentController extends Controller
             ->whereNull('production_comments.deleted_at')
             ->with(['parents' => function ($query) {
                 $query->from('comments')->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
+                    ->where('comments.status', '!=', CANCEL)
                     ->select('comments.*', 'customers.name');
             }])->get();
         return $comments;

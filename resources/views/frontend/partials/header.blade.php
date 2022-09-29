@@ -237,7 +237,6 @@
             })
             $('#signUp-form').on('submit', function(e) {
                 e.preventDefault();
-
                 let url = $(this).data('route');
                 $(this).validate({
                     onfocusout: false,
@@ -283,6 +282,7 @@
                         },
                     },
                     submitHandler: function(form) {
+                        $('#signUp-form').prop("disabled", true);
                         var name = $("input[name=name]").val();
                         var email = $("input[name=email]").val();
                         var password = $("input[name=password]").val();
@@ -311,6 +311,7 @@
                                 $("#signUp-form")[0].reset();
                             },
                             error: function(response) {
+                                $("#signUp-login").prop("disabled", false);
                                 $.toast({
                                     heading: 'Sign up!',
                                     text: (response.responseText),
@@ -403,6 +404,7 @@
 
             $("#forgot_password").on('submit', function(e) {
                 e.preventDefault();
+                $(this).prop("disabled", true);
                 var url = $(this).data('route');
                 var emailReset = $("input[name=emailReset]").val();
                 $.ajax({
@@ -437,6 +439,7 @@
 
             $("#change_password").on('submit', function(e) {
                 e.preventDefault();
+                $(this).prop("disabled", true);
                 var url = $(this).data('route');
                 var token = $("input[name=token]").val();
                 var newPassword = $("input[name=newPassword]").val();
