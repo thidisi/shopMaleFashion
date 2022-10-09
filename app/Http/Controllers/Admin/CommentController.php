@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\Customer;
 use App\Models\Production;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,8 +28,9 @@ class CommentController extends Controller
             ->get();
         foreach ($comments as $each) {
             if($each->parent_id !== null){
-                $each['name_comment'] = $this->model->where('comments.id', '=', $each->parent_id)->first()->name;
-                $each['parent_slug'] = $this->model->where('comments.id', '=', $each->parent_id)->with('productions')->first()->productions['0']->slug;
+                $customer_id = Comment::where('id', '=', $each->parent_id)->first()->customer_id;
+                $each['name_comment'] = Customer::find($customer_id)->name;
+                $each['parent_slug'] = Comment::where('id', '=', $each->parent_id)->with('productions')->first()->productions['0']->slug;
             }
         }
 

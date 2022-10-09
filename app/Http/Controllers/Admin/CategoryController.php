@@ -40,9 +40,6 @@ class CategoryController extends Controller
 
     public function view()
     {
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
         $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
             ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
             ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
@@ -72,13 +69,10 @@ class CategoryController extends Controller
             $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
         }
 
-        $about = About::query()->first();
 
         return view('frontend.shops.index', [
-            'menus' => $menus,
             'categories' => $categories,
             'products' => $products,
-            'about' => $about,
         ]);
     }
 

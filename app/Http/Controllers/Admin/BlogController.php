@@ -33,29 +33,17 @@ class BlogController extends Controller
 
     public function view()
     {
-        $about = About::query()->first();
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
         $blogs = Blog::where('status', '=', NameStatusEnum::ACTIVE)
             ->latest('created_at')
             ->paginate(9);
         return view('frontend.blogs.index', [
-            'menus' => $menus,
-            'about' => $about,
             'blogs' => $blogs,
         ]);
     }
 
     public function detail(Blog $blog)
     {
-        $about = About::query()->first();
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
         return view('frontend.blogs.detail', [
-            'menus' => $menus,
-            'about' => $about,
             'blog' => $blog,
         ]);
     }

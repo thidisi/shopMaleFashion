@@ -29,7 +29,7 @@ $title = 'Blogs';
                 <div class="col-lg-12">
                     {!! $blog->content !!}
                 </div>
-                <div class="col-lg-8">
+                {{-- <div class="col-lg-8">
                     <div class="blog__details__content">
                         <div class="blog__details__comment">
                             <h4>Leave A Comment</h4>
@@ -52,7 +52,7 @@ $title = 'Blogs';
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
