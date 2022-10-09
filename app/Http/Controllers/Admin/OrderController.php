@@ -128,11 +128,6 @@ class OrderController extends Controller
 
     public function order_detail()
     {
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
-        $about = About::query()->first();
-
         $order_details = Order::with('productions')->where('customer_id', session('sessionIdCustomer'))->latest()->get();
         foreach ($order_details as $value) {
             foreach ($value->productions as $each) {
@@ -142,8 +137,6 @@ class OrderController extends Controller
         }
 
         return view('frontend.orders.detail', [
-            'about' => $about,
-            'menus' => $menus,
             'order_details' => $order_details,
         ]);
     }

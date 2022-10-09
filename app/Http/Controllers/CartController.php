@@ -14,20 +14,14 @@ class CartController extends Controller
 {
     public function index()
     {
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
         $cartItems = Cart::getContent();
 
         $checkCart = Cart::isEmpty();
         $customer = Customer::query()->find(session('sessionIdCustomer'));
-        $about = About::query()->first();
         return view('frontend.carts.index', [
-            'menus' => $menus,
             'cartItems' => $cartItems,
             'checkCart' => $checkCart,
             'customer' => $customer,
-            'about' => $about,
         ]);
     }
 

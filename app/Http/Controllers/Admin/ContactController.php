@@ -33,14 +33,7 @@ class ContactController extends Controller
 
     public function view()
     {
-        $about = About::query()->first();
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
-        return view('frontend.contacts.index', [
-            'menus' => $menus,
-            'about' => $about,
-        ]);
+        return view('frontend.contacts.index');
     }
 
     public function seenMail(Contact $contact)

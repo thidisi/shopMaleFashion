@@ -80,7 +80,7 @@ $title = 'Silde';
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="mt-2 ml-1 btn btn-primary float-right">Create</button>
+                            <button type="submit" class="mt-2 ml-1 btn btn-primary float-right">Edit</button>
                             <a href="{{ route('admin.slides') }}" class="float-right mt-2 btn btn-info">Back</a>
                         </form>
                     </div>

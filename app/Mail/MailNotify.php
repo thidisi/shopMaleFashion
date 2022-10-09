@@ -31,6 +31,6 @@ class MailNotify extends Mailable
     public function build()
     {
         return $this->view('frontend.send_mail.index')
-            ->subject('Notification email');
+            ->subject('ShopMaleFashion gửi thông báo cho bạn');
     }
 }

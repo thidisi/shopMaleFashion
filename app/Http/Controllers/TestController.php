@@ -28,10 +28,11 @@ class TestController extends Controller
 {
     public function test(Request $request, CommentController $comments)
     {
+        return view('test');
         // dd(Storage::disk('public')->exists(''));
-        $show_reviews = $comments->show_comments(1);
+        // $show_reviews = $comments->show_comments(1);
 
-        dd($show_reviews);
+        // dd($show_reviews);
 
         // $body = "<div class='border border-secondary p-3' style='font-size: 1rem;color: black;'>
         //     <p><em>Hello ,</em></p>

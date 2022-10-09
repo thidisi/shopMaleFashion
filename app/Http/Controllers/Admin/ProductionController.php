@@ -73,10 +73,6 @@ class ProductionController extends Controller
 
     public function view(Production $production, CommentController $comments)
     {
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
-        $about = About::query()->first();
         if (!empty($production)) {
             $product = Production::leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
                 ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
@@ -186,9 +182,7 @@ class ProductionController extends Controller
             }
             return view('frontend.product_detail.index', [
                 'each' => $product,
-                'menus' => $menus,
                 'productRelated' => $productRelated,
-                'about' => $about,
                 'rating' => $rating,
                 'rating_avg' => $rating_avg,
                 'count_review' => $count_review,
@@ -199,10 +193,7 @@ class ProductionController extends Controller
             ]);
         }
 
-        return view('frontend.errors.index', [
-            'menus' => $menus,
-            'about' => $about,
-        ]);
+        return view('frontend.errors.index');
     }
 
     public function create(Request $request)

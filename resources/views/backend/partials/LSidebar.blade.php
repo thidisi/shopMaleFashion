@@ -53,6 +53,9 @@
                     <li class="side-nav-item">
                         <a href="{{ route('admin.contacts') }}">Contacts</a>
                     </li>
+                    <li class="side-nav-item">
+                        <a href="{{ route('admin.comments') }}">Comments</a>
+                    </li>
 
                 </ul>
             </li>

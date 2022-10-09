@@ -75,7 +75,7 @@ $title = 'Comments';
                                                     @if ($value->productions['0']->pivot->review == null)
                                                         @switch($value->status)
                                                             @case(ACTIVE)
-                                                                <form action="{{ route('admin.comments', $value->id) }}"
+                                                                <form action="{{ route('admin.comments.action', $value->id) }}"
                                                                     class="action-form d-flex align-items-center justify-content-center formd-submit"
                                                                     method="post">
                                                                     @csrf
@@ -93,7 +93,7 @@ $title = 'Comments';
                                                             @break
 
                                                             @case(CANCEL)
-                                                                <form action="{{ route('admin.comments', $value->id) }}"
+                                                                <form action="{{ route('admin.comments.action', $value->id) }}"
                                                                     class="action-form d-flex align-items-center justify-content-center"
                                                                     method="post">
                                                                     @csrf
@@ -111,7 +111,7 @@ $title = 'Comments';
                                                             @break
 
                                                             @default
-                                                                <form action="{{ route('admin.comments', $value->id) }}"
+                                                                <form action="{{ route('admin.comments.action', $value->id) }}"
                                                                     class="action-form d-flex align-items-center justify-content-center"
                                                                     method="post">
                                                                     @csrf
@@ -136,7 +136,7 @@ $title = 'Comments';
                                                 @else
                                                     @switch($value->status)
                                                         @case(ACTIVE)
-                                                            <form action="{{ route('admin.comments', $value->id) }}"
+                                                            <form action="{{ route('admin.comments.action', $value->id) }}"
                                                                 class="action-form d-flex align-items-center justify-content-center formd-submit"
                                                                 method="post">
                                                                 @csrf
@@ -154,7 +154,7 @@ $title = 'Comments';
                                                         @break
 
                                                         @case(CANCEL)
-                                                            <form action="{{ route('admin.comments', $value->id) }}"
+                                                            <form action="{{ route('admin.comments.action', $value->id) }}"
                                                                 class="action-form d-flex align-items-center justify-content-center"
                                                                 method="post">
                                                                 @csrf
@@ -172,7 +172,7 @@ $title = 'Comments';
                                                         @break
 
                                                         @default
-                                                            <form action="{{ route('admin.comments', $value->id) }}"
+                                                            <form action="{{ route('admin.comments.action', $value->id) }}"
                                                                 class="action-form d-flex align-items-center justify-content-center"
                                                                 method="post">
                                                                 @csrf
