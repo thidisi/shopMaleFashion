@@ -22,21 +22,31 @@ class CommentController extends Controller
 
     public function index()
     {
-        $comments = $this->model->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
-            ->select('comments.*', 'customers.name as name')
-            ->with('productions')
+        $comments = $this->model->with(['customers', 'productions'])
+        // ->where('status', '!=', 4)
+            ->latest("created_at")
             ->get();
+            // dd($comments);
         foreach ($comments as $each) {
             if($each->parent_id !== null){
-                $customer_id = Comment::where('id', '=', $each->parent_id)->first()->customer_id;
-                $each['name_comment'] = Customer::find($customer_id)->name;
-                $each['parent_slug'] = Comment::where('id', '=', $each->parent_id)->with('productions')->first()->productions['0']->slug;
+                $each['product'] = $comments->find($each->parent_id)->productions['0'];
             }
         }
 
         return view('backend.comments.index', [
             'comments' => $comments,
         ]);
+    }
+
+    public function feedback(Request $request)
+    {
+        $arr = [];
+        $arr['customer_id'] = 7;
+        $arr['parent_id'] = $request->commentId;
+        $arr['content'] = $request->content;
+        $arr['status'] = 4;
+        Comment::create($arr);
+        return response('You successfully feedback on the customer!!', 200);
     }
 
     public function action(Comment $comment, Request $request)

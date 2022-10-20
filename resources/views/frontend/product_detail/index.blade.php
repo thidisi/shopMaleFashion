@@ -334,7 +334,7 @@ $title = 'Products';
                                                         <p class="mr-2 d-flex align-items-center justify-content-center name-letter text-uppercase">
                                                             {{ substr($show_comment->name, 0, 1) }}
                                                         </p>
-                                                        <span class="name_user text-capitalize">{{ $value->name }}</span>
+                                                        <span class="name_user text-capitalize">{{ $show_comment->name }}</span>
                                                     </div>
                                                     <p class="date-time">
                                                         {{ $show_comment->created_at }}
