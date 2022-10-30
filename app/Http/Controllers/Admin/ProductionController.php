@@ -37,6 +37,7 @@ class ProductionController extends Controller
     {
         $products = Production::leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
             ->get(['product_images.image as image', 'product_images.status as statusImage', 'productions.*']);
+
         $infos = DB::table('production_attr_value')
             ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
             ->leftJoin('attribute_values', 'attribute_values.id', '=', 'production_attr_value.attribute_value_id')
@@ -46,7 +47,6 @@ class ProductionController extends Controller
             ->whereNull('production_attr_value.deleted_at')
             ->get();
         $groupSet = $infos->groupBy('product_id');
-
 
         $infoColor = DB::table('production_attr_value')
             ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
@@ -65,6 +65,7 @@ class ProductionController extends Controller
             $each['color'] = NameAttrEnum::getKeys(NameAttrEnum::COLOR)[0];
         }
 
+
         return view('backend.productions.index', [
             'products' => $products,
         ]);
@@ -72,10 +73,6 @@ class ProductionController extends Controller
 
     public function view(Production $production, CommentController $comments)
     {
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
-        $about = About::query()->first();
         if (!empty($production)) {
             $product = Production::leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
                 ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
@@ -183,12 +180,9 @@ class ProductionController extends Controller
             foreach ($check_review as $value) {
                 $check['customer_id']["$value->id"] = $value->customer_id;
             }
-
             return view('frontend.product_detail.index', [
                 'each' => $product,
-                'menus' => $menus,
                 'productRelated' => $productRelated,
-                'about' => $about,
                 'rating' => $rating,
                 'rating_avg' => $rating_avg,
                 'count_review' => $count_review,
@@ -199,10 +193,7 @@ class ProductionController extends Controller
             ]);
         }
 
-        return view('frontend.errors.index', [
-            'menus' => $menus,
-            'about' => $about,
-        ]);
+        return view('frontend.errors.index');
     }
 
     public function create(Request $request)
@@ -238,15 +229,11 @@ class ProductionController extends Controller
         $attrSize = $attr['0'] ? $attr['0'] : null;
         $attrColor = $attr['1'] ? $attr['1'] : null;
 
-        $attrValueSize = AttributeValue::where('attribute_id', '!=', NameAttrEnum::COLOR)->get();
-        // dd($attrValueSize);
-
         return view('backend.productions.create', [
             'categories' => $categories,
-            'attrValueSize' => $attrValueSize,
+            'attrSize' => $attrSize,
             'attrValueColor' => $attrColor,
         ]);
-        // chua xu ly xong logic
     }
 
     public function edit(Production $production)
@@ -279,19 +266,49 @@ class ProductionController extends Controller
         $production['infos'] = $infos;
         $production['infos2'] = $infoColor;
 
-        $attrValueColor = AttributeValue::where('attribute_id', '=', NameAttrEnum::COLOR)->get();
-        $attrValueSize = AttributeValue::where('attribute_id', '!=', NameAttrEnum::COLOR)->get();
+        $attrs = Attribute::query()
+            ->with('attribute_values')
+            ->with('replaces')
+            ->whereNull('replace_id')
+            ->get();
+        foreach ($attrs as $value) {
+            foreach ($value->replaces as $replaces) {
+                if ($replaces->id == NameAttrEnum::SIZE_SET) {
+                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_SET)->get();
+                }
+                if ($replaces->id == NameAttrEnum::SIZE_SHOE) {
+                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_SHOE)->get();
+                }
+                if ($replaces->id == NameAttrEnum::SIZE_BAG) {
+                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_BAG)->get();
+                }
+            }
+        }
+
+        for ($i = 0; $i < count($attrs); $i++) {
+            if (count($attrs["$i"]->attribute_values) > 0) {
+                $attr[$i] = $attrs["$i"]->attribute_values;
+            } else {
+                $attr[$i] = $attrs["$i"]->replaces;
+            }
+        }
+        $attrSize = $attr['0'] ? $attr['0'] : null;
+        $attrColor = $attr['1'] ? $attr['1'] : null;
+
+        // dd($production);
+
+        // $attrValueColor = AttributeValue::where('attribute_id', '=', NameAttrEnum::COLOR)->get();
+        // $attrValueSize = AttributeValue::where('attribute_id', '!=', NameAttrEnum::COLOR)->get();
         return view('backend.productions.edit', [
             'each' => $production,
             'categories' => $categories,
-            'attrValueSize' => $attrValueSize,
-            'attrValueColor' => $attrValueColor,
+            'attrSize' => $attrSize,
+            'attrColor' => $attrColor,
         ]);
     }
 
     public function store(StoreProductRequest $request)
     {
-
         $status = $request->input('status') ? '1' : '2';
         $slug = Str::slug($request->input('name'), '-');
         $arr = $request->validated();
@@ -341,6 +358,7 @@ class ProductionController extends Controller
 
     public function update(UpdateProductRequest $request, $productionId)
     {
+        dd($request->all());
         $production = $this->model->find($productionId);
 
         $status = $request->input('status') ? '1' : '2';

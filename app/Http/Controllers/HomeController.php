@@ -25,14 +25,8 @@ class HomeController extends Controller
 {
     public function errors()
     {
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
-        $about = About::query()->first();
-        return view('errors.404', [
-            'menus' => $menus,
-            'about' => $about
-        ]);
+       
+        return view('errors.404');
     }
 
     public function check_cookies()
@@ -49,9 +43,6 @@ class HomeController extends Controller
     public function index()
     {
         self::check_cookies();
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
         $slides = Slide::leftJoin('major_categories', 'slide.major_category_id', '=', 'major_categories.id')
             ->where('slide.sort_order', '=', SortOrderSlideEnum::SLIDER)
             ->where('slide.status', '=', NameStatusEnum::ACTIVE)
@@ -86,7 +77,8 @@ class HomeController extends Controller
             )
             ->where('discount_product.status', '=', NameStatusEnum::ACTIVE)
             ->where('discounts.date_end', '>', now())
-            ->orderBy('discount_product.updated_at', 'asc')
+            ->where('productions.quantity', '>', '0')
+            ->oldest('discounts.date_end')
             ->first();
 
         $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
@@ -111,17 +103,13 @@ class HomeController extends Controller
             $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
         }
 
-        $about = About::query()->first();
-
         return view('frontend.home.index', [
-            'menus' => $menus,
             'slides' => $slides,
             'banners' => $banners,
             'products' => $products,
             'instagram' => $instagram,
             'blogs' => $blogs,
             'discountProduct' => $discountProduct,
-            'about' => $about,
         ]);
     }
 
@@ -181,27 +169,31 @@ class HomeController extends Controller
     {
         try {
             $customer = Customer::query()->where('email', $request->get('emailReset'))->where('status', ACTIVE)->firstOrFail();
-            $token = uniqid();
-
+            $token = \Str::random(26);
             $check = DB::table('forgot_password')->where('customer_id', $customer->id)->count();
-            if ($check == 0) {
+            if ($check != ACTIVE) {
                 DB::table('forgot_password')->insert([
                     'customer_id' => $customer->id,
                     'token' => $token
                 ]);
-                $message = [
-                    'body' => "<div class='border border-secondary p-3' style='font-size: 1rem;color: black;'>
-                    <p><em>Hello $customer->name,</em></p>
-                    <p><em>
-                    We received a request to reset your account password for this email address. To begin the process of resetting your account's password, click on the code below.&nbsp;</em></p>
-                    <p><em>Code: $token</em></p>
-                    <p><em>Thank you !.<br>
-                    Shop Male Fashion;<br>
-                    </em></p></div>",
-                ];
-                $users[]['email'] = $customer->email;
-                SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
+            }else {
+                DB::table('forgot_password')->update([
+                    'customer_id' => $customer->id,
+                    'token' => $token
+                ]);
             }
+            $message = [
+                'body' => "<div class='border border-secondary p-3' style='font-size: 1rem;color: black;'>
+                <p><em>Hello $customer->name,</em></p>
+                <p><em>
+                We received a request to reset your account password for this email address. To begin the process of resetting your account's password, click on the code below.&nbsp;</em></p>
+                <p><em>Code: $token</em></p>
+                <p><em>Thank you !.<br>
+                Shop Male Fashion;<br>
+                </em></p></div>",
+            ];
+            $users[]['email'] = $customer->email;
+            SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
             return response('Please check your email for the code!!', 200);
         } catch (\Throwable $e) {
             return response('Email does not exist or has been disabled!!', 404);

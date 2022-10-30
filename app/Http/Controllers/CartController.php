@@ -5,35 +5,77 @@ namespace App\Http\Controllers;
 use App\Enums\MenuStatusEnum;
 use App\Models\About;
 use App\Models\Customer;
+use App\Models\District;
 use App\Models\Major_Category;
 use App\Models\Production;
+use App\Models\Province;
+use App\Models\Ward;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    /**
+     * Construct
+     */
+    public function __construct(Production $product, Customer $customer, Province $province, District $district, Ward $ward)
+    {
+        $this->product = $product;
+        $this->customer = $customer;
+        $this->province = $province;
+        $this->district = $district;
+        $this->ward = $ward;
+    }
     public function index()
     {
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
         $cartItems = Cart::getContent();
 
         $checkCart = Cart::isEmpty();
-        $customer = Customer::query()->find(session('sessionIdCustomer'));
-        $about = About::query()->first();
+        $customer = $this->customer->find(session('sessionIdCustomer'));
         return view('frontend.carts.index', [
-            'menus' => $menus,
             'cartItems' => $cartItems,
             'checkCart' => $checkCart,
             'customer' => $customer,
-            'about' => $about,
         ]);
+    }
+
+    public function checkout()
+    {
+        try {
+            $customer = $this->customer->findOrFail(session('sessionIdCustomer'));
+            $cartItems = Cart::getContent();
+            if(!Cart::isEmpty()){
+                $data['getSubTotal'] = 0;
+                foreach (Cart::getContent() as $value) {
+                    $data['getSubTotal'] += ($value->price * $value->quantity);
+                }
+                $data['getSubTotal'] = currency_format($data['getSubTotal']);
+                $data['getTotal'] = currency_format(Cart::getTotal());
+                return view('frontend.carts.checkout', [
+                    'customer' => $customer,
+                    'cartItems' => $cartItems,
+                    'data' => $data
+                ]);
+            }
+            return view('frontend.carts.checkoutNone');
+        } catch (\Throwable $th) {
+            return view('frontend.errors.index');
+        }
+    }
+
+    public function getAddress()
+    {
+        $provinces = $this->province->with(['districts' => function ($query) {
+            $query->with('wards');
+        }])->get();
+        return response()->json([
+            'data' => $provinces
+        ], 200);
     }
 
     public function addToCart(Request $request)
     {
-        $product = Production::find($request->id);
+        $product = $this->product->find($request->id);
         $checkQuantity = $product->quantity - $request->quantity;
         $productName = $request->name . ' (Size:' . $request->size . ', ' . $request->color . ')';
         $saleCondition = new \Darryldecode\Cart\CartCondition(array(
@@ -90,7 +132,7 @@ class CartController extends Controller
 
     public function updateCart(Request $request)
     {
-        $product = Production::find($request->id);
+        $product = $this->product->find($request->id);
         $checkQuantity = $product->quantity - $request->quantity;
         if ($checkQuantity >= 0) {
             Cart::update($request->id, array(
@@ -99,9 +141,18 @@ class CartController extends Controller
                     'value' => $request->quantity
                 ),
             ));
-            return response('Update sản phẩm thành công!', 200);
+            $data['getSubTotal'] = 0;
+            foreach (Cart::getContent() as $value) {
+                $data['getSubTotal'] += ($value->price * $value->quantity);
+            }
+            $data['getSubTotal'] = currency_format($data['getSubTotal']);
+            $data['getTotal'] = currency_format(Cart::getTotal());
+            return response()->json([
+                'message' => __("Update sản phẩm thành công!"),
+                'data' => $data
+            ], 200);
         } else {
-            return response('Sản phẩm bạn vừa thêm đã hết hàng rồi!', 299);
+            return response()->json(['message' => __("Sản phẩm bạn vừa thêm đã hết hàng rồi!")], 201);
         }
     }
 

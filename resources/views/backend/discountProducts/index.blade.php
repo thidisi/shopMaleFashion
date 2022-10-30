@@ -78,7 +78,7 @@ $title = 'DiscountProducts';
                                                     class="action-icon">
                                                     <i class="mdi mdi-square-edit-outline"></i>
                                                 </a>
-                                                <form class="d-inline-block ml-2"
+                                                <form class="d-inline-block ml-2 formd-submit"
                                                     action="{{ route('admin.discountProducts.destroy', $value) }}" method="post">
                                                     @csrf
                                                     @method('DELETE')

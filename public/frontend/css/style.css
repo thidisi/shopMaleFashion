@@ -2627,7 +2627,8 @@ ol {
 	width: 100%;
 	border: 1px solid #e1e1e1;
 	font-size: 14px;
-	color: #b7b7b7;
+	color: #3e3c3c;
+	border-radius: 4px;
 	padding-left: 20px;
 	margin-bottom: 20px;
 }
@@ -4211,4 +4212,21 @@ progress {color: #fa2f2f;}
 	margin-top: 15px;
     width: calc(100% - 25px);
     margin-left: auto;
+}
+
+.select2 {
+	display: block;
+    width: auto !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 36px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+}
+
+.select2-container .select2-selection--single {
+    height: 36px;
 }

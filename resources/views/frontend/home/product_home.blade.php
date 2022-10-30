@@ -51,7 +51,7 @@
                             @endif
                             <ul class="product__hover">
                                 <li>
-                                    <button class="button_wishlist" style="border: none;background-color: initial;"
+                                    <button class="button_wishlist border-0 p-0 bg-gradient-light"
                                         data-id="{{ $each->id }}"><img
                                             src="{{ asset('frontend/img/icon/heart.png') }}" alt=""></button>
                                 </li>

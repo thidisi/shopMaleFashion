@@ -37,15 +37,10 @@ class MenuController extends Controller
 
     public function view(Major_Category $menu)
     {
-        $about = About::query()->first();
         $majorCategories = $this->model->where('status', '=', MenuStatusEnum::SHOW)->get('slug');
         foreach ($majorCategories as $each) {
             $data[] = $each->slug;
         }
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
-            ->get();
-
         if (in_array($menu->slug, $data)) {
             $menuId = $this->model->where('slug', '=', $menu->slug)->first()->id;
 
@@ -156,18 +151,13 @@ class MenuController extends Controller
 
         if (!empty($products)) {
             return view('frontend.shops.index', [
-                'menus' => $menus,
                 'categories' => $categories,
                 'products' => $products,
-                'about' => $about,
                 'breadCrumb' => $breadCrumb->name,
             ]);
             exit;
         }
-        return view('frontend.errors.index', [
-            'menus' => $menus,
-            'about' => $about,
-        ]);
+        return view('frontend.errors.index');
     }
 
     public function create()

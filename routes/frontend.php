@@ -39,14 +39,16 @@ Route::get('/blogs-details-{blog}.html', [BlogController::class, 'detail'])->nam
 Route::get('/contact.html', [ContactController::class, 'view'])->name('contact');
 Route::post('/contact.html', [ContactController::class, 'store'])->name('contact.store');
 
-
 Route::get('/carts.html', [CartController::class, 'index'])->name('cart');
 Route::post('/carts.html', [CartController::class, 'addToCart'])->name('cart.store');
 Route::post('/carts.html/update', [CartController::class, 'updateCart'])->name('cart.update');
 Route::delete('/carts.html/{cartId}', [CartController::class, 'removeCart'])->name('cart.remove');
 Route::post('/carts.html/clear', [CartController::class, 'clearAllCart'])->name('cart.clear');
-Route::post('/carts.html/checkout', [OrderController::class, 'check_out'])->name('cart.checkout');
 Route::get('orders.html', [OrderController::class, 'order_detail'])->name('order_detail');
+
+Route::get('/checkout.html', [CartController::class, 'checkout'])->name('checkout');
+Route::post('/checkout.html', [OrderController::class, 'check_out'])->name('cart.checkout');
+
 
 Route::post('/reviews', [CommentController::class, 'review_products'])->name('reviewProducts');
 Route::post('/comments', [CommentController::class, 'add_comments'])->name('addComments');
