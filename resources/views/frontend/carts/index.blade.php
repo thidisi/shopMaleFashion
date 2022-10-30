@@ -8,6 +8,7 @@ $title = 'Carts';
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__text">
+                        <h4>Shopping Cart</h4>
                         <div class="breadcrumb__links">
                             <a href="{{ route('index') }}">Home</a>
                             <a href="{{ route('shop') }}">Shop</a>
@@ -105,49 +106,10 @@ $title = 'Carts';
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="continue__btn update__btn">
-                                    <a href="{{ route('cart') }}"><i class="fa fa-spinner"></i> Update cart</a>
+                                    <a href="{{ route('checkout') }}"><i class="fa fa-spinner"></i> Proceed to checkout</a>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <form action="{{ route('cart.checkout') }}" method="post" id="check_out">
-                            @csrf
-                            <div class="cart__discount mb-0">
-                                <h6>Order information</h6>
-                                <div class="checkout__input mb-2">
-                                    <p>Name<span>*</span></p>
-                                    <input class="mb-0" type="text" name="name_receiver" value="{{ $customer->name }}"
-                                        placeholder="Name...">
-                                </div>
-                                <div class="checkout__input mb-2">
-                                    <p>Address<span>*</span></p>
-                                    <input class="mb-0" type="text" name="address_receiver"
-                                        value="{{ $customer->address }}" placeholder="Address...">
-                                </div>
-                                <div class="checkout__input mb-2">
-                                    <p>Phone<span>*</span></p>
-                                    <input class="mb-0" type="text" name="phone_receiver"
-                                        value="{{ $customer->phone }}" placeholder="Phone...">
-                                </div>
-                                <div class="checkout__input mb-3">
-                                    <p>Note<span>*</span></p>
-                                    <input class="mb-0" type="text" name="note"
-                                        placeholder="Note(*Can be empty)...">
-                                </div>
-                            </div>
-                            <div class="cart__total">
-                                <h6>Cart total</h6>
-                                <ul>
-                                    <li>Subtotal <span id="subTotal"
-                                            style="text-decoration: line-through;">{{ currency_format(Cart::getTotal()) }}</span>
-                                    </li>
-                                    <li>Total <span id="total">{{ currency_format(Cart::getSubTotal()) }}</span></li>
-                                </ul>
-                                <button type="submit" class="primary-btn">Proceed to checkout</button>
-                            </div>
-                        </form>
-
                     </div>
                 @else
                     <div class="col-lg-12" style="min-height: 500px">
@@ -222,7 +184,7 @@ $title = 'Carts';
                             if (check) {
                                 $.toast({
                                     heading: 'Update Cart!',
-                                    text: (response),
+                                    text: (response.message),
                                     showHideTransition: 'slide',
                                     position: 'top-right',
                                     icon: 'success'
@@ -232,6 +194,8 @@ $title = 'Carts';
                                     currency: 'VND'
                                 });
                                 parent_col.find('.cart-total').text(sum);
+                                $('#total').text(response.data.getTotal);
+                                $('#subTotal').text(response.data.getSubTotal);
                             }
                         } else {
                             $button.parent().find('input').val(oldValue);
@@ -290,37 +254,37 @@ $title = 'Carts';
                     });
                 }
             });
-            $("#check_out").validate({
-                onfocusout: false,
-                onkeyup: false,
-                onclick: false,
-                rules: {
-                    "name_receiver": {
-                        required: true,
-                        maxlength: 15
-                    },
-                    "phone_receiver": {
-                        required: true,
-                        validatePhone: false,
-                    },
-                    address_receiver: "required",
-                },
-                messages: {
-                    "name_receiver": {
-                        required: "Vui lòng nhập tên của bạn",
-                        maxlength: "Nhập tối đa 15 kí tự"
-                    },
-                    "phone_receiver": {
-                        required: "Vui lòng nhập số điện thoại của bạn",
-                    },
-                    "address_receiver": {
-                        required: "Vui lòng nhập địa chỉ của bạn"
-                    },
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                }
-            });
+            // $("#check_out").validate({
+            //     onfocusout: false,
+            //     onkeyup: false,
+            //     onclick: false,
+            //     rules: {
+            //         "name_receiver": {
+            //             required: true,
+            //             maxlength: 15
+            //         },
+            //         "phone_receiver": {
+            //             required: true,
+            //             validatePhone: false,
+            //         },
+            //         address_receiver: "required",
+            //     },
+            //     messages: {
+            //         "name_receiver": {
+            //             required: "Vui lòng nhập tên của bạn",
+            //             maxlength: "Nhập tối đa 15 kí tự"
+            //         },
+            //         "phone_receiver": {
+            //             required: "Vui lòng nhập số điện thoại của bạn",
+            //         },
+            //         "address_receiver": {
+            //             required: "Vui lòng nhập địa chỉ của bạn"
+            //         },
+            //     },
+            //     submitHandler: function(form) {
+            //         form.submit();
+            //     }
+            // });
             $.validator.addMethod("validatePhone", function(value, element) {
                 return this.optional(element) ||
                     /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/i.test(value);

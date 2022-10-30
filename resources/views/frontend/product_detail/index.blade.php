@@ -97,7 +97,7 @@ $title = 'Products';
                                         {{ $value->name }}
                                         <input type="radio" id="{{ $value->name }}" @if (head($each->infos)[0]->name == $value->name) checked @endif
                                         value="{{ $value->name }}" name="size">
-                                        <input type="hidden" id="wishlist_productsize{{ $each->id }}" value="{{ $value->name }}">
+                                        <input type="hidden" class="wishlist_productsize{{ $each->id }}" value="{{ $value->name }}">
                                     </label>
                                     @endif
                                     @endforeach
@@ -207,11 +207,7 @@ $title = 'Products';
                                         </div>
                                         <div class="d-flex justify-content-center align-items-center">
                                             <button type="button" class="btn-review 
-                                            @if (session('sessionIdCustomer') == null) signIn @endif" 
-                                            @if (session('sessionIdCustomer') !==null) 
-                                            @if (!in_array(session('sessionIdCustomer'), $check_review['customer_id'])) 
-                                            data-toggle="modal" data-target="#centermodal" 
-                                            @else onClick="alert('Bạn đã review sản phẩm này rồi!!')" @endif @else data-toggle="modal" data-target="#loginModal" @endif>Review</button>
+                                            @if (session('sessionIdCustomer') == null) signIn @endif" @if (session('sessionIdCustomer') !==null) @if (!in_array(session('sessionIdCustomer'), $check_review['customer_id'])) data-toggle="modal" data-target="#centermodal" @else onClick="alert('Bạn đã review sản phẩm này rồi!!')" @endif @else data-toggle="modal" data-target="#loginModal" @endif>Review</button>
                                             <div class="modal fade" id="centermodal" tabindex="-1" role="dialog" aria-hidden="true">
                                                 <div class="modal-dialog full-width modal-dialog-centered">
                                                     <div class="modal-content p-0">
@@ -361,13 +357,13 @@ $title = 'Products';
                                                 <div class="boxComment-list-items">
                                                     @if (count($show_comment->parents) > 0)
                                                     @foreach ($show_comment->parents as $comment_parent)
-                                                    <div class="boxComment-list-item" @if ($comment_parent->status !== ACTIVE) style="opacity: 0.7;" @endif>
+                                                    <div class="boxComment-list-item" @if ($comment_parent->status === NOT_ACTIVE) style="opacity: 0.7;" @endif>
                                                         <div class="boxReview-comment-item-title d-flex justify-content-between align-items-center my-3">
                                                             <div class="d-flex align-items-center">
-                                                                <p class="mr-2 d-flex align-items-center justify-content-center name-letter text-uppercase">
+                                                                <p class="mr-2 d-flex align-items-center justify-content-center name-letter text-uppercase" @if ($comment_parent->status === 4) style="color:#fa2f2f;" @endif>
                                                                     {{ substr($comment_parent->name, 0, 1) }}
                                                                 </p>
-                                                                <span class="name_user text-capitalize">{{ $comment_parent->name }}</span>
+                                                                <span class="name_user text-capitalize" @if ($comment_parent->status === 4) style="color:#fa2f2f;" @endif>{{ $comment_parent->name }}</span>
                                                             </div>
                                                             <p class="date-time">
                                                                 {{ $comment_parent->created_at }}
@@ -375,7 +371,7 @@ $title = 'Products';
                                                         </div>
                                                         <div class="boxComment-item-form">
                                                             <div class="comment-content">
-                                                                <p>
+                                                                <p  @if ($comment_parent->status === 4) style="color:#00bcd4;" @endif>
                                                                     {{ $comment_parent->content }}
                                                                 </p>
                                                             </div>
@@ -398,7 +394,7 @@ $title = 'Products';
                                                     @endif
                                                 </div>
                                             </div>
-                                            <form class="form-group mx-2" data-route="{{ route('addComments') }}" id="comment-form2">
+                                            <form class="form-group mx-2 comment-form2" data-route="{{ route('addComments') }}">
                                                 <input type="hidden" name="comment_id" value="{{ $show_comment->id }}">
                                                 <input type="hidden" name="user_id" value="{{ session('sessionIdCustomer') }}">
                                                 <div id="comment-text-{{ $show_comment->id }}" class="textarea-comment mt-2 d-none" style="width: calc(100% - 25px);
@@ -662,7 +658,10 @@ $title = 'Products';
                     3000);
                 return false;
             }
-            $('.button-comment').prop("disabled", true);
+            $('.button-comment').addClass("bg-secondary").prop("disabled", true);
+            setTimeout(function() {
+                $('.button-comment').removeClass("bg-secondary").prop("disabled", false);
+            }, 3000);
             $.ajax({
                 type: "POST"
                 , url: $(this).data('route')
@@ -679,6 +678,7 @@ $title = 'Products';
                         , position: 'top-right'
                         , icon: 'success'
                     });
+                    $('.textarea-comment').find("textarea").val('');
                     window.location.reload(true);
                 }
                 , error: function(response) {
@@ -693,7 +693,7 @@ $title = 'Products';
             });
         });
 
-        $('#comment-form2').on('submit', function(e) {
+        $('.comment-form2').on('submit', function(e) {
             e.preventDefault();
             let comment_id = $("input[name=comment_id]").val();
             let user_id = $("input[name=user_id]").val();
@@ -716,7 +716,10 @@ $title = 'Products';
                     3000);
                 return false;
             }
-            $('.button-comment').prop("disabled", true);
+            $('.button-comment').addClass("bg-secondary").prop("disabled", true);
+            setTimeout(function() {
+                $('.button-comment').removeClass("bg-secondary").prop("disabled", false);
+            }, 3000);
             $.ajax({
                 type: "POST"
                 , url: $(this).data('route')
@@ -733,7 +736,7 @@ $title = 'Products';
                         , position: 'top-right'
                         , icon: 'success'
                     });
-                    window.location.reload(true);
+                    window.location.href("#tabs-6");
                 }
                 , error: function(response) {
                     $.toast({
