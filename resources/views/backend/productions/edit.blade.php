@@ -80,21 +80,20 @@ $title = 'Productions';
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Choose Size</label>
-                                        <select class="form-control select2" data-toggle="select2" name="attrValue1[]" multiple>
-                                            @foreach ($attrValueSize as $value)
-                                                <option value="{{ $value->id }}"
-                                                    @foreach ($each->infos as $infos)
-                                                        @if ($value->id == $infos->id) selected @endif
-                                                    @endforeach>
+                                        <select class="form-control select2" 
+                                        id="selectSize" data-toggle="select2">
+                                            @foreach ($attrSize as $value)
+                                                <option value="{{ $value->replace_id }}">
                                                     {{ $value->name }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <div class="mt-1"><select class="form-control select2" id="selectSizeValue" data-toggle="select2" name="attrValue1[]" multiple></select></div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Choose Color</label>
                                         <select class="form-control select2" data-toggle="select2" name="attrValue">
-                                            @foreach ($attrValueColor as $value)
+                                            @foreach ($attrColor as $value)
                                                 <option value="{{ $value->id }}"
                                                     @foreach ($each->infos2 as $infos)
                                                         @if ($value->id == $infos->id) selected @endif
@@ -127,5 +126,20 @@ $title = 'Productions';
     <script src="{{ asset('backend/ckeditor/ckeditor.js') }}"></script>
     <script>
         CKEDITOR.replace('ckeditor-product')
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var data = $('#selectSize option:selected').val();
+            data = JSON.parse(data);
+            for (let each of data) {
+                $('#selectSizeValue').append(`<option value="${each.id}" selected>${each.name}</option>`);
+            }
+            $("#selectSize").change(function() {
+                $('#selectSizeValue').html('');
+                for (let each of JSON.parse($(this).val())) {
+                    $('#selectSizeValue').append(`<option value="${each.id}">${each.name}</option>`);
+                }
+            });
+        });
     </script>
 @endpush

@@ -229,15 +229,11 @@ class ProductionController extends Controller
         $attrSize = $attr['0'] ? $attr['0'] : null;
         $attrColor = $attr['1'] ? $attr['1'] : null;
 
-        $attrValueSize = AttributeValue::where('attribute_id', '!=', NameAttrEnum::COLOR)->get();
-        // dd($attrValueSize);
-
         return view('backend.productions.create', [
             'categories' => $categories,
-            'attrValueSize' => $attrValueSize,
+            'attrSize' => $attrSize,
             'attrValueColor' => $attrColor,
         ]);
-        // chua xu ly xong logic
     }
 
     public function edit(Production $production)
@@ -270,19 +266,49 @@ class ProductionController extends Controller
         $production['infos'] = $infos;
         $production['infos2'] = $infoColor;
 
-        $attrValueColor = AttributeValue::where('attribute_id', '=', NameAttrEnum::COLOR)->get();
-        $attrValueSize = AttributeValue::where('attribute_id', '!=', NameAttrEnum::COLOR)->get();
+        $attrs = Attribute::query()
+            ->with('attribute_values')
+            ->with('replaces')
+            ->whereNull('replace_id')
+            ->get();
+        foreach ($attrs as $value) {
+            foreach ($value->replaces as $replaces) {
+                if ($replaces->id == NameAttrEnum::SIZE_SET) {
+                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_SET)->get();
+                }
+                if ($replaces->id == NameAttrEnum::SIZE_SHOE) {
+                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_SHOE)->get();
+                }
+                if ($replaces->id == NameAttrEnum::SIZE_BAG) {
+                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_BAG)->get();
+                }
+            }
+        }
+
+        for ($i = 0; $i < count($attrs); $i++) {
+            if (count($attrs["$i"]->attribute_values) > 0) {
+                $attr[$i] = $attrs["$i"]->attribute_values;
+            } else {
+                $attr[$i] = $attrs["$i"]->replaces;
+            }
+        }
+        $attrSize = $attr['0'] ? $attr['0'] : null;
+        $attrColor = $attr['1'] ? $attr['1'] : null;
+
+        // dd($production);
+
+        // $attrValueColor = AttributeValue::where('attribute_id', '=', NameAttrEnum::COLOR)->get();
+        // $attrValueSize = AttributeValue::where('attribute_id', '!=', NameAttrEnum::COLOR)->get();
         return view('backend.productions.edit', [
             'each' => $production,
             'categories' => $categories,
-            'attrValueSize' => $attrValueSize,
-            'attrValueColor' => $attrValueColor,
+            'attrSize' => $attrSize,
+            'attrColor' => $attrColor,
         ]);
     }
 
     public function store(StoreProductRequest $request)
     {
-
         $status = $request->input('status') ? '1' : '2';
         $slug = Str::slug($request->input('name'), '-');
         $arr = $request->validated();
@@ -332,6 +358,7 @@ class ProductionController extends Controller
 
     public function update(UpdateProductRequest $request, $productionId)
     {
+        dd($request->all());
         $production = $this->model->find($productionId);
 
         $status = $request->input('status') ? '1' : '2';

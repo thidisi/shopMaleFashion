@@ -16,6 +16,7 @@
 
     <!-- Css Styles -->
     <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('frontend/css/font-awesome.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/elegant-icons.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/magnific-popup.css') }}" type="text/css">
@@ -26,6 +27,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css"
         integrity="sha512-wJgJNTBBkLit7ymC6vvzM1EcSWeM9mmOu+1USHaRBbHkm6W9EgM0HY27+UtUaprntaYQJF75rc8gjxllKs5OIQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+            .nice-select{
+                width: 100%;
+            }
+            .nice-select.open .list {
+                width: 100%;
+            }
+        </style>
     @stack('css')
 </head>
 
@@ -68,6 +77,7 @@
     <script src="{{ asset('frontend/js/jquery.countdown.min.js') }}"></script>
     <script src="{{ asset('frontend/js/jquery.slicknav.js') }}"></script>
     <script src="{{ asset('frontend/js/mixitup.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('frontend/js/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"
@@ -137,7 +147,7 @@
                     .prop('src') : $('#wishlist_productimage' + id).attr("data-setbg");
                 let url = $('#wishlist_producturl' + id).prop('href') ? $('#wishlist_producturl' + id).prop(
                     'href') : location.href;
-                let size = $('#wishlist_productsize' + id).val() ? $('#wishlist_productsize' + id).val() :
+                let size = $('.wishlist_productsize' + id).val() ? $('.wishlist_productsize' + id).val() :
                     false;
                 let color = $('#wishlist_productcolor' + id).val() ? $('#wishlist_productcolor' + id)
                     .val() : false;

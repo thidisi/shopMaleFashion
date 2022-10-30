@@ -166,7 +166,7 @@ class CommentController extends Controller
                 $query->from('comments')->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
                     ->where('comments.status', '!=', CANCEL)
                     ->select('comments.*', 'customers.name');
-            }])->get();
+            }])->latest('comments.created_at')->get();
         return $comments;
     }
 }
