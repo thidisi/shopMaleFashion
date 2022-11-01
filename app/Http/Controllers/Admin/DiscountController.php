@@ -7,21 +7,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDiscountRequest;
 use App\Http\Requests\UpdateDiscountRequest;
 use App\Models\Discount;
+use App\Models\DiscountProduct;
 use Illuminate\Http\Request;
 
 class DiscountController extends Controller
 {
-    private object $model;
-
-    public function __construct()
+    /**
+     * Construct
+     */
+    public function __construct(Discount $discount, DiscountProduct $discountProduct)
     {
-        $this->model = Discount::query();
-        $this->table = (new Discount)->getTable();
+        $this->discount = $discount;
+        $this->discountProduct = $discountProduct;
     }
 
     public function index()
-    {   
-        $discounts = $this->model->get();
+    {
+        $discounts = $this->discount->latest('created_at')->get();
         foreach ($discounts as $each) {
             $each->date_start = $each->format_date_start;
             $each->date_end = $each->format_date_end;
@@ -50,36 +52,43 @@ class DiscountController extends Controller
 
     public function store(StoreDiscountRequest $request)
     {
-        $date_start = $request->input('date_start');
-        $date_start = date_format(date_create_from_format('j-M-Y', $date_start), 'Y-m-d');
-        $date_end = $request->input('date_end');
-        $date_end = date_format(date_create_from_format('j-M-Y', $date_end), 'Y-m-d');
-
-        $arr = $request->validated();
-        $arr['date_start'] = $date_start;
-        $arr['date_end'] = $date_end;
-
-        $this->model->create($arr);
-        return redirect()->route('admin.discounts')->with('addDiscountStatus', 'Add successfully!!');
+        try {
+            $date_start = $request->date_start;
+            $date_start = date_format(date_create_from_format('j-M-Y', $date_start), 'Y-m-d');
+            $date_end = $request->date_end;
+            $date_end = date_format(date_create_from_format('j-M-Y', $date_end), 'Y-m-d');
+            $arr['date_start'] = $date_start;
+            $arr['date_end'] = $date_end;
+            $arr['discount_price'] = $request->discount_price;
+            $this->discount->create($arr);
+            return redirect()->route('admin.discounts')->with('addDiscountStatus', 'Add successfully!!');
+        } catch (\Throwable $th) {
+            // return view('frontend.errors.index');
+        }
     }
 
     public function update(UpdateDiscountRequest $request, $discountId)
     {
-        $discounts = $this->model->find($discountId);
-        
-        $date_start = $request->input('date_start');
-        $date_end = $request->input('date_end');
-
-        $discounts->date_start = date_format(date_create_from_format('j-M-Y', $date_start), 'Y-m-d');
-        $discounts->date_end = date_format(date_create_from_format('j-M-Y', $date_end), 'Y-m-d');
-        $discounts->discount_price = $request->input('discount_price');
-        $discounts->update();
-        return redirect()->route("admin.discounts")->with('EditDiscountStatus', 'Edit successfully!!');
+        try {
+            $discount = $this->discount->findOrFail($discountId);
+            $date_start = $request->date_start;
+            $date_end = $request->date_end;
+            $discount->date_start = date_format(date_create_from_format('j-M-Y', $date_start), 'Y-m-d');
+            $discount->date_end = date_format(date_create_from_format('j-M-Y', $date_end), 'Y-m-d');
+            $discount->discount_price = $request->discount_price;
+            $discount->status = $request->status ? \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'] : \App\Models\Discount::DISCOUNT_STATUS['CLOSE'];
+            $discount->save();
+            return redirect()->route("admin.discounts")->with('EditDiscountStatus', 'Edit successfully!!');
+        } catch (\Throwable $th) {
+            // return view('frontend.errors.index');
+        }
     }
 
     public function destroy($discountId)
     {
-        Discount::destroy($discountId);
+        $this->discount->destroy($discountId);
+        $this->discountProduct->where('discount_id', $discountId)->delete();
+
         return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
     }
 }

@@ -17,7 +17,6 @@ class CreateForgotPasswordTable extends Migration
             $table->foreignId('customer_id')->constrained();
             $table->primary('customer_id');
             $table->integer('token')->unique();
-            $table->timestamps();
         });
     }
 

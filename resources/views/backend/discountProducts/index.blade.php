@@ -43,7 +43,6 @@ $title = 'DiscountProducts';
                                         <th>#</th>
                                         <th>Productions</th>
                                         <th>Discounts</th>
-                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -64,13 +63,6 @@ $title = 'DiscountProducts';
                                             </td>
                                             <td>
                                                 {{ $value->discount_price }}%
-                                            </td>
-
-                                            <td class="text-center">
-                                                <span
-                                                    @if ($value->status == 'Active') class="badge badge-success" @else class="badge badge-danger" @endif>
-                                                    {{ $value->status }}
-                                                </span>
                                             </td>
 
                                             <td class="table-action">
@@ -104,6 +96,6 @@ $title = 'DiscountProducts';
     <script src="{{ asset('backend/js/vendor/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
-    <script src="{{ asset('backend/js/backend/demo.discounts.js') }}"></script>
+    <script src="{{ asset('backend/js/backend/demo.discount.js') }}"></script>
 @endpush
 

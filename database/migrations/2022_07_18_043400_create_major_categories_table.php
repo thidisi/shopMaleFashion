@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterColumnsDeleteInDiscountProductTable extends Migration
+class CreateMajorCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,12 @@ class AlterColumnsDeleteInDiscountProductTable extends Migration
      */
     public function up()
     {
-        Schema::table('discount_product', function (Blueprint $table) {
+        Schema::create('major_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name',100)->unique();
+            $table->string('slug')->nullable();
+            $table->integer('status')->default(0);
+            $table->timestamps();
             $table->softDeletes();
         });
     }
@@ -25,8 +30,6 @@ class AlterColumnsDeleteInDiscountProductTable extends Migration
      */
     public function down()
     {
-        Schema::table('discount_product', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('major_categories');
     }
 }

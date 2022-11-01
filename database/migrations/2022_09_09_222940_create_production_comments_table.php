@@ -17,8 +17,8 @@ class CreateProductionCommentsTable extends Migration
             $table->foreignId('comment_id')->constrained();
             $table->foreignId('production_id')->constrained();
             $table->primary(['comment_id', 'production_id']);
-            $table->integer('review');
-            $table->text('images');
+            $table->integer('review')->nullable();
+            $table->text('images')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

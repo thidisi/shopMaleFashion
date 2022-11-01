@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateDiscountRequest extends FormRequest
 {
@@ -35,8 +36,7 @@ class UpdateDiscountRequest extends FormRequest
             ],
             'discount_price' => [
                 'required',
-                'numeric',
-                'min:1',
+                Rule::unique('discounts')->ignore($this->discount),
             ],
         ];
     }

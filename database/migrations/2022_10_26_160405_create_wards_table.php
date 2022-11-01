@@ -14,12 +14,8 @@ class CreateWardsTable extends Migration
     public function up()
     {
         Schema::create('wards', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
+            $table->id();
             $table->bigInteger('district_id');
-            $table->foreign('district_id')
-                ->references('id')
-                ->on('districts')
-                ->onDelete('cascade');
             $table->string('name', 100);
             $table->string('slug', 100);
             $table->string('path', 255);

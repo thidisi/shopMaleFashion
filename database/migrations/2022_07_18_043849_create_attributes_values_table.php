@@ -16,7 +16,7 @@ class CreateAttributesValuesTable extends Migration
         Schema::create('attribute_values', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attribute_id')->constrained();
-            $table->string('name')->unique();
+            $table->string('name',100)->unique();
             $table->string('slug');
             $table->string('descriptions')->nullable();
             $table->integer('status')->default(1);

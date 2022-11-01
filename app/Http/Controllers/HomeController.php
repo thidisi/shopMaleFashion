@@ -67,7 +67,6 @@ class HomeController extends Controller
             ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
             ->select(
                 'productions.id as id',
-                'discount_product.status as status',
                 'productions.name as name',
                 'productions.price as price',
                 'product_images.image as image',
@@ -75,11 +74,12 @@ class HomeController extends Controller
                 'discounts.date_end as date_end',
                 'discounts.discount_price as discount_price',
             )
-            ->where('discount_product.status', '=', NameStatusEnum::ACTIVE)
             ->where('discounts.date_end', '>', now())
+            ->where('discounts.status', \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'])
             ->where('productions.quantity', '>', '0')
             ->oldest('discounts.date_end')
             ->first();
+            
 
         $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
             ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
@@ -92,12 +92,12 @@ class HomeController extends Controller
                 'product_images.status as statusImage',
                 'categories.name as categoryName',
                 'discounts.discount_price as discountPrice',
-                'discount_product.status as statusDiscount',
+                'discounts.status as statusDiscount',
                 'productions.*'
             )->paginate(8);
         foreach ($products as $each) {
             $each->image = json_decode($each->image)[0];
-            if ($each->statusDiscount == ACTIVE) {
+            if ($each->statusDiscount == \App\Models\Discount::DISCOUNT_STATUS['ACTIVE']) {
                 $each->discountPrice = (100 - $each->discountPrice) / 100;
             }
             $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');

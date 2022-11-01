@@ -49,8 +49,8 @@ class CartController extends Controller
                 foreach (Cart::getContent() as $value) {
                     $data['getSubTotal'] += ($value->price * $value->quantity);
                 }
-                $data['getSubTotal'] = currency_format($data['getSubTotal']);
-                $data['getTotal'] = currency_format(Cart::getTotal());
+                $data['getSubTotal'] = $data['getSubTotal'];
+                $data['getTotal'] = Cart::getTotal();
                 return view('frontend.carts.checkout', [
                     'customer' => $customer,
                     'cartItems' => $cartItems,

@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\ProductionController;
 use App\Http\Controllers\Admin\SlideController;
 use App\Http\Controllers\Admin\DiscountProductController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\TicketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -138,4 +139,6 @@ Route::prefix('admin')
         Route::get('comments', [CommentController::class, 'index'])->name('comments');
         Route::post('comments/feedback', [CommentController::class, 'feedback'])->name('comments.feedback');
         Route::post('comments/{comment}', [CommentController::class, 'action'])->name('comments.action');
+
+        Route::resource('ticket', TicketController::class);
     });

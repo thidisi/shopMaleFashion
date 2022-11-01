@@ -58,7 +58,7 @@ class MenuController extends Controller
                     'product_images.status as statusImage',
                     'categories.name as categoryName',
                     'discounts.discount_price as discountPrice',
-                    'discount_product.status as statusDiscount',
+                    'discounts.status as statusDiscount',
                     'productions.*'
                 )->paginate(12);
             $categories = Category::leftJoin('productions', 'categories.id', '=', 'productions.category_id')
@@ -69,7 +69,7 @@ class MenuController extends Controller
                 ->get();
             foreach ($products as $each) {
                 $each->image = json_decode($each->image)[0];
-                if ($each->statusDiscount == ACTIVE) {
+                if ($each->statusDiscount == 'active') {
                     $each->discountPrice = (100 - $each->discountPrice) / 100;
                 }
                 $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
@@ -84,7 +84,7 @@ class MenuController extends Controller
                 ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
                 ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
                 ->whereNotNull('discounts.discount_price')
-                ->where('discount_product.status', '=', ACTIVE)
+                ->where('discounts.status', 'active')
                 ->where('productions.status', '=', ACTIVE)
                 ->latest('productions.created_at')
                 ->select(
@@ -92,7 +92,7 @@ class MenuController extends Controller
                     'product_images.status as statusImage',
                     'categories.name as categoryName',
                     'discounts.discount_price as discountPrice',
-                    'discount_product.status as statusDiscount',
+                    'discounts.status as statusDiscount',
                     'productions.*'
                 )->paginate(12);
             foreach ($products as $each) {
@@ -102,7 +102,7 @@ class MenuController extends Controller
                 ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
                 ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
                 ->selectRaw('categories.id, categories.name, count(productions.category_id) AS `count`',)
-                ->where('discount_product.status', '=', ACTIVE)
+                ->where('discounts.status', 'active')
                 ->groupBy('categories.name')
                 ->orderBy('count', 'DESC')
                 ->get();
@@ -123,7 +123,7 @@ class MenuController extends Controller
                 ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
                 ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
                 ->where('productions.created_at', '>=', $date_end)
-                ->where('productions.status', '=', ACTIVE)
+                ->where('productions.status', ACTIVE)
                 ->latest('productions.created_at')
                 ->select(
                     'product_images.image as image',

@@ -166,7 +166,7 @@ $title = 'Shop';
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__right">
                                     <p>Sort by Price:</p>
-                                    <select>
+                                    <select class="niceSelect">
                                         <option value="">Low To High</option>
                                         <option value="">$0 - $55</option>
                                         <option value="">$55 - $100</option>
@@ -180,7 +180,7 @@ $title = 'Shop';
                             @foreach ($products as $product)
                                 @php
                                     $productPrice = 1;
-                                    if ($product->statusDiscount == ACTIVE && $product->discountPrice != null) {
+                                    if ($product->statusDiscount == 'active' && $product->discountPrice != null) {
                                         $productPrice = $product->discountPrice;
                                     }
                                     
@@ -192,7 +192,7 @@ $title = 'Shop';
                                         <div class="product__item__pic set-bg"
                                             id="wishlist_productimage{{ $product->id }}"
                                             @if ($product->statusImage == ACTIVE) data-setbg="{{ asset("storage/$product->image") }}" @endif>
-                                            @if ($product->discountPrice != null && $product->statusDiscount == ACTIVE)
+                                            @if ($product->discountPrice != null && $product->statusDiscount == 'active')
                                                 <span class="item-sale">
                                                     -{{ (1 - $product->discountPrice) * 100 }}%</span>
                                             @endif
@@ -234,7 +234,7 @@ $title = 'Shop';
                                             </div>
                                             <h5>
                                                 {{ currency_format($product->price * $productPrice) }}
-                                                @if ($product->discountPrice != null && $product->statusDiscount == ACTIVE)
+                                                @if ($product->discountPrice != null && $product->statusDiscount == 'active')
                                                     <em id="wishlist_productpriceold{{ $product->id }}"
                                                         style="text-decoration:line-through">{{ currency_format($product->price) }}</em>
                                                 @endif

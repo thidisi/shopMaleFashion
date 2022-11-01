@@ -51,7 +51,7 @@ class CategoryController extends Controller
                 'product_images.status as statusImage',
                 'categories.name as categoryName',
                 'discounts.discount_price as discountPrice',
-                'discount_product.status as statusDiscount',
+                'discounts.status as statusDiscount',
                 'productions.*'
             )->paginate(8);
 
@@ -63,7 +63,7 @@ class CategoryController extends Controller
 
         foreach ($products as $each) {
             $each->image = json_decode($each->image)[0];
-            if($each->statusDiscount == ACTIVE){
+            if($each->statusDiscount == 'active'){
                 $each->discountPrice = (100 - $each->discountPrice)/100;
             }
             $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');

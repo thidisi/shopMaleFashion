@@ -14,13 +14,13 @@
             @foreach ($products as $each)
                 @php
                     $productPrice = 1;
-                    if ($each->statusDiscount == ACTIVE && $each->discountPrice != null) {
+                    if ($each->statusDiscount == 'active' && $each->discountPrice != null) {
                         $productPrice = $each->discountPrice;
                     }
                     
                     $date = $each->created_at;
                     $date_end = Carbon\Carbon::now()->addDays(-7);
-                    $checkDiscount = $each->discountPrice != null && $each->statusDiscount == ACTIVE;
+                    $checkDiscount = $each->discountPrice != null && $each->statusDiscount == 'active';
                     $checkDate = $date >= $date_end;
                 @endphp
                 <div
@@ -75,7 +75,7 @@
                             </div>
                             <h5>
                                 {{ currency_format($each->price * $productPrice) }}
-                                @if ($each->discountPrice != null && $each->statusDiscount == ACTIVE)
+                                @if ($each->discountPrice != null && $each->statusDiscount == 'active')
                                     <em id="wishlist_productpriceold{{ $each->id }}"
                                         style="text-decoration:line-through">{{ currency_format($each->price) }}</em>
                                 @endif
