@@ -45,6 +45,7 @@ class DiscountProductController extends Controller
 
     public function create()
     {
+        
         try {
             $products = $this->product->get();
             $discounts = $this->discount->where('status', \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'])->get();
