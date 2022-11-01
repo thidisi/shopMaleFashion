@@ -11,6 +11,7 @@ class DashboardController extends Controller
 {
     public function index(CommentController $comments)
     {
+        
         // $dd =  DiscountProduct::leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
         //     ->where('discounts.status', \App\Models\Discount::DISCOUNT_STATUS['CLOSE'])->get();
         // dd($dd);
