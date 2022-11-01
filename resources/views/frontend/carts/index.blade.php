@@ -285,10 +285,10 @@ $title = 'Carts';
             //         form.submit();
             //     }
             // });
-            $.validator.addMethod("validatePhone", function(value, element) {
-                return this.optional(element) ||
-                    /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/i.test(value);
-            }, "Vui lòng nhập đúng định dạng số điện thoại!!");
+            // $.validator.addMethod("validatePhone", function(value, element) {
+            //     return this.optional(element) ||
+            //         /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/i.test(value);
+            // }, "Vui lòng nhập đúng định dạng số điện thoại!!");
         });
     </script>
 @endpush

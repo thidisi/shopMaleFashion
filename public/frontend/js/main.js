@@ -100,7 +100,8 @@
     /*--------------------------
         Select
     ----------------------------*/
-    $("select").select2();
+    $(".niceSelect").niceSelect();
+    $(".select2").select2();
 
     /*-------------------
         Radio Btn

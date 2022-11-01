@@ -18,6 +18,7 @@ class CreateCommentsTable extends Migration
             $table->foreignId('customer_id')->constrained();
             $table->string('content');
             $table->integer('status')->default(1);
+            $table->foreignId('parent_id');
             $table->timestamps();
             $table->softDeletes();
         });

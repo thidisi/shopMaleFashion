@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Enums\MenuStatusEnum;
 use App\Enums\NameStatusEnum;
 use App\Models\About;
+use App\Models\Discount;
 use App\Models\DiscountProduct;
 use App\Models\Major_Category;
 use Illuminate\Support\ServiceProvider;
@@ -37,16 +38,26 @@ class AppServiceProvider extends ServiceProvider
             ->get();
         $about = About::query()->first();
 
+        Discount::where('date_end', '<', now())->update([
+            'status' =>  \App\Models\Discount::DISCOUNT_STATUS['CLOSE']
+        ]);
+
         DiscountProduct::leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-            ->where('discounts.date_end', '<', now())
-            ->update([
-                'discount_product.status' => NameStatusEnum::NOT_ACTIVE
-            ]);
-        DiscountProduct::leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-            ->where('discounts.date_end', '>', now())
-            ->update([
-                'discount_product.status' => NameStatusEnum::ACTIVE
-            ]);
+            ->where('discounts.status', \App\Models\Discount::DISCOUNT_STATUS['CLOSE'])->delete();
+            
+        // DiscountProduct::where('status', NameStatusEnum::NOT_ACTIVE)->delete();
+
+        // DiscountProduct::leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
+        //     ->where('discounts.date_end', '<', now())
+        //     ->update([
+        //         'discount_product.status' => NameStatusEnum::NOT_ACTIVE
+        //     ]);
+        // DiscountProduct::leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
+        //     ->where('discounts.date_end', '>', now())
+        //     ->update([
+        //         'discount_product.status' => NameStatusEnum::ACTIVE
+        //     ]);
+        // DiscountProduct::where('status', NameStatusEnum::NOT_ACTIVE)->delete();
 
         view()->share([
             'menus' => $menus,

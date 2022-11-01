@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', [HomeController::class, 'index'])->name('index');
 Route::get('/404.html', [HomeController::class, 'errors'])->name('errors');
 Route::post('/signUp', [HomeController::class, 'signUp'])->name('signUp');

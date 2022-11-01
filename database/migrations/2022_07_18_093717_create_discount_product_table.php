@@ -17,7 +17,6 @@ class CreateDiscountProductTable extends Migration
             $table->id();
             $table->foreignId('production_id')->constrained();
             $table->foreignId('discount_id')->constrained();
-            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

@@ -15,17 +15,14 @@ use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
-    private object $model;
-
-    public function __construct()
+    public function __construct(Blog $blog)
     {
-        $this->model = Blog::query();
-        $this->table = (new Blog)->getTable();
+        $this->blog = $blog;
     }
 
     public function index()
     {
-        $blogs = $this->model->latest()->paginate(5);
+        $blogs = $this->blog->latest()->paginate(5);
         return view('backend.blogs.index', [
             'blogs' => $blogs
         ]);
@@ -33,9 +30,10 @@ class BlogController extends Controller
 
     public function view()
     {
-        $blogs = Blog::where('status', '=', NameStatusEnum::ACTIVE)
+        $blogs = $this->blog->where('status', '=', NameStatusEnum::ACTIVE)
             ->latest('created_at')
             ->paginate(9);
+        // $data = 
         return view('frontend.blogs.index', [
             'blogs' => $blogs,
         ]);
@@ -43,8 +41,12 @@ class BlogController extends Controller
 
     public function detail(Blog $blog)
     {
+        
+        $data['previous'] = $this->blog->find($blog->id - 1);
+        $data['next'] = $this->blog->find($blog->id + 1);
         return view('frontend.blogs.detail', [
             'blog' => $blog,
+            'data' => $data
         ]);
     }
 
@@ -61,7 +63,7 @@ class BlogController extends Controller
         $arr['image'] = $path;
         $arr['status'] = $status;
 
-        $this->model->create($arr);
+        $this->blog->create($arr);
         return redirect()->route('admin.blogs')->with('addBlogsSuccess', 'Add successfully!!');
     }
 
@@ -74,7 +76,7 @@ class BlogController extends Controller
 
     public function update(UpdateBlogRequest $request, $blogId)
     {
-        $blog = $this->model->find($blogId);
+        $blog = $this->blog->find($blogId);
         $blog->title = $request->input('title');
         $blog->content = $request->input('content');
         $blog->status = $request->input('status') ? '1' : '2';
@@ -102,7 +104,7 @@ class BlogController extends Controller
 
     public function destroy($blogId)
     {
-        Blog::destroy($blogId);
+        $this->blog->destroy($blogId);
         return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
     }
 }

@@ -16,11 +16,11 @@ class CreateProductionsTable extends Migration
         Schema::create('productions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained();
-            $table->string('name');
+            $table->string('name', 255);
             $table->float('price');
             $table->integer('quantity');
             $table->string('slug');
-            $table->string('descriptions')->nullable();
+            $table->text('descriptions')->nullable();
             $table->integer('count_view')->default(0);
             $table->integer('status')->default(1);
             $table->timestamps();

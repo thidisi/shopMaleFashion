@@ -46,6 +46,14 @@ $title = 'Discounts';
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="form-group mt-3">
+                                        <label class="form-label">Status</label>
+                                        <div class="float-right">
+                                            <input type="checkbox" id="switch3" @if ($each->status == 'active') checked @endif data-switch="success"
+                                                name="status" />
+                                            <label for="switch3" data-on-label="Yes" data-off-label="No"></label>
+                                        </div>
+                                    </div>
                                     <button type="submit" class="float-right ml-1 mt-2 btn btn-primary">Update</button>
                                     <a href="{{ route('admin.discounts') }}"
                                         class="float-right mt-2 btn btn-info">Back</a>

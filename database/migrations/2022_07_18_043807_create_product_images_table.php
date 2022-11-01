@@ -16,8 +16,7 @@ class CreateProductImagesTable extends Migration
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('production_id')->constrained();
-            $table->string('image');
-            $table->integer('type_image');
+            $table->text('image');
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->softDeletes();

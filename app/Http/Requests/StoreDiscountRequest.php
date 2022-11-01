@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Discount;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDiscountRequest extends FormRequest
 {
@@ -35,8 +37,7 @@ class StoreDiscountRequest extends FormRequest
             ],
             'discount_price' => [
                 'required',
-                'numeric',
-                'min:1',
+                'unique:discounts,discount_price'
             ],
         ];
     }

@@ -20,7 +20,6 @@ use Carbon\Carbon;
 
 class OrderController extends Controller
 {
-    private object $model;
     /**
      * Construct
      */
@@ -44,7 +43,7 @@ class OrderController extends Controller
                 DB::table('order_detail')
                     ->where('order_id', '=', $order->id)
                     ->update(['deleted_at' => now()]);
-                $this->model->where('id', '=', $order->id)->delete();
+                $this->order->where('id', '=', $order->id)->delete();
             }
         }
 
@@ -87,14 +86,17 @@ class OrderController extends Controller
 
     public function check_out(Request $request)
     {
+        dd($request->all());
         try {
             $order = $request->all();
             $order['address_receiver'] =  $this->ward->findOrFail($order['wards'])->path;
-            unset($order['_token'], $order['provinces'], $order['districts'], $order['wards']);
+            $discount = $order['get_discount'];
+            
+            unset($order['_token'], $order['provinces'], $order['districts'], $order['wards'], $order['get_total'], $order['get_discount']);
 
             if (!empty(Cart::getTotal())) {
                 $order['customer_id'] = session('sessionIdCustomer');
-                $order['total_money'] = Cart::getTotal();
+                $order['total_money'] = Cart::getTotal() - $discount;
                 $order['action'] = NOT_ACTIVE;
                 $order_id = $this->order->create($order)->id;
                 $cartItems = Cart::getContent();
@@ -127,6 +129,27 @@ class OrderController extends Controller
             return redirect()->back()->with("Empty stock, can't order");
         } catch (\Throwable $th) {
             return view('frontend.errors.index');
+        }
+    }
+
+    public function get_discount(Request $request)
+    {
+        try {
+            if ($request->discount === 'GIAMNGAY20K') {
+                $discount = '20000';
+            }
+            if ($request->discount === 'GIAMNGAY50K') {
+                $discount = '50000';
+            }
+            $data = [
+                'discount' => currency_format($discount),
+                'slug' => $discount
+            ];
+            return response()->json([
+                'data' => $data
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => __("messages.not_content")], 403);
         }
     }
 

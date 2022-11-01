@@ -1503,6 +1503,7 @@ ol {
 	height: 8px;
 	right: 12px;
 	width: 8px;
+	top: 11px;
 }
 
 .shop__product__option__right .nice-select span {
@@ -4036,6 +4037,8 @@ ol {
 label.error{
 	color: red;
 	margin: 0;
+	font-size: 0.8rem;
+    padding: 4px 2px;
 }
 
 .item-sale {
@@ -4229,4 +4232,24 @@ progress {color: #fa2f2f;}
 
 .select2-container .select2-selection--single {
     height: 36px;
+}
+
+.btn-discount {
+	font-size: 12px;
+    color: #ffffff;
+    font-weight: 700;
+	display: block;
+	height: 50px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: #111111;
+    padding: 0 16px;
+    border: none;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.input_discount {
+	position: relative;
 }

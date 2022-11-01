@@ -16,8 +16,8 @@ class CreateOrderTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained();
-            $table->string('name_receiver');
-            $table->string('phone_receiver');
+            $table->string('name_receiver',100);
+            $table->float('phone_receiver');
             $table->string('address_receiver');
             $table->float('total_money');
             $table->string('note')->nullable();

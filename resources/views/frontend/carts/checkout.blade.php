@@ -72,9 +72,12 @@ $title = 'Checkout';
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6">
-                        <div class="checkout__input" id="input_discount">
+                        <div class="checkout__input" id="show_discount">
                             <p>Mã giảm giá<span></span></p>
-                            <input class="mb-0" type="text" name="discount">
+                            <div class="input_discount">
+                                <input class="mb-0" type="text" id="set_discount" placeholder="Coupon code">
+                                <button class="btn-discount" type="button" id="btn_discount">Apply</button>
+                            </div>
                         </div>
                         <div class="checkout__order mt-3">
                             <h4 class="order__title">Your order</h4>
@@ -87,9 +90,12 @@ $title = 'Checkout';
                                 @endforeach
                             </ul>
                             <ul class="checkout__total__all">
-                                <li>Subtotal <span style="text-decoration: line-through;">{{ $data['getSubTotal'] }}</span>
+                                <li>Subtotal <span style="text-decoration: line-through;">{{ currency_format($data['getSubTotal']) }}</span>
                                 </li>
-                                <li>Total <span>{{ $data['getTotal'] }}</span></li>
+                                <li id="get_discount"></li>
+                                <li>Total <span id="get_total">{{ currency_format($data['getTotal']) }}</span></li>
+                                <input type="hidden" name="get_total" value="{{ $data['getTotal'] }}">
+                                <input type="hidden" name="get_discount">
                             </ul>
                             <p>Lorem ipsum dolor sit amet, consectetur adip elit, sed do eiusmod tempor incididunt
                                 ut labore et dolore magna aliqua.</p>
@@ -119,6 +125,89 @@ $title = 'Checkout';
 @endsection
 @push('js')
 <script type="text/javascript">
+    $(document).ready(function() {
+        $("#check_out").validate({
+            rules: {
+                name_receiver: {
+                    required: true
+                    , minlength: 3
+                }
+                , phone_receiver: {
+                    required: true
+                    , validatePhone: true
+                , }
+                , provinces: {
+                    required: true
+                , }
+                , districts: {
+                    required: true
+                , }
+                , wards: {
+                    required: true
+                , }
+            , }
+            , messages: {
+                name_receiver: {
+                    required: "Không được bỏ trống"
+                    , minlength: "Tên không được nhỏ hơn 3 kí tự"
+                }
+                , phone_receiver: {
+                    required: "Không được bỏ trống"
+                    , min: "You must be at least 18 years old"
+                }
+                , provinces: {
+                    required: "Không được bỏ trống"
+                , }
+                , districts: {
+                    required: "Không được bỏ trống"
+                , }
+                , wards: {
+                    required: "Không được bỏ trống"
+                , }
+            , }
+            , submitHandler: function(form) {
+                form.submit();
+            }
+        });
+        $.validator.addMethod("validatePhone", function(value, element) {
+            return this.optional(element) ||
+                /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/i.test(value);
+        }, "Vui lòng nhập đúng định dạng số điện thoại!!");
+    });
+    $("#btn_discount").click(function() {
+        let discount = $("#set_discount").val();
+        $.ajax({
+            type: "POST"
+            , url: '{{ route('api.get_discount') }}'
+            , data: {
+                discount: discount
+            , }
+            , success: function(response, textStatus, xhr) {
+                $("#btn_discount").addClass("bg-secondary").prop("disabled", true);
+                setTimeout(function() {
+                    $("#btn_discount").removeClass("bg-secondary").prop("disabled", false);
+                }, 2500);
+                $("#get_discount").find('p').remove();
+                $('#get_discount').append(`<p>Discount <span>- ${response.data.discount}</span></p>`)
+                let sum = $("input[name=get_total]").val() - response.data.slug;
+                $("input[name=get_discount]").val(response.data.slug);
+                sum = sum.toLocaleString('vi', {
+                    style: 'currency'
+                    , currency: 'VND'
+                });
+                $("#get_total").text(sum);
+                $("#set_discount").val('');
+            }
+            , error: function(response) {
+                $("#show_discount").find('.text-danger').remove();
+                $("#show_discount").append(
+                    '<p class="text-danger ml-2 mt-1"></p>');
+                $("#show_discount").find('.text-danger').text("Mã giảm giá không hợp lệ").show()
+                    .fadeOut(
+                        3000);
+            }
+        });
+    });
     $(document).ready(function() {
         $.ajax({
             url: '{{ route('api.address') }}'
@@ -158,46 +247,6 @@ $title = 'Checkout';
                 console.log(response);
             }
         , })
-
-        $("#check_out").validate({
-            onfocusout: false
-            , onkeyup: false
-            , onclick: false
-            , rules: {
-                "name_receiver": {
-                    required: true
-                    , maxlength: 15
-                }
-                , "phone_receiver": {
-                    required: true
-                    , validatePhone: false
-                , }
-                , "provinces": "required"
-                , "districts": "required"
-                , "wards": "required"
-            , }
-            , messages: {
-                "name_receiver": {
-                    required: "Vui lòng nhập tên của bạn"
-                    , maxlength: "Nhập tối đa 15 kí tự"
-                }
-                , "phone_receiver": {
-                    required: "Vui lòng nhập số điện thoại của bạn"
-                , }
-                , "provinces": {
-                    required: "Vui lòng nhập địa chỉ của bạn"
-                }
-                , "districts": {
-                    required: "Vui lòng nhập địa chỉ của bạn"
-                }
-                , "wards": {
-                    required: "Vui lòng nhập địa chỉ của bạn"
-                }
-            , }
-            , submitHandler: function(form) {
-                form.submit();
-            }
-        });
     });
 
 </script>

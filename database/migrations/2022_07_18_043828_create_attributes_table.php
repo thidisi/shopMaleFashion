@@ -15,10 +15,11 @@ class CreateAttributesTable extends Migration
     {
         Schema::create('attributes', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name',100)->unique();
             $table->string('slug');
             $table->string('descriptions')->nullable();
             $table->integer('status')->default(1);
+            $table->foreignId('replace_id');
             $table->timestamps();
             $table->softDeletes();
 

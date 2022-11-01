@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,4 +20,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('address', [CartController::class, 'getAddress'])->name('api.address');
+Route::get('address', [CartController::class, 'getAddress'])->name('address');
+
+Route::post('getDiscount', [OrderController::class, 'get_discount'])->name('get_discount');

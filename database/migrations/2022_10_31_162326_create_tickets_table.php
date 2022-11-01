@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDiscountTable extends Migration
+class CreateTicketsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,17 @@ class CreateDiscountTable extends Migration
      */
     public function up()
     {
-        Schema::create('discounts', function (Blueprint $table) {
+        Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('date_start');
+            $table->foreignId('customer_id')->constrained();
+            $table->float('price');
+            $table->string('code',100);
             $table->dateTime('date_end');
-            $table->integer('discount_price');
             $table->enum('status', [
+                'pending',
                 'active',
                 'suspended',
-            ])->default('active');
+            ])->default(App\Models\Ticket::TICKET_STATUS['OPEN']);
             $table->timestamps();
         });
     }
@@ -33,6 +35,6 @@ class CreateDiscountTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('discount');
+        Schema::dropIfExists('tickets');
     }
 }
