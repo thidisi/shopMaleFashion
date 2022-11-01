@@ -11,6 +11,7 @@ use BenSampo\Enum\Enum;
  */
 final class DiscountPriceEnum extends Enum
 {
+    
     public const PROMOTION1 = 10;
     public const PROMOTION2 = 19;
     public const PROMOTION3 = 29;
