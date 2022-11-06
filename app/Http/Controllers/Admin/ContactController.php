@@ -41,10 +41,9 @@ class ContactController extends Controller
         return view('backend.contacts.feedback', [
             'each' => $contact
         ]);
-        
     }
 
-    public function putSeenMail(Request $request,Contact $contact)
+    public function putSeenMail(Request $request, Contact $contact)
     {
         $message = [
             'body' => $request->messages,
@@ -60,7 +59,7 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $arr = $request->validate([
-            'name' => "required|unique:contacts|min:2|max:255",
+            'name' => "required|min:2|max:255",
             'email' => 'required|email',
             'message' => 'required',
         ]);

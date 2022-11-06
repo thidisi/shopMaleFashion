@@ -1,6 +1,6 @@
 @extends('frontend.layout_frontend')
 @php
-$title = 'Contact';
+    $title = 'Contact';
 @endphp
 @section('container')
     <!-- Map Begin -->
@@ -37,27 +37,30 @@ $title = 'Contact';
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="contact__form">
-                        <form action="{{ route('contact.store') }}" method="post">
+                        <form action="{{ route('contact.store') }}" method="post" id="form_contact">
                             @csrf
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <input type="text" placeholder="Name" name="name" value="{{ session('sessionCustomerName') }}">
+                                    <input type="text" placeholder="Name" name="name"
+                                        value="{{ session('sessionCustomerName') }}">
                                     @if ($errors->has('name'))
                                         <p class="text-capitalize text-danger">{{ $errors->first('name') }}</p>
                                     @endif
                                 </div>
                                 <div class="col-lg-6">
-                                    <input type="text" placeholder="Email" name="email" value="{{ session('sessionEmailCustomer') }}">
+                                    <input type="text" placeholder="Email" name="email"
+                                        value="{{ session('sessionEmailCustomer') }}">
                                     @if ($errors->has('email'))
                                         <p class="text-capitalize text-danger">{{ $errors->first('email') }}</p>
                                     @endif
                                 </div>
                                 <div class="col-lg-12">
-                                    <textarea placeholder="Message" name="message"></textarea>
-                                    @if ($errors->has('message'))
-                                        <p class="text-capitalize text-danger">{{ $errors->first('message') }}</p>
-                                    @endif
-                                    <button type="submit" class="site-btn">Send Message</button>
+                                    <div class="mb-2">
+                                        <textarea placeholder="Message" name="message"></textarea>
+                                    </div>
+                                    <div class="d-flex">
+                                        <button type="submit" class="site-btn rounded">Send Message</button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -68,3 +71,64 @@ $title = 'Contact';
     </section>
     <!-- Contact Section End -->
 @endsection
+@push('js')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            function Disabled(time,data) {
+                if (time > 0) {
+                    let times = data ? data : time;
+                    $('.site-btn').addClass("bg-secondary").prop("disabled", true)
+                    $('.d-flex').append(
+                        `<span class="text-light d-block text-center ml-3 rounded-circle bg-dark"style="width: 34px;height:34px;line-height: 34px;margin: auto;">${times}</span>`
+                    );
+                    var timeleft = time;
+                    var downloadTimer = setInterval(function() {
+                        if (timeleft > 0) {
+                            $('.d-flex').find('span').text(timeleft);
+                            localStorage.setItem("timeDisabled", timeleft);
+                        } else {
+                            clearInterval(downloadTimer);
+                            $('.d-flex').find('span').remove();
+                            localStorage.removeItem("timeDisabled");
+                            $('.site-btn').removeClass("bg-secondary").prop("disabled", false);
+                        }
+                        timeleft -= 1;
+                    }, 1000);
+                }
+            }
+            Disabled(localStorage.getItem("timeDisabled"))
+            $('#form_contact').validate({
+                rules: {
+                    "name": {
+                        required: true,
+                        minlength: 3
+                    },
+                    "email": {
+                        required: true,
+                        email: true
+                    },
+                    "message": {
+                        required: true,
+                    },
+                },
+                messages: {
+                    "name": {
+                        required: "Không được bỏ trống",
+                        minlength: "Tên không được nhỏ hơn 3 kí tự"
+                    },
+                    "email": {
+                        required: "Vui lòng nhập email của bạn",
+                        email: "Email không đúng định dạng!!"
+                    },
+                    "message": {
+                        required: "Không được bỏ trống",
+                    },
+                },
+                submitHandler: function(form) {
+                    localStorage.setItem("timeDisabled", 29);
+                    Disabled(29,30);
+                }
+            });
+        })
+    </script>
+@endpush

@@ -65,7 +65,7 @@ $title = 'Products';
                 <div class="col-lg-8">
                     <div class="product__details__text">
                         <h4>{{ $each->name }}
-                            @if ($each->statusDiscount == ACTIVE)
+                            @if ($each->statusDiscount == 'active')
                             (<em class="text-danger">Sale: {{ $each->discountPrice }}%</em>)
                             @endif
                         </h4>
@@ -77,7 +77,7 @@ $title = 'Products';
                                 <span> - {{ $count_review }} Reviews / Purchases: {{ $each->count_view }}</span>
                         </div>
                         <h3>
-                            @if ($each->statusDiscount == ACTIVE)
+                            @if ($each->statusDiscount == 'active')
                             {{ currency_format(($each->price * (100 - $each->discountPrice)) / 100) }}
                             <span id="wishlist_productpriceold{{ $each->id }}" name="priceDiscount">{{ currency_format($each->price) }}</span>
                             @else
@@ -442,7 +442,7 @@ $title = 'Products';
             @php
             $image = json_decode($value->image)[0];
             $productPrice = 1;
-            if ($value->statusDiscount == ACTIVE && $value->discountPrice != null) {
+            if ($value->statusDiscount == 'active' && $value->discountPrice != null) {
             $productPrice = $value->discountPrice;
             }
 
@@ -452,7 +452,7 @@ $title = 'Products';
             <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
                 <div class="product__item">
                     <div class="product__item__pic set-bg" id="wishlist_productimage{{ $value->id }}" @if ($value->statusImage == ACTIVE) data-setbg="{{ asset("storage/$image") }}" @endif>
-                        @if ($value->discountPrice != null && $value->statusDiscount == ACTIVE)
+                        @if ($value->discountPrice != null && $value->statusDiscount == 'active')
                         <span class="item-sale">-{{ (1 - $value->discountPrice) * 100 }}%</span>
                         @endif
                         @if ($date >= $date_end)
@@ -479,7 +479,7 @@ $title = 'Products';
                         </div>
                         <h5>
                             {{ currency_format($value->price * $productPrice) }}
-                            @if ($value->discountPrice != null && $value->statusDiscount == ACTIVE)
+                            @if ($value->discountPrice != null && $value->statusDiscount == 'active')
                             <em id="wishlist_productpriceold{{ $value->id }}" style="text-decoration:line-through">{{ currency_format($value->price) }}</em>
                             @endif
                         </h5>

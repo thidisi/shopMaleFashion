@@ -34,9 +34,11 @@ class TicketController extends Controller
      */
     public function create()
     {
-        $customers = $this->customer->get();
+        $customers = $this->customer->where('status', ACTIVE)->get();
+        $total_customer = $this->customer->where('status', ACTIVE)->count();
         return view('backend.tickets.create', [
-            'customers' => $customers,
+            'customers' => json_encode($customers),
+            'total_customer' => $total_customer,
         ]);
     }
 

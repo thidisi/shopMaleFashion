@@ -8,14 +8,17 @@ use App\Enums\NameAttrEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\About;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Customer;
+use App\Models\District;
 use App\Models\Major_Category;
 use App\Models\ProductImage;
 use App\Models\Production;
+use App\Models\Province;
+use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -25,17 +28,21 @@ use Darryldecode\Cart\Facades\CartFacade as Cart;
 
 class ProductionController extends Controller
 {
-    private object $model;
-
-    public function __construct()
+    /**
+     * Construct
+     */
+    public function __construct(Production $product, Category $category, Attribute $attribute, AttributeValue $attributeValue, ProductImage $productImage)
     {
-        $this->model = Production::query();
-        $this->table = (new Production)->getTable();
+        $this->product = $product;
+        $this->category = $category;
+        $this->attribute = $attribute;
+        $this->attributeValue = $attributeValue;
+        $this->productImage = $productImage;
     }
 
     public function index()
     {
-        $products = Production::leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
+        $products = $this->product->leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
             ->get(['product_images.image as image', 'product_images.status as statusImage', 'productions.*']);
 
         $infos = DB::table('production_attr_value')
@@ -74,10 +81,10 @@ class ProductionController extends Controller
     public function view(Production $production, CommentController $comments)
     {
         if (!empty($production)) {
-            $product = Production::leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
+            $product = $this->product->leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
                 ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
                 ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->select('product_images.image as image', 'product_images.status as statusImage', 'discounts.discount_price as discountPrice', 'discount_product.status as statusDiscount', 'productions.*')
+                ->select('product_images.image as image', 'product_images.status as statusImage', 'discounts.discount_price as discountPrice', 'discounts.status as statusDiscount', 'productions.*')
                 ->where('productions.slug', '=', $production->slug)->first();
             $infos = DB::table('production_attr_value')
                 ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
@@ -120,14 +127,14 @@ class ProductionController extends Controller
                 }
             }
 
-            if ($product->statusDiscount != ACTIVE) {
+            if ($product->statusDiscount != 'active') {
                 $product->discountPrice = 0;
             }
 
             $show_reviews = $comments->show_reviews($production->id);
             $show_comments = $comments->show_comments($production->id);
 
-            $productRelated = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
+            $productRelated = $this->product->Join('product_images', 'productions.id', '=', 'product_images.production_id')
                 ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
                 ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
                 ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
@@ -140,12 +147,12 @@ class ProductionController extends Controller
                     'product_images.status as statusImage',
                     'categories.name as categoryName',
                     'discounts.discount_price as discountPrice',
-                    'discount_product.status as statusDiscount',
+                    'discounts.status as statusDiscount',
                     'productions.*'
                 )->paginate(4);
 
             foreach ($productRelated as $each) {
-                if ($each->statusDiscount == ACTIVE) {
+                if ($each->statusDiscount == 'active') {
                     $each->discountPrice = (100 - $each->discountPrice) / 100;
                 }
                 $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
@@ -198,9 +205,8 @@ class ProductionController extends Controller
 
     public function create(Request $request)
     {
-
-        $categories = Category::query()->get();
-        $attrs = Attribute::query()
+        $categories = $this->category->query()->get();
+        $attrs = $this->attribute->query()
             ->with('attribute_values')
             ->with('replaces')
             ->whereNull('replace_id')
@@ -208,13 +214,13 @@ class ProductionController extends Controller
         foreach ($attrs as $value) {
             foreach ($value->replaces as $replaces) {
                 if ($replaces->id == NameAttrEnum::SIZE_SET) {
-                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_SET)->get();
+                    $replaces->replace_id = $this->attributeValue->where('attribute_id', '=', NameAttrEnum::SIZE_SET)->get();
                 }
                 if ($replaces->id == NameAttrEnum::SIZE_SHOE) {
-                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_SHOE)->get();
+                    $replaces->replace_id = $this->attributeValue->where('attribute_id', '=', NameAttrEnum::SIZE_SHOE)->get();
                 }
                 if ($replaces->id == NameAttrEnum::SIZE_BAG) {
-                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_BAG)->get();
+                    $replaces->replace_id = $this->attributeValue->where('attribute_id', '=', NameAttrEnum::SIZE_BAG)->get();
                 }
             }
         }
@@ -238,10 +244,9 @@ class ProductionController extends Controller
 
     public function edit(Production $production)
     {
-        $categories = Category::query()->get();
+        $categories = $this->category->query()->get();
 
-
-        $image = ProductImage::query()->where('production_id', '=', $production->id)->whereNull('deleted_at')->get();
+        $image = $this->productImage->query()->where('production_id', '=', $production->id)->whereNull('deleted_at')->get();
         $production['image'] = $image;
 
         $infos = DB::table('production_attr_value')
@@ -266,7 +271,7 @@ class ProductionController extends Controller
         $production['infos'] = $infos;
         $production['infos2'] = $infoColor;
 
-        $attrs = Attribute::query()
+        $attrs = $this->attribute->query()
             ->with('attribute_values')
             ->with('replaces')
             ->whereNull('replace_id')
@@ -274,13 +279,13 @@ class ProductionController extends Controller
         foreach ($attrs as $value) {
             foreach ($value->replaces as $replaces) {
                 if ($replaces->id == NameAttrEnum::SIZE_SET) {
-                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_SET)->get();
+                    $replaces->replace_id = $this->attributeValue->where('attribute_id', '=', NameAttrEnum::SIZE_SET)->get();
                 }
                 if ($replaces->id == NameAttrEnum::SIZE_SHOE) {
-                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_SHOE)->get();
+                    $replaces->replace_id = $this->attributeValue->where('attribute_id', '=', NameAttrEnum::SIZE_SHOE)->get();
                 }
                 if ($replaces->id == NameAttrEnum::SIZE_BAG) {
-                    $replaces->replace_id = AttributeValue::where('attribute_id', '=', NameAttrEnum::SIZE_BAG)->get();
+                    $replaces->replace_id = $this->attributeValue->where('attribute_id', '=', NameAttrEnum::SIZE_BAG)->get();
                 }
             }
         }
@@ -295,10 +300,6 @@ class ProductionController extends Controller
         $attrSize = $attr['0'] ? $attr['0'] : null;
         $attrColor = $attr['1'] ? $attr['1'] : null;
 
-        // dd($production);
-
-        // $attrValueColor = AttributeValue::where('attribute_id', '=', NameAttrEnum::COLOR)->get();
-        // $attrValueSize = AttributeValue::where('attribute_id', '!=', NameAttrEnum::COLOR)->get();
         return view('backend.productions.edit', [
             'each' => $production,
             'categories' => $categories,
@@ -331,11 +332,11 @@ class ProductionController extends Controller
         }
         $status_image = $request->input('status_image') ? '1' : '2';
 
-        $id = $this->model->create($arr)->id;
+        $id = $this->product->create($arr)->id;
         $arr2['image'] = json_encode($data);
         $arr2['status'] = $status_image;
         $arr2['production_id'] = $id;
-        ProductImage::query()->create($arr2);
+        $this->productImage->query()->create($arr2);
 
         $arr3 = [];
         $attrValue1 = $request->input('attrValue1');
@@ -358,8 +359,7 @@ class ProductionController extends Controller
 
     public function update(UpdateProductRequest $request, $productionId)
     {
-        dd($request->all());
-        $production = $this->model->find($productionId);
+        $production = $this->product->find($productionId);
 
         $status = $request->input('status') ? '1' : '2';
         $slug = Str::slug($request->input('name'), '-');
@@ -406,7 +406,7 @@ class ProductionController extends Controller
         if ($nameImage == '') {
             $nameImage = $request->input('fileDataOld');
         }
-        $productImage = ProductImage::firstWhere('production_id', $productionId);
+        $productImage = $this->productImage->firstWhere('production_id', $productionId);
         $statusImage = $request->input('status_image') ? '1' : '2';
         $productImage->status = $statusImage;
         $productImage->image = $nameImage;
@@ -424,7 +424,7 @@ class ProductionController extends Controller
 
     public function destroy($productionId)
     {
-        $production = Production::find($productionId);
+        $production = $this->product->find($productionId);
         $production->product_images()->delete();
         $production->delete();
         DB::table('production_attr_value')

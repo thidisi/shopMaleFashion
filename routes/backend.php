@@ -140,5 +140,5 @@ Route::prefix('admin')
         Route::post('comments/feedback', [CommentController::class, 'feedback'])->name('comments.feedback');
         Route::post('comments/{comment}', [CommentController::class, 'action'])->name('comments.action');
 
-        Route::resource('ticket', TicketController::class);
+        Route::resource('tickets', TicketController::class);
     });
