@@ -39,6 +39,7 @@ class TicketController extends Controller
         return view('backend.tickets.create', [
             'customers' => json_encode($customers),
             'total_customer' => $total_customer,
+            
         ]);
     }
 
