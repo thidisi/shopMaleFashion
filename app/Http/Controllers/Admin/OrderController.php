@@ -86,7 +86,6 @@ class OrderController extends Controller
 
     public function check_out(Request $request)
     {
-        dd($request->all());
         try {
             $order = $request->all();
             $order['address_receiver'] =  $this->ward->findOrFail($order['wards'])->path;

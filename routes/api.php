@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,3 +24,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('address', [CartController::class, 'getAddress'])->name('address');
 
 Route::post('getDiscount', [OrderController::class, 'get_discount'])->name('get_discount');
+
+Route::get('setDataTicket', [TicketController::class, 'get_data'])->name('tickets.get_data');

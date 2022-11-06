@@ -21,6 +21,7 @@ class MailNotify extends Mailable
     public function __construct($data)
     {
         $this->data = $data;
+        $this->title = $data['subject'];
     }
 
     /**
@@ -31,6 +32,6 @@ class MailNotify extends Mailable
     public function build()
     {
         return $this->view('frontend.send_mail.index')
-            ->subject('ShopMaleFashion gửi thông báo cho bạn');
+            ->subject($this->title);
     }
 }

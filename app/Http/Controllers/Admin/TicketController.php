@@ -34,13 +34,25 @@ class TicketController extends Controller
      */
     public function create()
     {
-        $customers = $this->customer->where('status', ACTIVE)->get();
-        $total_customer = $this->customer->where('status', ACTIVE)->count();
-        return view('backend.tickets.create', [
-            'customers' => json_encode($customers),
-            'total_customer' => $total_customer,
-            
-        ]);
+        return view('backend.tickets.create');
+    }
+
+    public function get_data()
+    {
+        try {
+            $customers = $this->customer->where('status', ACTIVE)->get(['id', 'name'])->toArray();
+            // $total_customer = $this->customer->where('status', ACTIVE)->count();
+            $total_customer = 100;
+            $data = [
+                'customers' => $customers,
+                'total_customer' => $total_customer
+            ];
+            return response()->json([
+                'data' => $data
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => __("messages.not_content")], 403);
+        }
     }
 
     /**
@@ -51,7 +63,7 @@ class TicketController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->all());
     }
 
     /**

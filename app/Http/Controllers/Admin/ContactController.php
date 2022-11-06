@@ -47,8 +47,8 @@ class ContactController extends Controller
     {
         $message = [
             'body' => $request->messages,
+            'subject' => 'ShopMaleFashion gửi thông báo cho bạn'
         ];
-
         $users[]['email'] = $contact->email;
         $contact->status = ACTIVE;
         $contact->save();
