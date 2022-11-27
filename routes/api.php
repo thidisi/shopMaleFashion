@@ -21,8 +21,11 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('address', [CartController::class, 'getAddress'])->name('address');
 
-Route::post('getDiscount', [OrderController::class, 'get_discount'])->name('get_discount');
+// Route::middleware('auth:sanctum')->prefix("/")->group(function () {
+    Route::get('address', [CartController::class, 'getAddress'])->name('address');
 
-Route::get('setDataTicket', [TicketController::class, 'get_data'])->name('tickets.get_data');
+    Route::post('getDiscount', [OrderController::class, 'get_discount'])->name('get_discount');
+
+    Route::get('setDataTicket', [TicketController::class, 'get_data'])->name('tickets.get_data');
+// });

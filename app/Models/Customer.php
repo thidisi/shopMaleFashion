@@ -40,11 +40,6 @@ class Customer extends Model
         return $this->hasMany(Comment::class, 'customer_id', 'id');
     }
 
-    public function tickets()
-    {
-        return $this->hasMany(Ticket::class, 'customer_id', 'id');
-    }
-    
     public function getStatusNameAttribute()
     {
         return ($this->status == 1) ? 'Active' : 'Blocked';

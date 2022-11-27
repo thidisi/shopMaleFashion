@@ -71,7 +71,7 @@ $title = 'Contacts';
                                             <td class="text-center">
                                                 <a href="{{ route('admin.contacts.seenMail', $value->id) }}"
                                                     class="action-icon">
-                                                    <i class="mdi mdi-square-edit-outline"></i>
+                                                    <i class="mdi mdi-email-send-outline"></i>
                                                 </a>
                                             </td>
                                         </tr>

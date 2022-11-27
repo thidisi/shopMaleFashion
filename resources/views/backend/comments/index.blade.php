@@ -133,7 +133,7 @@ Thân Mến.
                                             </a>
                                             <small class="mdi mdi-checkbox-blank-circle text-danger align-middle mr-1"></small>
                                             <input type="hidden" value="1" name="action">
-                                            <button type="submit" class="action-icon" style="border: none;background: none;"><i class="mdi mdi-square-edit-outline"></i></button>
+                                            <button type="submit" class="action-icon" style="border: none;background: none;"><i class="mdi mdi-check-bold"></i></button>
                                         </form>
                                         @break
 
@@ -145,7 +145,7 @@ Thân Mến.
                                             </a>
                                             <small class="mdi mdi-checkbox-blank-circle text-info align-middle mr-1"></small>
                                             <input type="hidden" value="1" name="action">
-                                            <button type="submit" class="action-icon" style="border: none;background: none;"><i class="mdi mdi-square-edit-outline"></i></button>
+                                            <button type="submit" class="action-icon" style="border: none;background: none;"><i class="mdi mdi-check-bold"></i></button>
                                         </form>
                                         @endswitch
                                         @else
@@ -175,7 +175,7 @@ Thân Mến.
                                             </a>
                                             <small class="mdi mdi-checkbox-blank-circle text-danger align-middle mr-1"></small>
                                             <input type="hidden" value="1" name="action">
-                                            <button type="submit" class="action-icon" style="border: none;background: none;"><i class="mdi mdi-square-edit-outline"></i></button>
+                                            <button type="submit" class="action-icon" style="border: none;background: none;"><i class="mdi mdi-check-bold"></i></button>
                                         </form>
                                         @break
 
@@ -187,7 +187,7 @@ Thân Mến.
                                             </a>
                                             <small class="mdi mdi-checkbox-blank-circle text-info align-middle mr-1"></small>
                                             <input type="hidden" value="1" name="action">
-                                            <button type="submit" class="action-icon" style="border: none;background: none;"><i class="mdi mdi-square-edit-outline"></i></button>
+                                            <button type="submit" class="action-icon" style="border: none;background: none;"><i class="mdi mdi-check-bold"></i></button>
                                         </form>
                                         @endswitch
                                         @endif

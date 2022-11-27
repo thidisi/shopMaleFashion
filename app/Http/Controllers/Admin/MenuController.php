@@ -130,7 +130,7 @@ class MenuController extends Controller
                     'product_images.status as statusImage',
                     'categories.name as categoryName',
                     'discounts.discount_price as discountPrice',
-                    'discount_product.status as statusDiscount',
+                    'discounts.status as statusDiscount',
                     'productions.*'
                 )->paginate(12);
 

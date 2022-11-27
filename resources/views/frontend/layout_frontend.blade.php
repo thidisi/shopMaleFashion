@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/nice-select.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/owl.carousel.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/slicknav.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('frontend/css/styles.css') }}" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css"
         integrity="sha512-wJgJNTBBkLit7ymC6vvzM1EcSWeM9mmOu+1USHaRBbHkm6W9EgM0HY27+UtUaprntaYQJF75rc8gjxllKs5OIQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -106,31 +106,6 @@
                 icon: 'success'
             })
         });
-
-        $('#modal_signIn').on('click', function() {
-            $('#show_signIn').addClass('d-none')
-            $('#show_signUp').removeClass('d-none')
-            $('#modal_footer-signIn').addClass('d-none')
-            $('#modal_footer-signUp').removeClass('d-none')
-            $('#show_forgot_password').addClass('d-none')
-            $('#show_change_password').addClass('d-none')
-        });
-        $('#modal_signUp').on('click', function() {
-            $('#show_signIn').removeClass('d-none')
-            $('#show_signUp').addClass('d-none')
-            $('#modal_footer-signIn').removeClass('d-none')
-            $('#modal_footer-signUp').addClass('d-none')
-            $('#show_forgot_password').addClass('d-none')
-            $('#show_change_password').addClass('d-none')
-        });
-        $('#modal_forgot_password').on('click', function() {
-            $('#show_signIn').addClass('d-none')
-            $('#show_forgot_password').removeClass('d-none')
-            $('#modal_footer-signIn').addClass('d-none')
-            $('#modal_footer-signUp').removeClass('d-none')
-            $('#show_change_password').addClass('d-none')
-        });
-
         $(document).ready(function() {
             $('.button_wishlist').on('click', function(e) {
                 let id = $(this).attr("data-id");

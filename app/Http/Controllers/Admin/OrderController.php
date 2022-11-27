@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\ProductImage;
 use App\Models\Production;
 use App\Models\Province;
+use App\Models\Ticket;
 use App\Models\Ward;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Http\Request;
@@ -23,12 +24,13 @@ class OrderController extends Controller
     /**
      * Construct
      */
-    public function __construct(Order $order, ProductImage $productImage, DiscountProduct $discountProduct, Province $province, District $district, Ward $ward)
+    public function __construct(Order $order, ProductImage $productImage, DiscountProduct $discountProduct, Province $province, District $district, Ward $ward, Ticket $ticket)
     {
         $this->order = $order;
         $this->productImage = $productImage;
         $this->discountProduct = $discountProduct;
         $this->ward = $ward;
+        $this->ticket = $ticket;
     }
 
     public function index()
@@ -58,7 +60,7 @@ class OrderController extends Controller
             $value['image'] = $this->productImage->where('production_id', '=', $value->id)->get();
             $value['discount'] = $this->discountProduct->leftJoin('productions', 'productions.id', '=', 'discount_product.production_id')
                 ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->where('discount_product.status', '=', ACTIVE)
+                ->where('discounts.status', 'active')
                 ->where('productions.id', '=', $value->id)
                 ->get('discounts.discount_price as discount_price');
         }
@@ -133,7 +135,9 @@ class OrderController extends Controller
 
     public function get_discount(Request $request)
     {
-        try {
+        // try {
+            $tickets = $this->ticket->where('code','MALEFASHION34560')->first();
+            return $tickets;
             if ($request->discount === 'GIAMNGAY20K') {
                 $discount = '20000';
             }
@@ -147,9 +151,9 @@ class OrderController extends Controller
             return response()->json([
                 'data' => $data
             ], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => __("messages.not_content")], 403);
-        }
+        // } catch (\Throwable $th) {
+        //     return response()->json(['message' => __("messages.not_content")], 403);
+        // }
     }
 
     public function order_detail()

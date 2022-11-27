@@ -182,38 +182,48 @@
         });
         $("#btn_discount").click(function() {
             let discount = $("#set_discount").val();
-            $.ajax({
-                type: "POST",
-                url: '{{ route('api.get_discount') }}',
-                data: {
-                    discount: discount,
-                },
-                success: function(response, textStatus, xhr) {
-                    $("#btn_discount").addClass("bg-secondary").prop("disabled", true);
-                    setTimeout(function() {
-                        $("#btn_discount").removeClass("bg-secondary").prop("disabled", false);
-                    }, 2500);
-                    $("#get_discount").find('p').remove();
-                    $('#get_discount').append(
-                        `<p>Discount <span>- ${response.data.discount}</span></p>`)
-                    let sum = $("input[name=get_total]").val() - response.data.slug;
-                    $("input[name=get_discount]").val(response.data.slug);
-                    sum = sum.toLocaleString('vi', {
-                        style: 'currency',
-                        currency: 'VND'
-                    });
-                    $("#get_total").text(sum);
-                    $("#set_discount").val('');
-                },
-                error: function(response) {
-                    $("#show_discount").find('.text-danger').remove();
-                    $("#show_discount").append(
-                        '<p class="text-danger ml-2 mt-1"></p>');
-                    $("#show_discount").find('.text-danger').text("Mã giảm giá không hợp lệ").show()
-                        .fadeOut(
-                            3000);
-                }
-            });
+            if (discount !== '') {
+                $.ajax({
+                    type: "POST",
+                    url: '{{ route('api.get_discount') }}',
+                    data: {
+                        discount: discount,
+                    },
+                    success: function(response, textStatus, xhr) {
+                        $("#btn_discount").addClass("bg-secondary").prop("disabled", true);
+                        setTimeout(function() {
+                            $("#btn_discount").removeClass("bg-secondary").prop("disabled",
+                                false);
+                        }, 2500);
+                        $("#get_discount").find('p').remove();
+                        $('#get_discount').append(
+                            `<p>Discount <span>- ${response.data.discount}</span></p>`)
+                        let sum = $("input[name=get_total]").val() - response.data.slug;
+                        $("input[name=get_discount]").val(response.data.slug);
+                        sum = sum.toLocaleString('vi', {
+                            style: 'currency',
+                            currency: 'VND'
+                        });
+                        $("#get_total").text(sum);
+                        $("#set_discount").val('');
+                    },
+                    error: function(response) {
+                        $("#show_discount").find('.text-danger').remove();
+                        $("#show_discount").append(
+                            '<p class="text-danger ml-2 mt-1"></p>');
+                        $("#show_discount").find('.text-danger').text("Mã giảm giá không hợp lệ").show()
+                            .fadeOut(
+                                3000);
+                    }
+                });
+            } else {
+                $("#show_discount").find('.text-danger').remove();
+                $("#show_discount").append(
+                    '<p class="text-danger ml-2 mt-1"></p>');
+                $("#show_discount").find('.text-danger').text("Vui lòng nhập mã giảm giá!").show()
+                    .fadeOut(
+                        3000);
+            }
         });
         $(document).ready(function() {
             $.ajax({

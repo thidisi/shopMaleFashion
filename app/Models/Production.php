@@ -31,7 +31,7 @@ class Production extends Model
 
     public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function product_images()
@@ -46,7 +46,7 @@ class Production extends Model
 
     public function attribute_values()
     {
-        return $this->belongsToMany(AttributeValue::class, 'production_attr_value', 'production_id', 'attribute_value_id');
+        return $this->belongsToMany(AttributeValue::class, 'production_attr_value', 'production_id', 'attribute_value_id')->withTimestamps();
     }
 
     public function orders()

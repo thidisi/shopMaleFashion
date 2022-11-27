@@ -39,151 +39,188 @@
                                     </button>
                                 @endif
                             </div>
-                            <div class="modal fade" id="loginModal" tabindex="-1" role="dialog"
+                            <div class="modal fade pxp-user-modal" id="loginModal" tabindex="-1" role="dialog"
                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header border-bottom-0">
-                                            <button type="button" class="close" data-dismiss="modal"
+                                        <div class="modal-header">
+                                            <button type="button" class="btn-close" data-dismiss="modal"
                                                 aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body" id="show_signIn">
-                                            <div class="form-title text-center">
-                                                <h4>Login</h4>
+                                            <div class="pxp-user-modal-fig text-center">
+                                                <img src="{{ asset('frontend/img/signin-fig.png') }}" alt="Sign in">
                                             </div>
-                                            <div class="d-flex flex-column text-center">
-                                                <form data-route="{{ route('handleLogin') }}" id="login-form">
-                                                    @csrf
-                                                    <div class="form-group">
-                                                        <input type="email" class="form-control"
-                                                            placeholder="Your email address..." name="emailUser">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input type="password" class="form-control"
-                                                            placeholder="Your password..." name="passwordUser">
-                                                    </div>
-                                                    <div class="form-group row mt-1">
-                                                        <div class="col-md-6 d-flex justify-content-center">
-                                                            <div class="form-check mb-3 mb-md-0">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    name="remember" id="loginCheck"
-                                                                    style="cursor: pointer;">
-                                                                <label class="form-check-label" for="loginCheck"
-                                                                    style="cursor: pointer;"> Remember
-                                                                    me </label>
-                                                            </div>
+                                            <h5 class="modal-title text-center mt-4" id="signinModal">Welcome back!
+                                            </h5>
+                                            <form data-route="{{ route('handleLogin') }}" id="login-form"
+                                                class="mt-4">
+                                                <div class="form-floating">
+                                                    <input type="email" class="form-control" id="pxp-signin-email"
+                                                        placeholder=" " name="emailUser">
+                                                    <label class="label-input" for="pxp-signin-email">Email
+                                                        address</label>
+                                                    <span class="fa fa-envelope-o"></span>
+                                                </div>
+                                                <div class="form-floating mt-3">
+                                                    <input type="password" class="form-control" id="pxp-signin-password"
+                                                        placeholder=" " name="passwordUser">
+                                                    <label class="label-input"
+                                                        for="pxp-signin-password">Password</label>
+                                                    <span class="fa fa-lock"></span>
+                                                </div>
+                                                <div class="mt-3 d-flex text-center pxp-modal-small">
+                                                    <div class="col-6">
+                                                        <div class="form-check mb-3 mb-md-0">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="remember" id="loginCheck"
+                                                                style="cursor: pointer;">
+                                                            <label class="form-check-label" for="loginCheck"
+                                                                style="cursor: pointer;"> Remember
+                                                                me </label>
                                                         </div>
-                                                        <div class="col-md-6 d-flex justify-content-center">
-                                                            <button type="button" id="modal_forgot_password"
-                                                                class="text-primary"
-                                                                style="border: none;
-                                                            outline: none;background-color: initial;">Forgot
-                                                                password ?</button>
-                                                        </div>
                                                     </div>
+                                                    <div class="col-6">
+                                                        <button role="button" class="pxp-modal-link" type="button"
+                                                            data-toggle="modal" data-target="#modalForgotPassword"
+                                                            data-dismiss="modal">Forgot
+                                                            password?</button>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
                                                     <button type="submit" id="submit-login"
-                                                        class="btn btn-info btn-block btn-round">Login</button>
-                                                </form>
-
-                                                <div class="text-center text-muted delimiter">or use a social
-                                                    network
+                                                        class="btn rounded-pill pxp-modal-cta">Continue</button>
                                                 </div>
-                                                <div class="d-flex justify-content-center social-buttons">
-                                                    <button type="button" class="btn btn-secondary btn-round"
-                                                        data-toggle="tooltip" data-placement="top" title="Twitter">
-                                                        <i class="fa fa-twitter-square" aria-hidden="true"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-secondary btn-round"
-                                                        data-toggle="tooltip" data-placement="top" title="Facebook">
-                                                        <i class="fa fa-facebook-square" aria-hidden="true"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-secondary btn-round"
-                                                        data-toggle="tooltip" data-placement="top" title="Linkedin">
-                                                        <i class="fa fa-linkedin-square" aria-hidden="true"></i>
-                                                    </button>
+                                                <div class="mt-3 text-center pxp-modal-small">
+                                                    New to Account? <button role="button" class="pxp-modal-link"
+                                                        type="button" data-toggle="modal" data-target="#signUpModal"
+                                                        data-dismiss="modal">Create an
+                                                        account</button>
                                                 </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade pxp-user-modal" id="signUpModal" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="btn-close" data-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="pxp-user-modal-fig text-center">
+                                                <img src="{{ asset('frontend/img/signup-fig.png') }}" alt="Sign up">
+                                            </div>
+                                            <h5 class="modal-title text-center mt-4" id="signupModal">Create an
+                                                account</h5>
+                                            <form data-route="{{ route('signUp') }}" id="signUp-form">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" name="name"
+                                                        placeholder="Your name...">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="email" class="form-control" id="email1"
+                                                        placeholder="Your email address..." name="email">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" class="form-control" id="password1"
+                                                        placeholder="Your password..." name="password">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" name="phone"
+                                                        placeholder="Your phone...">
+                                                </div>
+                                                <div class="form-group">
+                                                    <textarea name="address" class="form-control" placeholder="Your address..."></textarea>
+                                                </div>
+                                                <button type="submit" class="btn rounded-pill pxp-modal-cta p-1">Sign
+                                                    Up</button>
+                                            </form>
+                                            <div class="mt-3 text-center pxp-modal-small">
+                                                You had account? <button role="button" class="pxp-modal-link"
+                                                    type="button" data-toggle="modal" data-target="#loginModal"
+                                                    data-dismiss="modal">Sign In</button>
                                             </div>
                                         </div>
-                                        <div class="modal-body d-none" id="show_signUp">
-                                            <div class="form-title text-center">
-                                                <h4>Sign Up</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade pxp-user-modal" id="modalForgotPassword" tabindex="-1"
+                                role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="btn-close" data-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="pxp-user-modal-fig text-center">
+                                                <img src="{{ asset('frontend/img/signup-fig.png') }}" alt="Sign up">
                                             </div>
-                                            <div class="d-flex flex-column text-center">
-                                                <form data-route="{{ route('signUp') }}" id="signUp-form">
-                                                    @csrf
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" name="name"
-                                                            placeholder="Your name...">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input type="email" class="form-control" id="email1"
-                                                            placeholder="Your email address..." name="email">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input type="password" class="form-control" id="password1"
-                                                            placeholder="Your password..." name="password">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" name="phone"
-                                                            placeholder="Your phone...">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <textarea name="address" class="form-control" placeholder="Your address..."></textarea>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-info btn-block">Sign
-                                                        Up</button>
-                                                </form>
+                                            <h5 class="modal-title text-center mt-4">Forgot Password
+                                            </h5>
+                                            <form data-route="{{ route('forgotPassword') }}" id="forgot_password">
+                                                <div class="form-floating mt-3 mb-3">
+                                                    <input type="email" class="form-control"
+                                                        id="pxp-forgot_password-email" placeholder=" "
+                                                        name="emailReset">
+                                                    <label class="label-input" for="pxp-forgot_password-email">Email
+                                                        address</label>
+                                                    <span class="fa fa-envelope-o"></span>
+                                                </div>
+                                                <button type="submit" id="forgot_password-btn"
+                                                    class="btn rounded-pill pxp-modal-cta ">Send
+                                                    password change mail</button>
+                                            </form>
+                                            <div class="mt-3 text-center pxp-modal-small">
+                                                You had account? <button role="button" class="pxp-modal-link"
+                                                    type="button" data-toggle="modal" data-target="#loginModal"
+                                                    data-dismiss="modal">Sign In</button>
                                             </div>
                                         </div>
-                                        <div class="modal-body d-none" id="show_forgot_password">
-                                            <div class="form-title text-center">
-                                                <h4>Forgot Password</h4>
-                                            </div>
-                                            <div class="d-flex flex-column text-center">
-                                                <form data-route="{{ route('forgotPassword') }}" id="forgot_password">
-                                                    @csrf
-                                                    <div class="form-group">
-                                                        <input type="email" class="form-control"
-                                                            aria-describedby="emailHelp"
-                                                            placeholder="Enter Email Address..." name="emailReset">
-                                                    </div>
-                                                    <button type="submit" id="forgot_password-btn"
-                                                        class="btn btn-info btn-block">Send
-                                                        password change mail</button>
-                                                </form>
-                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade pxp-user-modal" id="showChangePassword" tabindex="-1"
+                                role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="btn-close" data-dismiss="modal"
+                                                aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body d-none" id="show_change_password">
-                                            <div class="form-title text-center">
-                                                <h4>Changer Password</h4>
+                                        <div class="modal-body">
+                                            <div class="pxp-user-modal-fig text-center">
+                                                <img src="{{ asset('frontend/img/signup-fig.png') }}" alt="Sign up">
                                             </div>
-                                            <div class="d-flex flex-column text-center">
-                                                <form data-route="{{ route('changePassword') }}" id="change_password">
-                                                    @csrf
-                                                    <div class="form-group form-error">
-                                                        <input type="text" class="form-control"
-                                                            placeholder="Code..." name="token">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input type="password" class="form-control"
-                                                            placeholder="Enter Change Password..." name="newPassword">
-                                                    </div>
-                                                    <button type="submit" id="change_password-btn"
-                                                        class="btn btn-info btn-block">
-                                                        Change password</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer d-flex justify-content-center">
-                                            <div class="signup-section" id="modal_footer-signIn">You have no
-                                                account?
-                                                <a class="text-info" type="button" id="modal_signIn">Sign Up</a>
-                                            </div>
-                                            <div class="signup-section d-none" id="modal_footer-signUp">You had
-                                                account?
-                                                <a class="text-info" type="button" id="modal_signUp">Sign In</a>
+                                            <h5 class="modal-title text-center mt-4" id="signupModal">Change Password
+                                            </h5>
+                                            <form data-route="{{ route('changePassword') }}" id="change_password">
+                                                <div class="form-floating form-group form-error-code mt-3">
+                                                    <input type="text" class="form-control"
+                                                        id="pxp-change-password-code" placeholder=" " name="token">
+                                                    <label class="label-input"
+                                                        for="pxp-change-password-code">Code</label>
+                                                </div>
+                                                <div class="form-floating form-group form-error-pass mt-3">
+                                                    <input type="password" class="form-control"
+                                                        id="pxp-change-password" placeholder=" " name="newPassword">
+                                                    <label class="label-input"
+                                                        for="pxp-change-password">Password</label>
+                                                </div>
+                                                <button type="submit" id="change_password-btn"
+                                                    class="btn rounded-pill pxp-modal-cta p-2">
+                                                    Change password</button>
+                                            </form>
+                                            <div class="mt-3 text-center pxp-modal-small">
+                                                You had account? <button role="button" class="pxp-modal-link"
+                                                    type="button" data-toggle="modal" data-target="#loginModal"
+                                                    data-dismiss="modal">Sign In</button>
                                             </div>
                                         </div>
                                     </div>
@@ -418,8 +455,8 @@
                     },
                     success: function(response, textStatus, xhr) {
                         $("#forgot_password").find("input[name=emailReset]").val('');
-                        $('#show_forgot_password').addClass('d-none');
-                        $('#show_change_password').removeClass('d-none');
+                        $('#modalForgotPassword').modal('hide');
+                        $('#showChangePassword').modal('show');
                         $.toast({
                             heading: 'Change Password!',
                             text: (response),
@@ -448,39 +485,57 @@
                 var url = $(this).data('route');
                 var token = $("input[name=token]").val();
                 var newPassword = $("input[name=newPassword]").val();
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: {
-                        token: token,
-                        newPassword: newPassword,
-                    },
-                    success: function(response, textStatus, xhr) {
-                        if (xhr.status == 200) {
-                            $("#forgot_password").find("input[name=emailReset]").val('');
-                            $('#show_forgot_password').addClass('d-none');
-                            $('#show_change_password').removeClass('d-none');
-                            $.toast({
-                                heading: 'Change Password!',
-                                text: (response),
-                                showHideTransition: 'slide',
-                                position: 'top-right',
-                                icon: 'success'
-                            });
+                if (token != '' && newPassword != '') {
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            token: token,
+                            newPassword: newPassword,
+                        },
+                        success: function(response, textStatus, xhr) {
+                            if (xhr.status == 200) {
+                                $("#change_password").find("input[name=token]").val('');
+                                $("#change_password").find("input[name=newPassword]").val('');
+                                $.toast({
+                                    heading: 'Change Password!',
+                                    text: (response),
+                                    showHideTransition: 'slide',
+                                    position: 'top-right',
+                                    icon: 'success'
+                                });
+                                $("#change_password")[0].reset();
+                                $("#change_password-btn").prop("disabled", false);
+                            }
+                        },
+                        error: function(response) {
                             $("#change_password")[0].reset();
+                            $("#change_password").find('.text-danger').remove();
+                            $("#change_password").find('.form-error-code').append(
+                                '<p class="text-left text-danger ml-2 mt-1"></p>');
                             $("#change_password-btn").prop("disabled", false);
+                            $("#change_password").find('.text-danger').text(response
+                                .responseText).show().fadeOut(2000);
                         }
-                    },
-                    error: function(response) {
-                        $("#change_password")[0].reset();
-                        $("#show_change_password").find('.text-danger').remove();
-                        $("#show_change_password").find('.form-error').append(
-                            '<p class="text-danger ml-2 mt-3"></p>');
-                        $("#change_password-btn").prop("disabled", false);
-                        $("#show_change_password").find('.text-danger').text(response
-                            .responseText).show().fadeOut(2000);
-                    }
-                });
+                    });
+                } else {
+                    $("#change_password")[0].reset();
+                    $("#change_password").find('.text-danger').remove();
+                    $("#change_password-btn").prop("disabled", false);
+                }
+                if (token == '') {
+                    $("#change_password").find('.form-error-code').append(
+                        '<p class="text-left text-danger ml-2 mt-1"></p>');
+                    $("#change_password").find('.form-error-code').find('.text-danger').text('Vui lòng nhập code').show().fadeOut(
+                        3000);
+                }
+                if (newPassword == '') {
+                    $("#change_password").find('.form-error-pass').append(
+                        '<p class="text-left text-danger ml-2 mt-1"></p>');
+                    $("#change_password").find('.form-error-pass').find('.text-danger').text('Vui lòng nhập password mới').show()
+                        .fadeOut(3000);
+                }
+
             });
 
             $(".logout").click(function(e) {

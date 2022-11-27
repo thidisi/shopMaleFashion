@@ -2,22 +2,22 @@
 
 use App\Http\Controllers\Admin\AboutController;
 use App\Http\Controllers\Admin\AttributeController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\Admin\DiscountProductController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductionController;
 use App\Http\Controllers\Admin\SlideController;
-use App\Http\Controllers\Admin\DiscountProductController;
-use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\TicketController;
+use App\Http\Controllers\Admin\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -140,5 +140,6 @@ Route::prefix('admin')
         Route::post('comments/feedback', [CommentController::class, 'feedback'])->name('comments.feedback');
         Route::post('comments/{comment}', [CommentController::class, 'action'])->name('comments.action');
 
-        Route::resource('tickets', TicketController::class);
+        Route::get('tickets', [TicketController::class, 'index'])->name('tickets.index');
+        Route::post('tickets/store', [TicketController::class, 'store'])->name('tickets.store');
     });

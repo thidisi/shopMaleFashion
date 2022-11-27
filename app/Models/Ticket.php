@@ -9,7 +9,7 @@ class Ticket extends Model
 {
     use HasFactory;
 
-    protected $table = 'tickets';
+    // protected $table = 'tickets';
 
     const TICKET_STATUS = [
         'OPEN'            => 'pending',
@@ -17,15 +17,23 @@ class Ticket extends Model
         'CLOSE'           => 'suspended',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data_customer' => 'array',
+    ];
+
     protected $fillable = [
-        'customer_id',
+        'data_customer',
         'price',
         'date_end',
+        'code',
+        'quantity',
         'status',
     ];
 
-    public function customers()
-    {
-        return $this->belongsTo(Customer::class);
-    }
+    
 }

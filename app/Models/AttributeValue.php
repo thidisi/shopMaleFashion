@@ -34,7 +34,7 @@ class AttributeValue extends Model
 
     public function productions()
     {
-        return $this->belongsToMany(Production::class, 'production_attr_value', 'production_id', 'attribute_value_id');
+        return $this->belongsToMany(Production::class, 'production_attr_value', 'production_id', 'attribute_value_id')->withTimestamps();
     }
 
     public function getStatusNameAttribute()

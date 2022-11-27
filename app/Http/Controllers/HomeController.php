@@ -192,6 +192,7 @@ class HomeController extends Controller
                 Shop Male Fashion;<br>
                 </em></p></div>",
             ];
+            $message['subject'] = "Shop ko biet dau";
             $users[]['email'] = $customer->email;
             SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
             return response('Please check your email for the code!!', 200);

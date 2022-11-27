@@ -18,28 +18,28 @@ $title = 'Productions';
                                     @if ($errors->has('name'))
                                     <p class="text-capitalize text-danger">{{ $errors->first('name') }}</p>
                                     @endif
-                                    <input type="text" class="form-control" name="name">
+                                    <input type="text" class="form-control" name="name" value="{{ old('name') }}">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Price</label>
                                     @if ($errors->has('price'))
                                     <p class="text-capitalize text-danger">{{ $errors->first('price') }}</p>
                                     @endif
-                                    <input type="text" class="form-control" name="price">
+                                    <input type="text" class="form-control" name="price" value="{{ old('price') }}">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Quantity</label>
                                     @if ($errors->has('quantity'))
                                     <p class="text-capitalize text-danger">{{ $errors->first('quantity') }}</p>
                                     @endif
-                                    <input type="number" class="form-control" name="quantity">
+                                    <input type="number" class="form-control" name="quantity" value="{{ old('quantity') }}">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Description(* Can Be Empty)</label>
                                     @if ($errors->has('descriptions'))
                                     <p class="text-capitalize text-danger">{{ $errors->first('descriptions') }}</p>
                                     @endif
-                                    <textarea id="ckeditor-product" class="form-control" name="descriptions" rows="8" placeholder="Enter some brief about desciption.."></textarea>
+                                    <textarea id="ckeditor-product" class="form-control" name="descriptions" rows="8" placeholder="Enter some brief about desciption..">{{ old('descriptions') }}</textarea>
                                 </div>
 
                             </div>

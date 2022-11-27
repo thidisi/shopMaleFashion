@@ -71,8 +71,6 @@ class ProductionController extends Controller
             $each['size'] = NameAttrEnum::getKeys(NameAttrEnum::SIZE)[0];
             $each['color'] = NameAttrEnum::getKeys(NameAttrEnum::COLOR)[0];
         }
-
-
         return view('backend.productions.index', [
             'products' => $products,
         ]);
@@ -234,6 +232,7 @@ class ProductionController extends Controller
         }
         $attrSize = $attr['0'] ? $attr['0'] : null;
         $attrColor = $attr['1'] ? $attr['1'] : null;
+        dd($attrSize);
 
         return view('backend.productions.create', [
             'categories' => $categories,
@@ -244,6 +243,19 @@ class ProductionController extends Controller
 
     public function edit(Production $production)
     {
+        $production = $production->with(['product_images', 'attribute_values', 'categories'])->first();
+        $productAttr = [];
+        foreach ($production->attribute_values as $key => $item) {
+            $attrKey = $item['attribute_id'];
+            $attrValue = $item['name'];
+            $attrId = $item['id'];
+            $productAttr[$attrKey] = ["$attrId" => "$attrValue"];
+        }
+        $productAttr = (object) $productAttr;
+        $production->attr = $productAttr;
+        dd($production);
+
+
         $categories = $this->category->query()->get();
 
         $image = $this->productImage->query()->where('production_id', '=', $production->id)->whereNull('deleted_at')->get();
@@ -300,6 +312,8 @@ class ProductionController extends Controller
         $attrSize = $attr['0'] ? $attr['0'] : null;
         $attrColor = $attr['1'] ? $attr['1'] : null;
 
+        dd($production);
+        // bug
         return view('backend.productions.edit', [
             'each' => $production,
             'categories' => $categories,
@@ -315,14 +329,12 @@ class ProductionController extends Controller
         $arr = $request->validated();
         $arr['status'] = $status;
         $arr['slug'] = $slug;
-
         $arr2 = $request->validate([
             'fileData' => 'required',
             'status_image' => 'required',
             'attrValue1' => 'required',
             'attrValue' => 'required',
         ]);
-
         if ($request->hasFile('fileData')) {
             $images = $request->file('fileData');
             foreach ($images as $image) {
@@ -331,29 +343,31 @@ class ProductionController extends Controller
             }
         }
         $status_image = $request->input('status_image') ? '1' : '2';
-
         $id = $this->product->create($arr)->id;
         $arr2['image'] = json_encode($data);
         $arr2['status'] = $status_image;
         $arr2['production_id'] = $id;
-        $this->productImage->query()->create($arr2);
-
-        $arr3 = [];
-        $attrValue1 = $request->input('attrValue1');
-        foreach ($attrValue1 as $attrValue_id) {
-            $arr3[] = [
-                'production_id' => $id,
-                'attribute_value_id' => $attrValue_id,
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-        }
-        $attrValue_id = $request->input('attrValue');
-        $arr3[] = [
-            'production_id' => $id,
-            'attribute_value_id' => $attrValue_id,
-            'created_at' => date('Y-m-d H:i:s')
-        ];
-        $insert = DB::table('production_attr_value')->insert($arr3);
+        $this->productImage->create($arr2);
+        $product = $this->product->find($id);
+        $arr3 = $request->input('attrValue1');
+        $arr3[] = $request->input('attrValue');
+        $product->attribute_values()->sync($arr3);
+        // $arr3 = [];
+        // $attrValue1 = $request->input('attrValue1');
+        // foreach ($attrValue1 as $attrValue_id) {
+        //     $arr3[] = [
+        //         'production_id' => $id,
+        //         'attribute_value_id' => $attrValue_id,
+        //         'created_at' => date('Y-m-d H:i:s')
+        //     ];
+        // }
+        // $attrValue_id = $request->input('attrValue');
+        // $arr3[] = [
+        //     'production_id' => $id,
+        //     'attribute_value_id' => $attrValue_id,
+        //     'created_at' => date('Y-m-d H:i:s')
+        // ];
+        // $insert = DB::table('production_attr_value')->insert($arr3);
         return redirect()->route('admin.productions')->with('addProductionStatus', 'Add successfully!!');
     }
 
@@ -373,26 +387,29 @@ class ProductionController extends Controller
         $arr['status'] = $status;
         $arr['slug'] = $slug;
 
-        $production->update($arr);
-        DB::table('production_attr_value')->where('production_id', '=', $productionId)->delete();
+        $production->save($arr);
+        // DB::table('production_attr_value')->where('production_id', '=', $productionId)->delete();
 
-        $arr2 = [];
-        $attrValue1 = $request->input('attrValue1');
-        foreach ($attrValue1 as $attrValue_id) {
-            $arr2[] = [
-                'production_id' => $productionId,
-                'attribute_value_id' => $attrValue_id,
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-        }
-        $attrValue_id = $request->input('attrValue');
-        $arr2[] = [
-            'production_id' => $productionId,
-            'attribute_value_id' => $attrValue_id,
-            'created_at' => date('Y-m-d H:i:s')
-        ];
+        // $arr2 = [];
+        // $attrValue1 = $request->input('attrValue1');
+        // foreach ($attrValue1 as $attrValue_id) {
+        //     $arr2[] = [
+        //         'production_id' => $productionId,
+        //         'attribute_value_id' => $attrValue_id,
+        //         'created_at' => date('Y-m-d H:i:s')
+        //     ];
+        // }
+        // $attrValue_id = $request->input('attrValue');
+        // $arr2[] = [
+        //     'production_id' => $productionId,
+        //     'attribute_value_id' => $attrValue_id,
+        //     'created_at' => date('Y-m-d H:i:s')
+        // ];
 
-        DB::table('production_attr_value')->insert($arr2);
+        // DB::table('production_attr_value')->insert($arr2);
+        $arr2 = $request->input('attrValue1');
+        $arr2[] = $request->input('attrValue');
+        $production->attribute_values()->sync($arr2);
         $nameImage = null;
         if ($request->hasFile('fileDataNew')) {
             if ($request->file('fileDataNew')) {
@@ -412,7 +429,7 @@ class ProductionController extends Controller
         $productImage->image = $nameImage;
 
         if (is_numeric($productionId) && $productionId > 0) {
-            $productImage->update();
+            $productImage->save();
             return redirect()->route("admin.productions")->with('EditProductionStatus', 'Edit successfully!!');
         } else {
             if (Storage::disk('public')->exists($nameImage)) {

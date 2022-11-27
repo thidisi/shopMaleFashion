@@ -28,7 +28,7 @@ class Category extends Model
 
     public function major_categories()
     {
-        return $this->belongsTo(Major_Category::class);
+        return $this->belongsTo(Major_Category::class, 'major_category_id');
     }
 
     public function productions()
