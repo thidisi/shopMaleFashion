@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTicketRequest;
 use App\Models\Customer;
 use App\Models\Ticket;
+use DataTables;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -38,6 +39,20 @@ class TicketController extends Controller
         return view('backend.tickets.index');
     }
 
+    public function api_data()
+    {
+        try {
+            $tickets = $this->ticket->get();
+            return DataTables::of($tickets)
+            ->addColumn('action', function ($object) {
+                return route('admin.tickets.destroy', $object);
+            })
+                ->make(true);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => __("messages.not_content")], 403);
+        }
+    }
+
     public function get_data(): JsonResponse
     {
         try {
@@ -64,7 +79,7 @@ class TicketController extends Controller
      */
     public function store(StoreTicketRequest $request)
     {
-        try {
+        // try {
             $data = $request->all();
             if (is_array($data['data'])) {
                 $data['quantity'] = count($data['data']);
@@ -85,9 +100,9 @@ class TicketController extends Controller
                 $this->ticket->create($data);
             }
             return redirect()->back()->with('addTicketStatus', 'Add successfully!!');
-        } catch (\Throwable $th) {
-            return response()->json(['message' => __("messages.not_content")], 403);
-        }
+        // } catch (\Throwable $th) {
+        //     return response()->json(['message' => __("messages.not_content")], 403);
+        // }
     }
 
     /**
@@ -110,6 +125,6 @@ class TicketController extends Controller
      */
     public function destroy(int $id)
     {
-        //
+        dd($id);
     }
 }

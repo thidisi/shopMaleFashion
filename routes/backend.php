@@ -141,5 +141,6 @@ Route::prefix('admin')
         Route::post('comments/{comment}', [CommentController::class, 'action'])->name('comments.action');
 
         Route::get('tickets', [TicketController::class, 'index'])->name('tickets.index');
+        Route::delete('tickets/{ticketId}', [TicketController::class, 'destroy'])->name('tickets.destroy');
         Route::post('tickets/store', [TicketController::class, 'store'])->name('tickets.store');
     });

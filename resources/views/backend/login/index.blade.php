@@ -20,12 +20,12 @@ $title = 'Login';
         @csrf
         <div class="form-group">
             <label for="">Username</label>
-            <input class="form-control" type="text" required="" placeholder="Enter your username" name="userName">
+            <input class="form-control" type="text" required="" placeholder="Enter your username" name="email">
         </div>
         <div class="form-group">
             <a href="#" class="text-muted float-right"><small>Forgot your password?</small></a>
             <label for="password">Password</label>
-            <input class="form-control" type="password" required="" id="password" placeholder="Enter your password" name="passwordUser">
+            <input class="form-control" type="password" required="" id="password" placeholder="Enter your password" name="password">
         </div>
         {{-- <div class="form-group mb-3">
             <div class="custom-control custom-checkbox">

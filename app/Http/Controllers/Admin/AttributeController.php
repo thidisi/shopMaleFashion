@@ -13,17 +13,15 @@ use Illuminate\Http\Request;
 
 class AttributeController extends Controller
 {
-    private object $model;
-
-    public function __construct()
+    public function __construct(Attribute $attribute, AttributeValue $attributeValue)
     {
-        $this->model = Attribute::query();
-        $this->table = (new Attribute)->getTable();
+        $this->attribute = $attribute;
+        $this->attributeValue = $attributeValue;
     }
 
     public function index()
     {
-        $attr = $this->model->get();
+        $attr = $this->attribute->get();
         $attrValue = Attribute::Join('attribute_values', 'attribute_values.attribute_id', '=', 'attributes.id')
             ->select(['attributes.name as attr_name', 'attribute_values.*'])
             ->whereNull('attribute_values.deleted_at')
@@ -42,7 +40,7 @@ class AttributeController extends Controller
 
     public function create()
     {
-        $replace = $this->model->whereNull('replace_id')->get();
+        $replace = $this->attribute->whereNull('replace_id')->get();
         return view('backend.attributes.create',[
             'replace' => $replace,
         ]);
@@ -50,7 +48,7 @@ class AttributeController extends Controller
 
     public function createValue()
     {
-        $attr = $this->model->whereNull('replace_id')
+        $attr = $this->attributeValue->whereNull('replace_id')
             ->with('replaces')
             ->get();
         return view('backend.attributes.createValue', [
@@ -63,9 +61,8 @@ class AttributeController extends Controller
         $status = $request->input('status') ? '1' : '2';
         $arr = $request->validated();
         $arr['status'] = $status;
-        $this->model->create($arr);
-        // $id = $this->model->create($arr)->id;
- 
+        $this->attribute->create($arr);
+
         return redirect()->route('admin.attributes')->with('addAttrStatus', 'Add successfully!!');
     }
 
@@ -74,14 +71,14 @@ class AttributeController extends Controller
         $status = $request->input('status') ? '1' : '2';
         $arr = $request->validated();
         $arr['status'] = $status;
-        AttributeValue::query()->create($arr);
+        $this->attributeValue->create($arr);
 
         return redirect()->route('admin.attributes')->with('addAttrStatus', 'Add successfully!!');
     }
 
     public function edit(Attribute $attribute)
     {
-        $replace = $this->model->whereNull('replace_id')->get();
+        $replace = $this->attribute->whereNull('replace_id')->get();
         return view('backend.attributes.edit', [
             'each' => $attribute,
             'replace' => $replace,
@@ -90,7 +87,7 @@ class AttributeController extends Controller
 
     public function editValue(AttributeValue $attributeValue)
     {
-        $attr = $this->model->whereNull('replace_id')
+        $attr = $this->attribute->whereNull('replace_id')
             ->with('replaces')
             ->get();
         return view('backend.attributes.editValue', [
@@ -101,39 +98,31 @@ class AttributeController extends Controller
 
     public function update(UpdateAttributeRequest $request, $attributeId)
     {
-        $attribute = $this->model->find($attributeId);
+        $attribute = $this->attribute->findOrFail($attributeId);
         $attribute->name = $request->input('name');
         $attribute->slug = $request->input('slug');
         $attribute->descriptions = $request->input('descriptions');
         $attribute->replace_id = $request->input('replace_id');
         $attribute->status = $request->input('status') ? '1' : '2';
-        $attribute->update();
+        $attribute->save();
         return redirect()->route('admin.attributes')->with('EditAttrStatus', 'Edit successfully!!');
     }
 
     public function updateValue(UpdateAttrValueRequest $request, $attrValueId)
     {
-        $attrValue = AttributeValue::find($attrValueId);
+        $attrValue = $this->attributeValue->findOrFail($attrValueId);
         $attrValue->name = $request->input('name');
         $attrValue->slug = $request->input('slug');
         $attrValue->descriptions = $request->input('descriptions');
         $attrValue->attribute_id = $request->input('attribute_id');
         $attrValue->status = $request->input('status') ? '1' : '2';
-        $attrValue->update();
+        $attrValue->save();
         return redirect()->route('admin.attributes')->with('EditAttrStatus', 'Edit successfully!!');
     }
 
-    // public function destroy($attributeId)
-    // {
-    //     $attribute = Attribute::find($attributeId);
-    //     $attribute->attribute_values()->delete();
-    //     $attribute->delete();
-    //     return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
-    // }
-
     public function destroyValue($attributeValueId)
     {
-        AttributeValue::destroy($attributeValueId);
+        $this->attributeValue->destroy($attributeValueId);
         return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
     }
 }

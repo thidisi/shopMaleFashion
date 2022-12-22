@@ -4,14 +4,15 @@ namespace App\Models;
 
 use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Model
+class User extends Authenticatable
 {
-    use HasFactory;
-    use SoftDeletes;
-     /**
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    /**
      * The table associated with the model.
      *
      * @var string
@@ -52,5 +53,4 @@ class User extends Model
     {
         return ($this->status == 1) ? 'Active' : 'Not active';
     }
-
 }

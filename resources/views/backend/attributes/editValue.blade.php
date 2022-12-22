@@ -1,6 +1,6 @@
 @extends('backend.layout_admin')
 @php
-$title = 'AttributeValues';
+    $title = 'AttributeValues';
 @endphp
 @section('container')
     <div class="container-fluid">
@@ -34,18 +34,16 @@ $title = 'AttributeValues';
                                 <textarea class="form-control" name="descriptions" rows="5" placeholder="Enter some brief about desciption..">{{ $each->descriptions }}</textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Attribute Id</label>
+                                <label class="form-label">Attribute</label>
                                 <select class="form-control select2" data-toggle="select2" name="attribute_id">
                                     @foreach ($attr as $value)
-                                        @if (!empty($value->replaces))
-                                            @foreach ($value->replaces as $each)
-                                                <option value="{{ $each->id }}">
-                                                    @if ($value->id == $each->attribute_id) selected @endif
-                                                    {{ $each->name }}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                        @if (count($value->replaces) == 0)
+                                        @foreach ($value->replaces as $valueSize)
+                                            <option value="{{ $valueSize->id }}"
+                                                @if ($valueSize->id == $each->attribute_id) selected @endif>
+                                                {{ $valueSize->name }}
+                                            </option>
+                                        @endforeach
+                                        @if (!(count($value->replaces) > 0))
                                             <option value="{{ $value->id }}"
                                                 @if ($value->id == $each->attribute_id) selected @endif>
                                                 {{ $value->name }}

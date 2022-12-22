@@ -1,6 +1,6 @@
 @extends('backend.layout_admin')
 @php
-$title = 'Productions';
+    $title = 'Productions';
 @endphp
 @section('container')
     <div class="container-fluid">
@@ -9,7 +9,8 @@ $title = 'Productions';
                 <h1 class="h3 mb-3 text-gray-800">Productions edit</h1>
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.productions.update', $each) }}" method="post" enctype="multipart/form-data">
+                        <form action="{{ route('admin.productions.update', $each) }}" method="post"
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="row">
@@ -19,37 +20,43 @@ $title = 'Productions';
                                         @if ($errors->has('name'))
                                             <p class="text-capitalize text-danger">{{ $errors->first('name') }}</p>
                                         @endif
-                                        <input type="text" class="form-control" name="name" value="{{ $each->name }}">
+                                        <input type="text" class="form-control" name="name"
+                                            value="{{ $each->name }}">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Price</label>
                                         @if ($errors->has('price'))
                                             <p class="text-capitalize text-danger">{{ $errors->first('price') }}</p>
                                         @endif
-                                        <input type="text" class="form-control" name="price" value="{{ $each->price }}">
+                                        <input type="text" class="form-control" name="price"
+                                            value="{{ $each->price }}">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Quantity</label>
                                         @if ($errors->has('quantity'))
                                             <p class="text-capitalize text-danger">{{ $errors->first('quantity') }}</p>
                                         @endif
-                                        <input type="number" class="form-control" name="quantity" value="{{ $each->quantity }}">
+                                        <input type="number" class="form-control" name="quantity"
+                                            value="{{ $each->quantity }}">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Description(* Can Be Empty)</label>
                                         @if ($errors->has('descriptions'))
                                             <p class="text-capitalize text-danger">{{ $errors->first('descriptions') }}</p>
                                         @endif
-                                        <textarea id="ckeditor-product" class="form-control" name="descriptions" rows="5" placeholder="Enter some brief about desciption..">{{ $each->descriptions }}</textarea>
+                                        <textarea id="ckeditor-product" class="form-control" name="descriptions" rows="5"
+                                            placeholder="Enter some brief about desciption..">{{ $each->descriptions }}</textarea>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="col-xl-6">
                                     <div class="mb-3">
                                         <label class="form-label">Category</label>
-                                        <select class="form-control select2" data-toggle="select2" name="category_id" id="">
+                                        <select class="form-control select2" data-toggle="select2" name="category_id"
+                                            id="">
                                             @foreach ($categories as $value)
-                                                <option value="{{ $value->id }}"  @if ($value->id == $each->category_id) selected @endif>
+                                                <option value="{{ $value->id }}"
+                                                    @if ($value->id == $each->category_id) selected @endif>
                                                     {{ $value->name }}
                                                 </option>
                                             @endforeach
@@ -59,7 +66,8 @@ $title = 'Productions';
                                         @foreach ($each->image as $value)
                                             <label for="" class="form-label">Image New</label>
                                             <div class="float-right">
-                                                <input type="checkbox" id="switch4" @if ($value->status == 1) checked @endif data-switch="success"
+                                                <input type="checkbox" id="switch4"
+                                                    @if ($value->status == 1) checked @endif data-switch="success"
                                                     name="status_image" />
                                                 <label for="switch4" data-on-label="Yes" data-off-label="No"></label>
                                             </div>
@@ -74,39 +82,62 @@ $title = 'Productions';
                                                         alt="contact-img" title="contact-img" class="rounded mr-3"
                                                         height="68" />
                                                 @endforeach
-                                                <input multiple type="hidden" name="fileDataOld" value="{{ $value->image }}">
+                                                <input multiple type="hidden" name="fileDataOld"
+                                                    value="{{ $value->image }}">
                                             </div>
                                         @endforeach
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Choose Size</label>
-                                        <select class="form-control select2" 
-                                        id="selectSize" data-toggle="select2">
+                                        <select class="form-control select2" id="selectSize" data-toggle="select2">
                                             @foreach ($attrSize as $value)
-                                                <option value="{{ $value->replace_id }}">
+                                                <option value="{{ $value->replace_id }}"
+                                                    @foreach ($each->attr as $keySize => $infoSize)
+                                                        @if ($value->id == $keySize)
+                                                        selected
+                                                         @endif @endforeach>
                                                     {{ $value->name }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <div class="mt-1"><select class="form-control select2" id="selectSizeValue" data-toggle="select2" name="attrValue1[]" multiple></select></div>
+                                        <div class="mt-1">
+                                            <select class="form-control select2" id="selectSizeValue" data-toggle="select2"
+                                                name="attrValue1[]" multiple>
+                                                @foreach ($attrSize as $valueSize)
+                                                    @foreach ($each->attr as $keySize => $infoSize)
+                                                        @if ($valueSize->id == $keySize)
+                                                            @foreach ($valueSize->replace_id as $eachSize)
+                                                                <option value="{{ $eachSize->id }}"
+                                                                    @foreach ($infoSize as $checkId) @if ($eachSize->id == $checkId->id) selected @endif @endforeach>
+                                                                    {{ $eachSize->name }} </option>
+                                                            @endforeach>
+                                                        @endif
+                                                    @endforeach>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Choose Color</label>
                                         <select class="form-control select2" data-toggle="select2" name="attrValue">
-                                            @foreach ($attrColor as $value)
-                                                <option value="{{ $value->id }}"
-                                                    @foreach ($each->infos2 as $infos)
-                                                        @if ($value->id == $infos->id) selected @endif
-                                                    @endforeach>
-                                                    {{ $value->name }}
-                                                </option>
+                                            @foreach ($attrColor as $valueColor)
+                                                <option value="{{ $valueColor->id }}"
+                                                    @foreach ($each->attr as $keyColor => $infoColor)
+                                                        @if ($valueColor->attribute_id == $keyColor)
+                                                        @foreach ($infoColor as $eachColor)
+                                                            @if ($valueColor->id == $eachColor->id) selected @endif @endforeach
+                                                    @endif
+                                            @endforeach>
+                                            {{ $valueColor->name }}
+                                            </option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Status</label>
                                         <div class="float-right">
-                                            <input type="checkbox" id="switch3" @if ($each->status == 1) checked @endif data-switch="success"
+                                            <input type="checkbox" id="switch3"
+                                                @if ($each->status == 1) checked @endif data-switch="success"
                                                 name="status" />
                                             <label for="switch3" data-on-label="Yes" data-off-label="No"></label>
                                         </div>
@@ -130,10 +161,12 @@ $title = 'Productions';
     <script type="text/javascript">
         $(document).ready(function() {
             var data = $('#selectSize option:selected').val();
-            data = JSON.parse(data);
-            for (let each of data) {
-                $('#selectSizeValue').append(`<option value="${each.id}" selected>${each.name}</option>`);
-            }
+            // // if($("#selectSizeValue").val())
+            // console.log($("#selectSizeValue").val().length > 0);
+            // data = JSON.parse(data);
+            // // for (let each of data) {
+            // //     $('#selectSizeValue').append(`<option value="${each.id}" selected>${each.name}</option>`);
+            // // }
             $("#selectSize").change(function() {
                 $('#selectSizeValue').html('');
                 for (let each of JSON.parse($(this).val())) {

@@ -1,6 +1,6 @@
 @extends('backend.layout_admin')
 @php
-$title = 'Categories';
+    $title = 'Categories';
 @endphp
 @section('container')
     <div class="container-fluid">

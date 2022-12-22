@@ -44,7 +44,6 @@ class ProductionController extends Controller
     {
         $products = $this->product->leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
             ->get(['product_images.image as image', 'product_images.status as statusImage', 'productions.*']);
-
         $infos = DB::table('production_attr_value')
             ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
             ->leftJoin('attribute_values', 'attribute_values.id', '=', 'production_attr_value.attribute_value_id')
@@ -53,7 +52,7 @@ class ProductionController extends Controller
             ->where('attributes.replace_id', '=', NameAttrEnum::SIZE)
             ->whereNull('production_attr_value.deleted_at')
             ->get();
-        $groupSet = $infos->groupBy('product_id');
+        $groupSet = $infos->groupBy('product_id')->toArray();
 
         $infoColor = DB::table('production_attr_value')
             ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
@@ -62,12 +61,16 @@ class ProductionController extends Controller
             ->where('attribute_values.attribute_id', '=', NameAttrEnum::COLOR)
             ->whereNull('production_attr_value.deleted_at')
             ->get();
-        $groupColor = $infoColor->groupBy('product_id');
+        $groupColor = $infoColor->groupBy('product_id')->toArray();
 
         foreach ($products as $each) {
             $each->status = $each->status_name;
-            $each['infos'] = $groupSet[$each->id];
-            $each['infoColor'] = $groupColor[$each->id];
+            if(array_key_exists($each->id, $groupSet)){
+                $each['infos'] = $groupSet[$each->id];
+            }
+            if(array_key_exists($each->id, $groupColor)){
+                $each['infoColor'] = $groupColor[$each->id];
+            }
             $each['size'] = NameAttrEnum::getKeys(NameAttrEnum::SIZE)[0];
             $each['color'] = NameAttrEnum::getKeys(NameAttrEnum::COLOR)[0];
         }
@@ -232,7 +235,6 @@ class ProductionController extends Controller
         }
         $attrSize = $attr['0'] ? $attr['0'] : null;
         $attrColor = $attr['1'] ? $attr['1'] : null;
-        dd($attrSize);
 
         return view('backend.productions.create', [
             'categories' => $categories,
@@ -241,51 +243,24 @@ class ProductionController extends Controller
         ]);
     }
 
-    public function edit(Production $production)
+    public function edit($product)
     {
-        $production = $production->with(['product_images', 'attribute_values', 'categories'])->first();
+        $production = $this->product->with(['product_images', 'attribute_values', 'categories'])->findOrFail($product);
         $productAttr = [];
         foreach ($production->attribute_values as $key => $item) {
             $attrKey = $item['attribute_id'];
             $attrValue = $item['name'];
             $attrId = $item['id'];
-            $productAttr[$attrKey] = ["$attrId" => "$attrValue"];
+            $productAttr[$attrKey][] = (object)["id" => "$attrId","name" => "$attrValue"];
         }
-        $productAttr = (object) $productAttr;
         $production->attr = $productAttr;
-        dd($production);
+        $categories = $this->category->get();
 
-
-        $categories = $this->category->query()->get();
-
-        $image = $this->productImage->query()->where('production_id', '=', $production->id)->whereNull('deleted_at')->get();
+        $image = $this->productImage->where('production_id', '=', $production->id)->whereNull('deleted_at')->get();
         $production['image'] = $image;
 
-        $infos = DB::table('production_attr_value')
-            ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
-            ->leftJoin('attribute_values', 'attribute_values.id', '=', 'production_attr_value.attribute_value_id')
-            ->leftJoin('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
-            ->select('production_attr_value.production_id as product_id', 'attribute_values.*')
-            ->where('attributes.replace_id', '=', NameAttrEnum::SIZE)
-            ->where('production_attr_value.production_id', '=', $production->id)
-            ->whereNull('production_attr_value.deleted_at')
-            ->get();
-
-
-        $infoColor = DB::table('production_attr_value')
-            ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
-            ->leftJoin('attribute_values', 'attribute_values.id', '=', 'production_attr_value.attribute_value_id')
-            ->select('production_attr_value.production_id as product_id', 'attribute_values.*')
-            ->where('attribute_values.attribute_id', '=', NameAttrEnum::COLOR)
-            ->where('production_attr_value.production_id', '=', $production->id)
-            ->whereNull('production_attr_value.deleted_at')
-            ->get();
-        $production['infos'] = $infos;
-        $production['infos2'] = $infoColor;
-
-        $attrs = $this->attribute->query()
-            ->with('attribute_values')
-            ->with('replaces')
+        $attrs = $this->attribute
+            ->with(['attribute_values', 'replaces'])
             ->whereNull('replace_id')
             ->get();
         foreach ($attrs as $value) {
@@ -301,7 +276,6 @@ class ProductionController extends Controller
                 }
             }
         }
-
         for ($i = 0; $i < count($attrs); $i++) {
             if (count($attrs["$i"]->attribute_values) > 0) {
                 $attr[$i] = $attrs["$i"]->attribute_values;
@@ -311,9 +285,6 @@ class ProductionController extends Controller
         }
         $attrSize = $attr['0'] ? $attr['0'] : null;
         $attrColor = $attr['1'] ? $attr['1'] : null;
-
-        dd($production);
-        // bug
         return view('backend.productions.edit', [
             'each' => $production,
             'categories' => $categories,
@@ -373,40 +344,17 @@ class ProductionController extends Controller
 
     public function update(UpdateProductRequest $request, $productionId)
     {
-        $production = $this->product->find($productionId);
-
+        $production = $this->product->findOrFail($productionId);
         $status = $request->input('status') ? '1' : '2';
         $slug = Str::slug($request->input('name'), '-');
         $arr = $request->validated();
-
         $arr2 = $request->validate([
             'attrValue1' => 'required',
             'attrValue' => 'required',
         ]);
-
         $arr['status'] = $status;
         $arr['slug'] = $slug;
-
-        $production->save($arr);
-        // DB::table('production_attr_value')->where('production_id', '=', $productionId)->delete();
-
-        // $arr2 = [];
-        // $attrValue1 = $request->input('attrValue1');
-        // foreach ($attrValue1 as $attrValue_id) {
-        //     $arr2[] = [
-        //         'production_id' => $productionId,
-        //         'attribute_value_id' => $attrValue_id,
-        //         'created_at' => date('Y-m-d H:i:s')
-        //     ];
-        // }
-        // $attrValue_id = $request->input('attrValue');
-        // $arr2[] = [
-        //     'production_id' => $productionId,
-        //     'attribute_value_id' => $attrValue_id,
-        //     'created_at' => date('Y-m-d H:i:s')
-        // ];
-
-        // DB::table('production_attr_value')->insert($arr2);
+        $production->update($arr);
         $arr2 = $request->input('attrValue1');
         $arr2[] = $request->input('attrValue');
         $production->attribute_values()->sync($arr2);

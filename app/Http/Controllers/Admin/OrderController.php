@@ -92,7 +92,7 @@ class OrderController extends Controller
             $order = $request->all();
             $order['address_receiver'] =  $this->ward->findOrFail($order['wards'])->path;
             $discount = $order['get_discount'];
-            
+
             unset($order['_token'], $order['provinces'], $order['districts'], $order['wards'], $order['get_total'], $order['get_discount']);
 
             if (!empty(Cart::getTotal())) {
@@ -135,25 +135,25 @@ class OrderController extends Controller
 
     public function get_discount(Request $request)
     {
-        // try {
-            $tickets = $this->ticket->where('code','MALEFASHION34560')->first();
-            return $tickets;
-            if ($request->discount === 'GIAMNGAY20K') {
-                $discount = '20000';
-            }
-            if ($request->discount === 'GIAMNGAY50K') {
-                $discount = '50000';
+        try {
+            $tickets = $this->ticket->where('quantity', '>', 0)->where('status', '!=', 'suspended')->where('code', $request->discount)->firstOrFail();
+            if($tickets->status == 'active'){
+                return response()->json([
+                    'data' => 'Mã giảm giá của bạn đã sử dụng!'
+                ], 201);
             }
             $data = [
-                'discount' => currency_format($discount),
-                'slug' => $discount
+                'discount' => currency_format($tickets->price),
+                'slug' => $tickets->price
             ];
             return response()->json([
                 'data' => $data
             ], 200);
-        // } catch (\Throwable $th) {
-        //     return response()->json(['message' => __("messages.not_content")], 403);
-        // }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'data' => 'Mã giảm giá không tồn tại!'
+            ], 404);
+        }
     }
 
     public function order_detail()

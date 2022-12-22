@@ -19,8 +19,8 @@ class Production extends Model
     protected $table = 'productions';
 
     protected $fillable = [
-        "category_id",
         "name",
+        "category_id",
         "price",
         "quantity",
         "slug",
@@ -68,5 +68,5 @@ class Production extends Model
     {
         return ($this->status == 1) ? "Active" : "Not active";
     }
-    
+
 }

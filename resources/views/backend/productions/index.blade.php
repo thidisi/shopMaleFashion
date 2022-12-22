@@ -94,8 +94,8 @@ $title = 'Production';
                                                 <br>
                                                 <span>
                                                     {{ $value->color }}:
-                                                    @foreach ($value->infoColor as $info)
-                                                        {{ $info->name }}
+                                                    @foreach ($value->infoColor as $infoColor)
+                                                        {{ $infoColor->name }}
                                                     @endforeach
                                                 </span>
                                                 <br>
@@ -146,5 +146,5 @@ $title = 'Production';
     <script src="{{ asset('backend/js/vendor/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
     <script src="{{ asset('backend/js/backend/demo.productions.js') }}"></script>
-    
+
 @endpush

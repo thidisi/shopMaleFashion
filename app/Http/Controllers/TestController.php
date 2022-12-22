@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class TestController extends Controller
 {
@@ -274,9 +275,9 @@ class TestController extends Controller
 
 
 
-        //get Date diff as intervals 
+        //get Date diff as intervals
 
-        // function dateDiffInDays($date1, $date2) 
+        // function dateDiffInDays($date1, $date2)
         // {
         //     $diff = strtotime($date2) - strtotime($date1);
         //     return abs(round($diff / 86400));
@@ -323,7 +324,7 @@ class TestController extends Controller
         //    $pro = Production::query()->find(1);
         //    $slug = Str::slug($pro->name, '-');
         //    dd($slug);
-        // 
+        //
 
 
 
@@ -332,6 +333,12 @@ class TestController extends Controller
 
 
 
+    }
+
+    public function callback()
+    {
+        // dd($request->all());
+        dd(Socialite::driver('gitlab'));
     }
 
     // public function check(Request $request)

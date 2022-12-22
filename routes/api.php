@@ -28,4 +28,5 @@ use Illuminate\Support\Facades\Route;
     Route::post('getDiscount', [OrderController::class, 'get_discount'])->name('get_discount');
 
     Route::get('setDataTicket', [TicketController::class, 'get_data'])->name('tickets.get_data');
+    Route::get('getDataTicket', [TicketController::class, 'api_data'])->name('tickets.dataApi');
 // });

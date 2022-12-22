@@ -32,6 +32,7 @@ class StoreProductRequest extends FormRequest
                 'string',
                 'min:2',
                 'max:255',
+                'unique:productions,name',
             ],
             'price' => 'required|numeric',
             'quantity' => 'required|numeric|min:1',

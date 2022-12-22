@@ -13,8 +13,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $header = Auth::id();
-        dd($header);
+        // $header = Auth::id();
         // $dd =  DiscountProduct::leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
         //     ->where('discounts.status', \App\Models\Discount::DISCOUNT_STATUS['CLOSE'])->get();
         // dd($dd);

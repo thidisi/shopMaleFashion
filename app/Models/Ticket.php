@@ -35,5 +35,8 @@ class Ticket extends Model
         'status',
     ];
 
-    
+    public function getFormatDateEndAttribute()
+    {
+        return date("d-M-Y", strtotime($this->date_end)) . "\n";
+    }
 }
