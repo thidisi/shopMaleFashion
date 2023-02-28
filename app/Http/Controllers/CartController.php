@@ -59,7 +59,7 @@ class CartController extends Controller
             }
             return view('frontend.carts.checkoutNone');
         } catch (\Throwable $th) {
-            return view('frontend.errors.index');
+            return redirect()->route('index');
         }
     }
 

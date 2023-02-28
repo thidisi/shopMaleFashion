@@ -41,7 +41,7 @@ class AttributeController extends Controller
     public function create()
     {
         $replace = $this->attribute->whereNull('replace_id')->get();
-        return view('backend.attributes.create',[
+        return view('backend.attributes.create', [
             'replace' => $replace,
         ]);
     }
@@ -98,31 +98,43 @@ class AttributeController extends Controller
 
     public function update(UpdateAttributeRequest $request, $attributeId)
     {
-        $attribute = $this->attribute->findOrFail($attributeId);
-        $attribute->name = $request->input('name');
-        $attribute->slug = $request->input('slug');
-        $attribute->descriptions = $request->input('descriptions');
-        $attribute->replace_id = $request->input('replace_id');
-        $attribute->status = $request->input('status') ? '1' : '2';
-        $attribute->save();
-        return redirect()->route('admin.attributes')->with('EditAttrStatus', 'Edit successfully!!');
+        try {
+            $attribute = $this->attribute->findOrFail($attributeId);
+            $attribute->name = $request->input('name');
+            $attribute->slug = $request->input('slug');
+            $attribute->descriptions = $request->input('descriptions');
+            $attribute->replace_id = $request->input('replace_id');
+            $attribute->status = $request->input('status') ? '1' : '2';
+            $attribute->save();
+            return redirect()->route('admin.attributes')->with('EditAttrStatus', 'Edit successfully!!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
+        }
     }
 
     public function updateValue(UpdateAttrValueRequest $request, $attrValueId)
     {
-        $attrValue = $this->attributeValue->findOrFail($attrValueId);
-        $attrValue->name = $request->input('name');
-        $attrValue->slug = $request->input('slug');
-        $attrValue->descriptions = $request->input('descriptions');
-        $attrValue->attribute_id = $request->input('attribute_id');
-        $attrValue->status = $request->input('status') ? '1' : '2';
-        $attrValue->save();
-        return redirect()->route('admin.attributes')->with('EditAttrStatus', 'Edit successfully!!');
+        try {
+            $attrValue = $this->attributeValue->findOrFail($attrValueId);
+            $attrValue->name = $request->input('name');
+            $attrValue->slug = $request->input('slug');
+            $attrValue->descriptions = $request->input('descriptions');
+            $attrValue->attribute_id = $request->input('attribute_id');
+            $attrValue->status = $request->input('status') ? '1' : '2';
+            $attrValue->save();
+            return redirect()->route('admin.attributes')->with('EditAttrStatus', 'Edit successfully!!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
+        }
     }
 
     public function destroyValue($attributeValueId)
     {
-        $this->attributeValue->destroy($attributeValueId);
-        return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+        try {
+            $this->attributeValue->destroy($attributeValueId);
+            return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
+        }
     }
 }

@@ -17,17 +17,16 @@ use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    private object $model;
-
-    public function __construct()
+    public function __construct(Category $category, Production $production, Major_Category $major_category)
     {
-        $this->model = Category::query();
-        $this->table = (new Category)->getTable();
+        $this->category = $category;
+        $this->production = $production;
+        $this->major_category = $major_category;
     }
 
     public function index()
     {
-        $categories = Category::leftJoin('major_categories', 'categories.major_category_id', '=', 'major_categories.id')
+        $categories = $this->catogory->leftJoin('major_categories', 'categories.major_category_id', '=', 'major_categories.id')
             ->latest('categories.created_at')
             ->get(['major_categories.name as name_majorCate', 'categories.*']);
         foreach ($categories as $each) {
@@ -40,7 +39,7 @@ class CategoryController extends Controller
 
     public function view()
     {
-        $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
+        $products = $this->production->Join('product_images', 'productions.id', '=', 'product_images.production_id')
             ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
             ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
             ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
@@ -55,7 +54,7 @@ class CategoryController extends Controller
                 'productions.*'
             )->paginate(8);
 
-        $categories = Category::leftJoin('productions', 'categories.id', '=', 'productions.category_id')
+        $categories = $this->catogory->leftJoin('productions', 'categories.id', '=', 'productions.category_id')
             ->selectRaw('categories.id, categories.name, count(productions.category_id) AS `count`',)
             ->groupBy('categories.name')
             ->orderBy('count', 'DESC')
@@ -63,8 +62,8 @@ class CategoryController extends Controller
 
         foreach ($products as $each) {
             $each->image = json_decode($each->image)[0];
-            if($each->statusDiscount == 'active'){
-                $each->discountPrice = (100 - $each->discountPrice)/100;
+            if ($each->statusDiscount == 'active') {
+                $each->discountPrice = (100 - $each->discountPrice) / 100;
             }
             $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
         }
@@ -78,7 +77,7 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $majorCategories = Major_Category::where('status', '!=', MenuStatusEnum::HOT_DEFAULT)->get();
+        $majorCategories = $this->major_category->where('status', '!=', MenuStatusEnum::HOT_DEFAULT)->get();
         return view('backend.categories.create', [
             'major_categories' => $majorCategories
         ]);
@@ -94,14 +93,14 @@ class CategoryController extends Controller
         $arr = $request->validated();
         $arr['avatar'] = $path;
         $arr['status'] = $status;
-        $this->model->create($arr);
+        $this->category->create($arr);
 
         return redirect()->route('admin.categories')->with('addCategoryStatus', 'Add successfully!!');
     }
 
     public function edit(Category $category)
     {
-        $majorCategories = Major_Category::where('status', '!=', MenuStatusEnum::HOT_DEFAULT)->get();
+        $majorCategories = $this->major_category->where('status', '!=', MenuStatusEnum::HOT_DEFAULT)->get();
         return view('backend.categories.edit', [
             'each' => $category,
             'major_categories' => $majorCategories
@@ -110,37 +109,41 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, $categoryId)
     {
-        $category = $this->model->find($categoryId);
-        $category->name = $request->input('name');
-        $category->slug = $request->input('slug');
-        $category->status = $request->input('status') ? '1' : '2';
-        $category->major_category_id = $request->input('major_category_id');
+        try {
+            $category = $this->category->findOrFail($categoryId);
+            $category->name = $request->input('name');
+            $category->slug = $request->input('slug');
+            $category->status = $request->input('status') ? '1' : '2';
+            $category->major_category_id = $request->input('major_category_id');
 
-        $nameAvatar = null;
-        if ($request->hasFile('photo_new')) {
-            if ($request->file('photo_new')->isValid()) {
-                $nameAvatar = Storage::disk('public')->put('avatarCategories', $request->file('photo_new'));
+            $nameAvatar = null;
+            if ($request->hasFile('photo_new')) {
+                if ($request->file('photo_new')->isValid()) {
+                    $nameAvatar = Storage::disk('public')->put('avatarCategories', $request->file('photo_new'));
+                }
             }
-        }
-        if ($nameAvatar == '') {
-            $nameAvatar = $request->input('photo_old');
-        }
-        $category->avatar = $nameAvatar;
+            if ($nameAvatar == '') {
+                $nameAvatar = $request->input('photo_old');
+            }
+            $category->avatar = $nameAvatar;
 
-        if (is_numeric($categoryId) && $categoryId > 0) {
-            $category->update();
-            return redirect()->route("admin.categories")->with('EditCategoryStatus', 'Edit successfully!!');
-        } else {
-            if (Storage::disk('public')->exists($nameAvatar)) {
-                Storage::disk('public')->delete($nameAvatar);
+            if (is_numeric($categoryId) && $categoryId > 0) {
+                $category->update();
+                return redirect()->route("admin.categories")->with('EditCategoryStatus', 'Edit successfully!!');
+            } else {
+                if (Storage::disk('public')->exists($nameAvatar)) {
+                    Storage::disk('public')->delete($nameAvatar);
+                }
+                return redirect()->route('admin.categories')->with('CategoryErrors', 'Edit Failed Category table');
             }
-            return redirect()->route('admin.categories')->with('CategoryErrors', 'Edit Failed Category table');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
         }
     }
 
     public function destroy($categoryId)
     {
-        Category::destroy($categoryId);
+        $this->category->destroy($categoryId);
         return response('Category deleted successfully.', 200);
     }
 }

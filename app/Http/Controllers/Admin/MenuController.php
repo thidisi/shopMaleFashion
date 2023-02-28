@@ -18,15 +18,15 @@ class MenuController extends Controller
 {
     private object $model;
 
-    public function __construct()
+    public function __construct(Major_Category $major_category)
     {
-        $this->model = Major_Category::query();
         $this->table = (new Major_Category)->getTable();
+        $this->major_category = $major_category;
     }
 
     public function index()
     {
-        $majorCategories = $this->model->latest()->paginate(5);
+        $majorCategories = $this->major_category->latest()->paginate(5);
         foreach ($majorCategories as $each) {
             $each->status = $each->status_name;
         }
@@ -37,14 +37,14 @@ class MenuController extends Controller
 
     public function view(Major_Category $menu)
     {
-        $majorCategories = $this->model->where('status', '=', MenuStatusEnum::SHOW)->get('slug');
+        $majorCategories = $this->major_category->where('status', '=', MenuStatusEnum::SHOW)->get('slug');
         foreach ($majorCategories as $each) {
             $data[] = $each->slug;
         }
         if (in_array($menu->slug, $data)) {
-            $menuId = $this->model->where('slug', '=', $menu->slug)->first()->id;
+            $menuId = $this->major_category->where('slug', '=', $menu->slug)->first()->id;
 
-            $breadCrumb = $this->model->find($menuId);
+            $breadCrumb = $this->major_category->find($menuId);
 
             $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
                 ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
@@ -175,7 +175,7 @@ class MenuController extends Controller
             'status' => 'required',
         ]);
         $arr['created_at'] = now();
-        $this->model->create($arr);
+        $this->major_category->create($arr);
 
         return redirect()->route('admin.major-categories')->with('addMajorCategoryStatus', 'Add successfully!!');
     }
@@ -191,15 +191,19 @@ class MenuController extends Controller
 
     public function update(Request $request, $majorCategoryId)
     {
-        $majorCategory = $this->model->find($majorCategoryId);
-        $arr = $request->validate([
-            'name' => [
-                'required',
-                'unique:major_categories,name,' . $majorCategoryId
-            ],
-            'status' => 'required',
-        ]);
-        $majorCategory->update($arr);
-        return redirect()->route('admin.major-categories')->with('EditMajorCategoryStatus', 'Edit successfully!!');
+        try {
+            $majorCategory = $this->major_category->findOrFail($majorCategoryId);
+            $arr = $request->validate([
+                'name' => [
+                    'required',
+                    'unique:major_categories,name,' . $majorCategoryId
+                ],
+                'status' => 'required',
+            ]);
+            $majorCategory->update($arr);
+            return redirect()->route('admin.major-categories')->with('EditMajorCategoryStatus', 'Edit successfully!!');
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
+        }
     }
 }

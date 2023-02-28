@@ -74,69 +74,72 @@ class OrderController extends Controller
 
     public function action(Request $request, $action)
     {
-        $orders = $this->order->find($request->id);
-        if ($action == ACTIVE) {
-            foreach ($orders->productions as $value) {
-                $value->quantity -= $value->pivot->quantity;
-                $value->save();
+        try {
+            $orders = $this->order->findOrFail($request->id);
+            if ($action == ACTIVE) {
+                foreach ($orders->productions as $value) {
+                    $value->quantity -= $value->pivot->quantity;
+                    $value->save();
+                }
             }
+            $orders->update(["action" => "$action"]);
+            return redirect()->route('admin.orders')->with('UpdateOrderSuccess', 'Update successfully!!');
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
         }
-        $orders->update(["action" => "$action"]);
-
-        return redirect()->route('admin.orders')->with('UpdateOrderSuccess', 'Update successfully!!');
     }
 
     public function check_out(Request $request)
     {
-        // try {
-            $order = $request->all();
-            $order['address_receiver'] =  $this->ward->findOrFail($order['wards'])->path;
-            $discount = $order['get_discount'];
-            $code = $order['get_code'];
+        try {
+        $order = $request->all();
+        $order['address_receiver'] =  $this->ward->findOrFail($order['wards'])->path;
+        $discount = $order['get_discount'];
+        $code = $order['get_code'];
 
-            unset($order['_token'], $order['get_code'], $order['provinces'], $order['districts'], $order['wards'], $order['get_total'], $order['get_discount']);
+        unset($order['_token'], $order['get_code'], $order['provinces'], $order['districts'], $order['wards'], $order['get_total'], $order['get_discount']);
 
-            if (!empty(Cart::getTotal())) {
-                $order['customer_id'] = session('sessionIdCustomer');
-                $order['total_money'] = Cart::getTotal() - $discount;
-                $order['action'] = NOT_ACTIVE;
-                $order_id = $this->order->create($order)->id;
-                $cartItems = Cart::getContent();
-                $pattern = "/\(.*\)/";
-                $orders = $this->order->findOrFail($order_id);
-                if($code != null) {
-                    $ticket = $this->ticket->where('code', $code)->first();
-                    $ticket->quantity = $ticket->quantity - 1;
-                    $ticket->status = 'active';
-                    $ticket->save();
-                }
-                foreach ($cartItems as $each) {
-                    if (preg_match_all($pattern, $each->name, $matches)) {
-                        foreach ($matches as $value) {
-                            $dataAttr["$each->id"] = trim($value['0'], "()");
-                        }
-                    }
-                    $orders->productions()->attach(
-                        [
-                            $each->id => ['quantity' => $each->quantity, 'attr' => $dataAttr["$each->id"]],
-                        ]
-                    );
-                    $productId["$each->id"] = $each->quantity;
-                }
-                if (!empty($productId)) {
-                    foreach ($productId as $key => $value) {
-                        $product = Production::find($key);
-                        $product->count_view += $value;
-                        $product->save();
-                    }
-                }
-                Cart::clear();
-                return redirect()->route('index')->with('success', 'Orders successfully!!');
+        if (!empty(Cart::getTotal())) {
+            $order['customer_id'] = session('sessionIdCustomer');
+            $order['total_money'] = Cart::getTotal() - $discount;
+            $order['action'] = NOT_ACTIVE;
+            $order_id = $this->order->create($order)->id;
+            $cartItems = Cart::getContent();
+            $pattern = "/\(.*\)/";
+            $orders = $this->order->findOrFail($order_id);
+            if ($code != null) {
+                $ticket = $this->ticket->where('code', $code)->first();
+                $ticket->quantity = $ticket->quantity - 1;
+                $ticket->status = 'active';
+                $ticket->save();
             }
-            return redirect()->back()->with("Empty stock, can't order");
-        // } catch (\Throwable $th) {
-        //     return view('frontend.errors.index');
-        // }
+            foreach ($cartItems as $each) {
+                if (preg_match_all($pattern, $each->name, $matches)) {
+                    foreach ($matches as $value) {
+                        $dataAttr["$each->id"] = trim($value['0'], "()");
+                    }
+                }
+                $orders->productions()->attach(
+                    [
+                        $each->id => ['quantity' => $each->quantity, 'attr' => $dataAttr["$each->id"]],
+                    ]
+                );
+                $productId["$each->id"] = $each->quantity;
+            }
+            if (!empty($productId)) {
+                foreach ($productId as $key => $value) {
+                    $product = Production::find($key);
+                    $product->count_view += $value;
+                    $product->save();
+                }
+            }
+            Cart::clear();
+            return redirect()->route('index')->with('success', 'Orders successfully!!');
+        }
+        return redirect()->back()->with("Empty stock, can't order");
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
+        }
     }
 
     public function get_discount(Request $request)

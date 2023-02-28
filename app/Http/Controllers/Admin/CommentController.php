@@ -12,17 +12,14 @@ use Illuminate\Support\Facades\Storage;
 
 class CommentController extends Controller
 {
-    private object $model;
-
-    public function __construct()
+    public function __construct(Comment $comment)
     {
-        $this->model = Comment::query();
-        $this->table = (new Comment)->getTable();
+        $this->comment = $comment;
     }
 
     public function index()
     {
-        $comments = $this->model->with(['customers', 'productions'])
+        $comments = $this->comment->with(['customers', 'productions'])
         // ->where('status', '!=', 4)
             ->latest("created_at")
             ->get();
@@ -45,7 +42,7 @@ class CommentController extends Controller
         $arr['parent_id'] = $request->commentId;
         $arr['content'] = $request->content;
         $arr['status'] = 4;
-        Comment::create($arr);
+        $this->comment->create($arr);
         return response('You successfully feedback on the customer!!', 200);
     }
 
@@ -64,14 +61,14 @@ class CommentController extends Controller
             $arr['parent_id'] = $request->parent_id ? $request->parent_id : null;
             $arr['content'] = $request->review_content;
             $arr['status'] = ACTIVE;
-            $id = Comment::create($arr)->id;
+            $id = $this->comment->create($arr)->id;
         }
         $check = DB::table('production_comments')
             ->leftJoin('comments', 'comments.id', '=', 'production_comments.comment_id')
             ->where('production_comments.production_id', '=', $request->product_id)
             ->where('comments.customer_id', '=', $request->customer_id)->count();
         if ($check === 0) {
-            $comments = Comment::find($id);
+            $comments = $this->comment->find($id);
             $product_id = $request->product_id;
             $review = $request->ratings;
             $images = null;
@@ -105,9 +102,9 @@ class CommentController extends Controller
             }
             $arr['content'] = $request->content;
             $arr['status'] = NOT_ACTIVE;
-            $id = Comment::create($arr)->id;
+            $id = $this->comment->create($arr)->id;
             if ($request->product_id !== null) {
-                $comments = Comment::find($id);
+                $comments = $this->comment->find($id);
                 $product_id = $request->product_id;
                 $comments->productions()->attach(
                     [
@@ -121,7 +118,7 @@ class CommentController extends Controller
 
     public function show_reviews($product_id)
     {
-        // $comments = $this->model->with(['productions' => function ($query) use ($product_id) {
+        // $comments = $this->comment->with(['productions' => function ($query) use ($product_id) {
         //     $query->where('id', $product_id);
         // }])->get();
         $comments = DB::table('production_comments')
@@ -148,7 +145,7 @@ class CommentController extends Controller
 
     public function show_comments($product_id)
     {
-        $comments = Comment::query()
+        $comments = $this->comment
             ->leftJoin('production_comments', 'comments.id', '=', 'production_comments.comment_id')
             ->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
             ->where('production_comments.production_id', $product_id)

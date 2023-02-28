@@ -13,10 +13,9 @@ use Yajra\DataTables\Facades\DataTables;
 class UserController extends Controller
 {
     private object $model;
-    public function __construct()
+    public function __construct(User $user)
     {
-        $this->model = User::query();
-        $this->table = (new User)->getTable();
+        $this->user = $user;
     }
 
     public function index()
@@ -27,7 +26,7 @@ class UserController extends Controller
     public function api()
     {
 
-        return DataTables::of($this->model)
+        return DataTables::of($this->user)
             ->editColumn('birthday', function ($object) {
                 return $object->age;
             })
@@ -60,55 +59,61 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, $id)
     {
-        $user = $this->model->find($id);
-        $fullname = $request->input('fullname');
-        $address = $request->input('address');
-        $phone = $request->input('phone');
-        $birthday = $request->input('birthday');
-        $birthday = date('Y-m-d', strtotime($birthday));
-        $gender = $request->input('gender');
-        $gender = $gender === '0' || $gender === '1' ? $gender : '0';
-        $roles = $request->input('level');
-        $status = $request->input('status') ? '1' : '2';
+        try {
+            $user = $this->user->findOrFail($id);
+            $fullname = $request->input('fullname');
+            $address = $request->input('address');
+            $phone = $request->input('phone');
+            $birthday = $request->input('birthday');
+            $birthday = date('Y-m-d', strtotime($birthday));
+            $gender = $request->input('gender');
+            $gender = $gender === '0' || $gender === '1' ? $gender : '0';
+            $roles = $request->input('level');
+            $status = $request->input('status') ? '1' : '2';
 
-        $nameAvatar = null;
-        if($request->hasFile('photo_new')){
-            if($request->file('photo_new')->isValid()){
-                $nameAvatar = $request->file('photo_new')->hashName();
-                $path = $request->file('photo_new')->store(PATH_UPLOAD_AVATAR);
+            $nameAvatar = null;
+            if ($request->hasFile('photo_new')) {
+                if ($request->file('photo_new')->isValid()) {
+                    $nameAvatar = $request->file('photo_new')->hashName();
+                    $path = $request->file('photo_new')->store(PATH_UPLOAD_AVATAR);
+                }
             }
-        }
-        if($nameAvatar == ''){
-            $nameAvatar = $request->input('photo_old');
-        }
-
-        $user->fullname = $fullname;
-        $user->address = $address;
-        $user->phone = $phone;
-        $user->birthday = $birthday;
-        $user->gender = $gender;
-        $user->level = $roles;
-        $user->status = $status;
-        $user->avatar = $nameAvatar;
-        if(is_numeric($id) && $id > 0){
-            $user->update();
-            return redirect()->route("admin.users")->with('statusEdit','User Updated Successfully');
-        } else {
-            if(Storage::exists(PATH_UPLOAD_AVATAR.'/'.$nameAvatar)){
-                Storage::delete(PATH_UPLOAD_AVATAR.'/'.$nameAvatar);
+            if ($nameAvatar == '') {
+                $nameAvatar = $request->input('photo_old');
             }
-            return redirect()->route('admin.users')->with('statusEdit', 'Edit Failed User table');
+
+            $user->fullname = $fullname;
+            $user->address = $address;
+            $user->phone = $phone;
+            $user->birthday = $birthday;
+            $user->gender = $gender;
+            $user->level = $roles;
+            $user->status = $status;
+            $user->avatar = $nameAvatar;
+            if (is_numeric($id) && $id > 0) {
+                $user->update();
+                return redirect()->route("admin.users")->with('statusEdit', 'User Updated Successfully');
+            } else {
+                if (Storage::exists(PATH_UPLOAD_AVATAR . '/' . $nameAvatar)) {
+                    Storage::delete(PATH_UPLOAD_AVATAR . '/' . $nameAvatar);
+                }
+                return redirect()->route('admin.users')->with('statusEdit', 'Edit Failed User table');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
         }
-
-
     }
 
     public function destroy($userId)
     {
-        User::destroy($userId);
-        $array = array();
-        $arr['status'] = true;
+        try {
+            $this->user->destroy($userId);
+            $array = array();
+            $arr['status'] = true;
 
-        return response($arr, 200);
+            return response($arr, 200);
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
+        }
     }
 }

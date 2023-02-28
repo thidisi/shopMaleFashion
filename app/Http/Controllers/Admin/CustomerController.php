@@ -11,12 +11,11 @@ class CustomerController extends Controller
 {
     private object $model;
 
-    public function __construct()
+    public function __construct(Customer $customer)
     {
-        $this->model = Customer::query();
         $this->table = (new Customer)->getTable();
+        $this->customer = $customer;
     }
-
     public function index()
     {
         return view('backend.customers.index', [
@@ -26,7 +25,7 @@ class CustomerController extends Controller
 
     public function api()
     {
-        return DataTables::of($this->model)
+        return DataTables::of($this->customer)
             ->editColumn('status', function ($object) {
                 return $object->status_name;
             })
@@ -48,22 +47,30 @@ class CustomerController extends Controller
 
     public function update($customerId)
     {
-        $customer = $this->model->find($customerId);
-        if ($customer->status == ACTIVE) {
-            $customer->status = NOT_ACTIVE;
-        } else {
-            $customer->status = ACTIVE;
+        try {
+            $customer = $this->customer->findOrFail($customerId);
+            if ($customer->status == ACTIVE) {
+                $customer->status = NOT_ACTIVE;
+            } else {
+                $customer->status = ACTIVE;
+            }
+            $customer->save();
+            return response('Updated successfully!!', 200);
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
         }
-        $customer->save();
-        return response('Updated successfully!!', 200);
     }
 
     public function destroy($customerId)
     {
-        Customer::destroy($customerId);
-        $array = array();
-        $arr['status'] = true;
+        try {
+            $this->customer->destroy($customerId);
+            $array = array();
+            $arr['status'] = true;
 
-        return response($arr, 200);
+            return response($arr, 200);
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
+        }
     }
 }

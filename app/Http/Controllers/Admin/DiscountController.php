@@ -63,7 +63,7 @@ class DiscountController extends Controller
             $this->discount->create($arr);
             return redirect()->route('admin.discounts')->with('addDiscountStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            // return view('frontend.errors.index');
+            return redirect()->route('index');
         }
     }
 
@@ -80,15 +80,18 @@ class DiscountController extends Controller
             $discount->save();
             return redirect()->route("admin.discounts")->with('EditDiscountStatus', 'Edit successfully!!');
         } catch (\Throwable $th) {
-            // return view('frontend.errors.index');
+            return redirect()->route('index');
         }
     }
 
     public function destroy($discountId)
     {
-        $this->discount->destroy($discountId);
-        $this->discountProduct->where('discount_id', $discountId)->delete();
-
-        return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+        try {
+            $this->discount->destroy($discountId);
+            $this->discountProduct->where('discount_id', $discountId)->delete();
+            return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
+        }
     }
 }

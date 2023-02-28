@@ -102,7 +102,7 @@ class TicketController extends Controller
             }
             return redirect()->back()->with('addTicketStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            return response()->json(['message' => __("messages.not_content")], 403);
+            return redirect()->route('index');
         }
     }
 
@@ -118,7 +118,7 @@ class TicketController extends Controller
             $ticket = $this->ticket->findOrFail($id);
             $ticket->delete();
         } catch (\Throwable $th) {
-            return response()->json(['message' => __("messages.not_content")], 403);
+            return redirect()->route('index');
         }
     }
 }

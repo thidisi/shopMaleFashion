@@ -326,7 +326,7 @@ class ProductionController extends Controller
             $product->attribute_values()->sync($arr3);
             return redirect()->route('admin.productions')->with('addProductionStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            return abort('404');
+            return redirect()->route('index');
         }
     }
 
@@ -375,7 +375,7 @@ class ProductionController extends Controller
                 return redirect()->route('admin.productions')->with('ProductionErrors', 'Edit Failed Production table');
             }
         } catch (\Throwable $th) {
-            return abort('404');
+            return redirect()->route('index');
         }
     }
 
@@ -393,7 +393,7 @@ class ProductionController extends Controller
                 ]);
             return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
         } catch (\Throwable $th) {
-            return abort('404');
+            return redirect()->route('index');
         }
     }
 }

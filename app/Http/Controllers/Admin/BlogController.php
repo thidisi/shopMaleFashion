@@ -33,7 +33,6 @@ class BlogController extends Controller
         $blogs = $this->blog->where('status', '=', NameStatusEnum::ACTIVE)
             ->latest('created_at')
             ->paginate(9);
-        // $data = 
         return view('frontend.blogs.index', [
             'blogs' => $blogs,
         ]);
@@ -41,7 +40,7 @@ class BlogController extends Controller
 
     public function detail(Blog $blog)
     {
-        
+
         $data['previous'] = $this->blog->find($blog->id - 1);
         $data['next'] = $this->blog->find($blog->id + 1);
         return view('frontend.blogs.detail', [
@@ -76,35 +75,43 @@ class BlogController extends Controller
 
     public function update(UpdateBlogRequest $request, $blogId)
     {
-        $blog = $this->blog->find($blogId);
-        $blog->title = $request->input('title');
-        $blog->content = $request->input('content');
-        $blog->status = $request->input('status') ? '1' : '2';
+        try {
+            $blog = $this->blog->find($blogId);
+            $blog->title = $request->input('title');
+            $blog->content = $request->input('content');
+            $blog->status = $request->input('status') ? '1' : '2';
 
-        $nameAvatar = null;
-        if ($request->hasFile('photo_new')) {
-            if ($request->file('photo_new')->isValid()) {
-                $nameAvatar = Storage::disk('public')->put('imageBlog', $request->file('photo_new'));
+            $nameAvatar = null;
+            if ($request->hasFile('photo_new')) {
+                if ($request->file('photo_new')->isValid()) {
+                    $nameAvatar = Storage::disk('public')->put('imageBlog', $request->file('photo_new'));
+                }
             }
-        }
-        if ($nameAvatar == '') {
-            $nameAvatar = $request->input('photo_old');
-        }
-        $blog->image = $nameAvatar;
-        if (is_numeric($blogId) && $blogId > 0) {
-            $blog->update();
-            return redirect()->route("admin.blogs")->with('EditBlogStatus', 'Edit successfully!!');
-        } else {
-            if (Storage::disk('public')->exists($nameAvatar)) {
-                Storage::disk('public')->delete($nameAvatar);
+            if ($nameAvatar == '') {
+                $nameAvatar = $request->input('photo_old');
             }
-            return redirect()->route('admin.blogs')->with('BlogErrors', 'Edit Failed Blog table');
+            $blog->image = $nameAvatar;
+            if (is_numeric($blogId) && $blogId > 0) {
+                $blog->update();
+                return redirect()->route("admin.blogs")->with('EditBlogStatus', 'Edit successfully!!');
+            } else {
+                if (Storage::disk('public')->exists($nameAvatar)) {
+                    Storage::disk('public')->delete($nameAvatar);
+                }
+                return redirect()->route('admin.blogs')->with('BlogErrors', 'Edit Failed Blog table');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
         }
     }
 
     public function destroy($blogId)
     {
-        $this->blog->destroy($blogId);
-        return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+        try {
+            $this->blog->destroy($blogId);
+            return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
+        }
     }
 }

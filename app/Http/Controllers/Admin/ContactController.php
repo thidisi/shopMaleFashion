@@ -17,15 +17,15 @@ class ContactController extends Controller
 {
     private object $model;
 
-    public function __construct()
+    public function __construct(Contact $contact)
     {
-        $this->model = Contact::query();
-        $this->table = (new Contact)->getTable();
+        $this->contact = $contact;
+
     }
 
     public function index()
     {
-        $contacts = $this->model->latest('created_at')->paginate(5);
+        $contacts = $this->contact->latest('created_at')->paginate(5);
         return view('backend.contacts.index', [
             'contacts' => $contacts
         ]);
@@ -45,12 +45,13 @@ class ContactController extends Controller
 
     public function putSeenMail(Request $request, Contact $contact)
     {
-        $message = [
-            'body' => $request->messages,
-            'subject' => 'ShopMaleFashion gửi thông báo cho bạn'
-        ];
-        $users[]['email'] = $contact->email;
-        $contact->status = ACTIVE;
+        // hoan lai
+        // $message = [
+        //     'body' => $request->messages,
+        //     'subject' => 'ShopMaleFashion gửi thông báo cho bạn'
+        // ];
+        // $users[]['email'] = $contact->email;
+        // $contact->status = ACTIVE;
         // $contact->save();
         // SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
         return redirect()->back()->with('seenMailSuccess', 'Seen Mail successfully!!');
@@ -64,7 +65,7 @@ class ContactController extends Controller
             'message' => 'required',
         ]);
         $arr['status'] = NOT_ACTIVE;
-        $this->model->create($arr);
+        $this->contact->create($arr);
         return redirect()->back()->with('success', 'Get messages successfully!!');
     }
 }

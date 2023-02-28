@@ -39,13 +39,12 @@ class DiscountProductController extends Controller
                 'discountProducts' => $discountProducts,
             ]);
         } catch (\Throwable $th) {
-            // return view('frontend.errors.index');
+            return redirect()->route('index');
         }
     }
 
     public function create()
     {
-        
         try {
             $products = $this->product->get();
             $discounts = $this->discount->where('status', \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'])->get();
@@ -55,7 +54,7 @@ class DiscountProductController extends Controller
                 'discounts' => $discounts,
             ]);
         } catch (\Throwable $th) {
-            // return view('frontend.errors.index');
+            return redirect()->route('index');
         }
     }
 
@@ -71,13 +70,13 @@ class DiscountProductController extends Controller
                 'each' => $discountProduct,
             ]);
         } catch (\Throwable $th) {
-            // return view('frontend.errors.index');
+            return redirect()->route('index');
         }
     }
 
     public function store(Request $request)
     {
-        // try {
+        try {
             $arr = $request->validate([
                 'production_id' => [
                     'required',
@@ -95,9 +94,9 @@ class DiscountProductController extends Controller
             }
             $this->discountProduct->insert($data);
             return redirect()->route('admin.discountProducts')->with('addDiscountProductStatus', 'Add successfully!!');
-        // } catch (\Throwable $th) {
-        //     // return view('frontend.errors.index');
-        // }
+        } catch (\Throwable $th) {
+            return redirect()->route('index');
+        }
     }
 
     public function update(Request $request, $discountProductId)
@@ -114,7 +113,7 @@ class DiscountProductController extends Controller
             $discountProduct->update($arr);
             return redirect()->route('admin.discountProducts')->with('editDiscountProductStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            // return view('frontend.errors.index');
+            return redirect()->route('index');
         }
     }
 
