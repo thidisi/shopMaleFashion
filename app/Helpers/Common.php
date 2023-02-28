@@ -16,3 +16,18 @@ if (!function_exists('currency_format')) {
         }
     }
 }
+
+if (!function_exists('getWebURL')) {
+    /**
+     * Build web url with query params
+     *
+     * @param string $segment
+     * @param array $queryParams
+     * @return string
+     */
+    function getWebURL(string $segment, array $queryParams = [])
+    {
+        $queryString = http_build_query($queryParams);
+        return config('app.url') . $segment . ($queryString ? '?' . http_build_query($queryParams) : '');
+    }
+}

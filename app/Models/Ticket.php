@@ -9,21 +9,12 @@ class Ticket extends Model
 {
     use HasFactory;
 
-    // protected $table = 'tickets';
+    protected $table = 'tickets';
 
     const TICKET_STATUS = [
         'OPEN'            => 'pending',
         'PAYMENT_SUCCESS' => 'active',
         'CLOSE'           => 'suspended',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'data_customer' => 'array',
     ];
 
     protected $fillable = [
@@ -33,6 +24,15 @@ class Ticket extends Model
         'code',
         'quantity',
         'status',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data_customer' => 'array',
     ];
 
     public function getFormatDateEndAttribute()

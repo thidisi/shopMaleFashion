@@ -15,10 +15,10 @@ class CreateTicketsTable extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->text('data_customer');
+            $table->longText('data_customer');
             $table->float('price');
             $table->string('code',100);
-            $table->int('quantity');
+            $table->integer('quantity');
             $table->dateTime('date_end');
             $table->enum('status', [
                 'pending',

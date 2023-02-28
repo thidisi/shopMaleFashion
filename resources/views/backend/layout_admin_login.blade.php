@@ -15,7 +15,7 @@
         <link href="{{ asset('backend/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('backend/css/app-creative.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
         <link href="{{ asset('backend/css/app-creative-dark.min.css') }}" rel="stylesheet" type="text/css" id="dark-style" />
-
+        @stack('css')
     </head>
 
     <body class="authentication-bg pb-0" data-layout-config='{"darkMode":false}'>
@@ -38,10 +38,10 @@
 
                         <!-- title-->
                         @yield('content')
-                        
+
                         <!-- end form-->
 
-                        
+
                     </div> <!-- end .card-body -->
                 </div> <!-- end .align-items-center.d-flex.h-100-->
             </div>

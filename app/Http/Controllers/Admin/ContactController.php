@@ -51,8 +51,8 @@ class ContactController extends Controller
         ];
         $users[]['email'] = $contact->email;
         $contact->status = ACTIVE;
-        $contact->save();
-        SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
+        // $contact->save();
+        // SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
         return redirect()->back()->with('seenMailSuccess', 'Seen Mail successfully!!');
     }
 

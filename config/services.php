@@ -29,9 +29,9 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    // 'gitlab' => [
-    //     'client_id' => '3d18ada7eb16f02c8113d28b9c81d32301073024b0532de30ff2de5e1f853f92',
-    //     'client_secret' => 'babe1c0a541e4cf69d6d15c4daf05b6f8fe1bf3bcd5e8a3c3bb68948856601a0',
-    //     'redirect' => 'http://localhost:8000/auth/callback/gitlab',
-    // ],
+    'gitlab' => [
+        'client_id' => env('GITLAB_CLIENT_ID'),
+        'client_secret' => env('GITLAB_CLIENT_SECRET'),
+        'redirect' => env('CALLBACK_URI_GITLAB'),
+    ],
 ];

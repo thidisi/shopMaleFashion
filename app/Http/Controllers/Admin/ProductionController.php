@@ -65,10 +65,10 @@ class ProductionController extends Controller
 
         foreach ($products as $each) {
             $each->status = $each->status_name;
-            if(array_key_exists($each->id, $groupSet)){
+            if (array_key_exists($each->id, $groupSet)) {
                 $each['infos'] = $groupSet[$each->id];
             }
-            if(array_key_exists($each->id, $groupColor)){
+            if (array_key_exists($each->id, $groupColor)) {
                 $each['infoColor'] = $groupColor[$each->id];
             }
             $each['size'] = NameAttrEnum::getKeys(NameAttrEnum::SIZE)[0];
@@ -251,7 +251,7 @@ class ProductionController extends Controller
             $attrKey = $item['attribute_id'];
             $attrValue = $item['name'];
             $attrId = $item['id'];
-            $productAttr[$attrKey][] = (object)["id" => "$attrId","name" => "$attrValue"];
+            $productAttr[$attrKey][] = (object)["id" => "$attrId", "name" => "$attrValue"];
         }
         $production->attr = $productAttr;
         $categories = $this->category->get();
@@ -295,109 +295,105 @@ class ProductionController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $status = $request->input('status') ? '1' : '2';
-        $slug = Str::slug($request->input('name'), '-');
-        $arr = $request->validated();
-        $arr['status'] = $status;
-        $arr['slug'] = $slug;
-        $arr2 = $request->validate([
-            'fileData' => 'required',
-            'status_image' => 'required',
-            'attrValue1' => 'required',
-            'attrValue' => 'required',
-        ]);
-        if ($request->hasFile('fileData')) {
-            $images = $request->file('fileData');
-            foreach ($images as $image) {
-                $path = Storage::disk('public')->put('imageProducts', $image);
-                $data[] = $path;
+        try {
+            $status = $request->input('status') ? '1' : '2';
+            $slug = Str::slug($request->input('name'), '-');
+            $arr = $request->validated();
+            $arr['status'] = $status;
+            $arr['slug'] = $slug;
+            $arr2 = $request->validate([
+                'fileData' => 'required',
+                'status_image' => 'required',
+                'attrValue1' => 'required',
+                'attrValue' => 'required',
+            ]);
+            if ($request->hasFile('fileData')) {
+                $images = $request->file('fileData');
+                foreach ($images as $image) {
+                    $path = Storage::disk('public')->put('imageProducts', $image);
+                    $data[] = $path;
+                }
             }
+            $status_image = $request->input('status_image') ? '1' : '2';
+            $id = $this->product->create($arr)->id;
+            $arr2['image'] = json_encode($data);
+            $arr2['status'] = $status_image;
+            $arr2['production_id'] = $id;
+            $this->productImage->create($arr2);
+            $product = $this->product->find($id);
+            $arr3 = $request->input('attrValue1');
+            $arr3[] = $request->input('attrValue');
+            $product->attribute_values()->sync($arr3);
+            return redirect()->route('admin.productions')->with('addProductionStatus', 'Add successfully!!');
+        } catch (\Throwable $th) {
+            return abort('404');
         }
-        $status_image = $request->input('status_image') ? '1' : '2';
-        $id = $this->product->create($arr)->id;
-        $arr2['image'] = json_encode($data);
-        $arr2['status'] = $status_image;
-        $arr2['production_id'] = $id;
-        $this->productImage->create($arr2);
-        $product = $this->product->find($id);
-        $arr3 = $request->input('attrValue1');
-        $arr3[] = $request->input('attrValue');
-        $product->attribute_values()->sync($arr3);
-        // $arr3 = [];
-        // $attrValue1 = $request->input('attrValue1');
-        // foreach ($attrValue1 as $attrValue_id) {
-        //     $arr3[] = [
-        //         'production_id' => $id,
-        //         'attribute_value_id' => $attrValue_id,
-        //         'created_at' => date('Y-m-d H:i:s')
-        //     ];
-        // }
-        // $attrValue_id = $request->input('attrValue');
-        // $arr3[] = [
-        //     'production_id' => $id,
-        //     'attribute_value_id' => $attrValue_id,
-        //     'created_at' => date('Y-m-d H:i:s')
-        // ];
-        // $insert = DB::table('production_attr_value')->insert($arr3);
-        return redirect()->route('admin.productions')->with('addProductionStatus', 'Add successfully!!');
     }
 
     public function update(UpdateProductRequest $request, $productionId)
     {
-        $production = $this->product->findOrFail($productionId);
-        $status = $request->input('status') ? '1' : '2';
-        $slug = Str::slug($request->input('name'), '-');
-        $arr = $request->validated();
-        $arr2 = $request->validate([
-            'attrValue1' => 'required',
-            'attrValue' => 'required',
-        ]);
-        $arr['status'] = $status;
-        $arr['slug'] = $slug;
-        $production->update($arr);
-        $arr2 = $request->input('attrValue1');
-        $arr2[] = $request->input('attrValue');
-        $production->attribute_values()->sync($arr2);
-        $nameImage = null;
-        if ($request->hasFile('fileDataNew')) {
-            if ($request->file('fileDataNew')) {
-                $images = $request->file('fileDataNew');
-                foreach ($images as $image) {
-                    $path = Storage::disk('public')->put('imageProducts', $image);
-                    $nameImage[] = $path;
+        try {
+            $production = $this->product->findOrFail($productionId);
+            $status = $request->input('status') ? '1' : '2';
+            $slug = Str::slug($request->input('name'), '-');
+            $arr = $request->validated();
+            $arr2 = $request->validate([
+                'attrValue1' => 'required',
+                'attrValue' => 'required',
+            ]);
+            $arr['status'] = $status;
+            $arr['slug'] = $slug;
+            $production->update($arr);
+            $arr2 = $request->input('attrValue1');
+            $arr2[] = $request->input('attrValue');
+            $production->attribute_values()->sync($arr2);
+            $nameImage = null;
+            if ($request->hasFile('fileDataNew')) {
+                if ($request->file('fileDataNew')) {
+                    $images = $request->file('fileDataNew');
+                    foreach ($images as $image) {
+                        $path = Storage::disk('public')->put('imageProducts', $image);
+                        $nameImage[] = $path;
+                    }
                 }
             }
-        }
-        if ($nameImage == '') {
-            $nameImage = $request->input('fileDataOld');
-        }
-        $productImage = $this->productImage->firstWhere('production_id', $productionId);
-        $statusImage = $request->input('status_image') ? '1' : '2';
-        $productImage->status = $statusImage;
-        $productImage->image = $nameImage;
-
-        if (is_numeric($productionId) && $productionId > 0) {
-            $productImage->save();
-            return redirect()->route("admin.productions")->with('EditProductionStatus', 'Edit successfully!!');
-        } else {
-            if (Storage::disk('public')->exists($nameImage)) {
-                Storage::disk('public')->delete($nameImage);
+            if ($nameImage == '') {
+                $nameImage = $request->input('fileDataOld');
             }
-            return redirect()->route('admin.productions')->with('ProductionErrors', 'Edit Failed Production table');
+            $productImage = $this->productImage->firstWhere('production_id', $productionId);
+            $statusImage = $request->input('status_image') ? '1' : '2';
+            $productImage->status = $statusImage;
+            $productImage->image = $nameImage;
+
+            if (is_numeric($productionId) && $productionId > 0) {
+                $productImage->save();
+                return redirect()->route("admin.productions")->with('EditProductionStatus', 'Edit successfully!!');
+            } else {
+                if (Storage::disk('public')->exists($nameImage)) {
+                    Storage::disk('public')->delete($nameImage);
+                }
+                return redirect()->route('admin.productions')->with('ProductionErrors', 'Edit Failed Production table');
+            }
+        } catch (\Throwable $th) {
+            return abort('404');
         }
     }
 
     public function destroy($productionId)
     {
-        $production = $this->product->find($productionId);
-        $production->product_images()->delete();
-        $production->delete();
-        DB::table('production_attr_value')
-            ->where('production_id', $productionId)
-            ->update([
-                'updated_at' => Carbon::now(),
-                'deleted_at' => Carbon::now(),
-            ]);
-        return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+        try {
+            $production = $this->product->findOrFail($productionId);
+            $production->product_images()->delete();
+            $production->delete();
+            DB::table('production_attr_value')
+                ->where('production_id', $productionId)
+                ->update([
+                    'updated_at' => Carbon::now(),
+                    'deleted_at' => Carbon::now(),
+                ]);
+            return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+        } catch (\Throwable $th) {
+            return abort('404');
+        }
     }
 }

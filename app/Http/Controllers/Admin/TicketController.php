@@ -42,11 +42,13 @@ class TicketController extends Controller
     public function api_data()
     {
         try {
-            $tickets = $this->ticket->get();
+            $tickets = $this->ticket->latest('id')->get();
             return DataTables::of($tickets)
-            ->addColumn('action', function ($object) {
-                return route('admin.tickets.destroy', $object);
-            })
+                ->addIndexColumn()
+                ->addColumn('action', function ($object) {
+                    return route('admin.tickets.destroy', $object);
+                })
+                ->rawColumns(['id', 'data_customer', 'price', 'code', 'quantity', 'date_end', 'status', 'action'])
                 ->make(true);
         } catch (\Throwable $th) {
             return response()->json(['message' => __("messages.not_content")], 403);
@@ -57,8 +59,7 @@ class TicketController extends Controller
     {
         try {
             $customers = $this->customer->where('status', ACTIVE)->get(['id', 'name'])->toArray();
-            // $total_customer = $this->customer->where('status', ACTIVE)->count();
-            $total_customer = 100;
+            $total_customer = $this->customer->where('status', ACTIVE)->count();
             $data = [
                 'customers' => $customers,
                 'total_customer' => $total_customer
@@ -79,7 +80,7 @@ class TicketController extends Controller
      */
     public function store(StoreTicketRequest $request)
     {
-        // try {
+        try {
             $data = $request->all();
             if (is_array($data['data'])) {
                 $data['quantity'] = count($data['data']);
@@ -100,21 +101,9 @@ class TicketController extends Controller
                 $this->ticket->create($data);
             }
             return redirect()->back()->with('addTicketStatus', 'Add successfully!!');
-        // } catch (\Throwable $th) {
-        //     return response()->json(['message' => __("messages.not_content")], 403);
-        // }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return Response
-     */
-    public function update(Request $request, int $id)
-    {
-        //
+        } catch (\Throwable $th) {
+            return response()->json(['message' => __("messages.not_content")], 403);
+        }
     }
 
     /**
@@ -125,6 +114,11 @@ class TicketController extends Controller
      */
     public function destroy(int $id)
     {
-        dd($id);
+        try {
+            $ticket = $this->ticket->findOrFail($id);
+            $ticket->delete();
+        } catch (\Throwable $th) {
+            return response()->json(['message' => __("messages.not_content")], 403);
+        }
     }
 }

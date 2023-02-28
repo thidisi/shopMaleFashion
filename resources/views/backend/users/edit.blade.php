@@ -64,7 +64,7 @@ $title = 'Users';
                                     </option>
                                 </select>
                             </div>
-                            @if (session('sessionUserRole') == strtolower($roles[2]))
+                            @if (\Auth()->user()->email == strtolower($roles[2]))
                                 <div class="mb-3">
                                     <label class="form-label">Roles</label>
                                     <select class="form-control" name="level" id="">
@@ -87,7 +87,7 @@ $title = 'Users';
                                     <label for="switch3" data-on-label="Yes" data-off-label="No"></label>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Update</button>

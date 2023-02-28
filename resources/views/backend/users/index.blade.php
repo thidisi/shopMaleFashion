@@ -95,7 +95,7 @@ $title = 'Users';
                 processing: true,
                 serverSide: true,
                 ajax: '{!! route('admin.users.api') !!}',
-                lengthMenu: [5, 10, 20, 50],
+                lengthMenu: [2, 10, 20, 50],
                 columnDefs: [{
                     className: "not-export",
                 }],

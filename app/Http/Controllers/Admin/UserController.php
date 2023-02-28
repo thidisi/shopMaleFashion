@@ -99,8 +99,8 @@ class UserController extends Controller
             }
             return redirect()->route('admin.users')->with('statusEdit', 'Edit Failed User table');
         }
-        
-        
+
+
     }
 
     public function destroy($userId)

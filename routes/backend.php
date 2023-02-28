@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SlideController;
 use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,15 +40,15 @@ Route::prefix('admin')
         Route::get('logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('register', [AuthController::class, 'register'])->name('register');
         Route::post('register', [AuthController::class, 'registering'])->name('registering');
-        // Route::get('/auth/redirect/{provider}', function ($provider) {
-        //     return Socialite::driver($provider)->redirect();
-        // })->name('auth.redirect');
-        // Route::get('/auth/callback/{provider}', [AuthController::class, 'callback'])->name('auth.callback');
+        Route::get('/auth/redirect/{provider}', function ($provider) {
+            return Socialite::driver($provider)->redirect();
+        })->name('auth.redirect');
+        Route::get('/auth/callback/{provider}', [AuthController::class, 'callback'])->name('auth.callback');
     });
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware('check.login.admin.page')
+    ->middleware('auth:sanctum')
     ->group(function () {
         Route::get('dashboards', [DashboardController::class, 'index'])->name('dashboards');
         Route::get('users', [UserController::class, 'index'])->name('users');

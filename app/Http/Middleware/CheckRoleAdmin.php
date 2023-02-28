@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRoleEnum;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -16,8 +17,7 @@ class CheckRoleAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        $roleLevel = $request->session()->get('sessionUserRole');
-        if($roleLevel == 'staff') {
+        if(strtolower(UserRoleEnum::getKeys(auth()->user()->level)[0]) == 'staff') {
             return redirect()->route('admin.login');
         }
         return $next($request);

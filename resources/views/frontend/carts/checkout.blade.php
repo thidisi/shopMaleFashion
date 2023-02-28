@@ -95,13 +95,16 @@
                                     @endforeach
                                 </ul>
                                 <ul class="checkout__total__all">
-                                    <li>Subtotal <span
-                                            style="text-decoration: line-through;">{{ currency_format($data['getSubTotal']) }}</span>
-                                    </li>
+                                    @if ($data['getSubTotal'] != $data['getTotal'])
+                                        <li>Subtotal <span
+                                                style="text-decoration: line-through;">{{ currency_format($data['getSubTotal']) }}</span>
+                                        </li>
+                                    @endif
                                     <li id="get_discount"></li>
                                     <li>Total <span id="get_total">{{ currency_format($data['getTotal']) }}</span></li>
                                     <input type="hidden" name="get_total" value="{{ $data['getTotal'] }}">
                                     <input type="hidden" name="get_discount">
+                                    <input type="hidden" name="get_code">
                                 </ul>
                                 <p>Lorem ipsum dolor sit amet, consectetur adip elit, sed do eiusmod tempor incididunt
                                     ut labore et dolore magna aliqua.</p>
@@ -200,6 +203,7 @@
                             `<p>Discount <span>- ${response.data.discount}</span></p>`)
                         let sum = $("input[name=get_total]").val() - response.data.slug;
                         $("input[name=get_discount]").val(response.data.slug);
+                        $("input[name=get_code]").val(response.data.code);
                         sum = sum.toLocaleString('vi', {
                             style: 'currency',
                             currency: 'VND'
@@ -211,7 +215,7 @@
                         $("#show_discount").find('.text-danger').remove();
                         $("#show_discount").append(
                             '<p class="text-danger ml-2 mt-1"></p>');
-                        $("#show_discount").find('.text-danger').text("Mã giảm giá không hợp lệ").show()
+                        $("#show_discount").find('.text-danger').text(response.responseJSON.data).show()
                             .fadeOut(
                                 3000);
                     }

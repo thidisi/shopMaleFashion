@@ -15,7 +15,8 @@
         <li class="dropdown notification-list topbar-dropdown">
             <a class="nav-link dropdown-toggle arrow-none" data-toggle="dropdown" href="#" role="button"
                 aria-haspopup="false" aria-expanded="false">
-                <img src="{{ asset('backend/images/flags/us.jpg') }}" alt="user-image" class="mr-0 mr-sm-1" height="12">
+                <img src="{{ asset('backend/images/flags/us.jpg') }}" alt="user-image" class="mr-0 mr-sm-1"
+                    height="12">
                 <span class="align-middle d-none d-sm-inline-block">English</span> <i
                     class="mdi mdi-chevron-down d-none d-sm-inline-block align-middle"></i>
             </a>
@@ -23,26 +24,26 @@
 
                 <!-- item-->
                 <a href="javascript:void(0);" class="dropdown-item notify-item">
-                    <img src="{{ asset('backend/images/flags/germany.jpg') }}" alt="user-image" class="mr-1" height="12"> <span
-                        class="align-middle">German</span>
+                    <img src="{{ asset('backend/images/flags/germany.jpg') }}" alt="user-image" class="mr-1"
+                        height="12"> <span class="align-middle">German</span>
                 </a>
 
                 <!-- item-->
                 <a href="javascript:void(0);" class="dropdown-item notify-item">
-                    <img src="{{ asset('backend/images/flags/italy.jpg') }}" alt="user-image" class="mr-1" height="12"> <span
-                        class="align-middle">Italian</span>
+                    <img src="{{ asset('backend/images/flags/italy.jpg') }}" alt="user-image" class="mr-1"
+                        height="12"> <span class="align-middle">Italian</span>
                 </a>
 
                 <!-- item-->
                 <a href="javascript:void(0);" class="dropdown-item notify-item">
-                    <img src="{{ asset('backend/images/flags/spain.jpg') }}" alt="user-image" class="mr-1" height="12"> <span
-                        class="align-middle">Spanish</span>
+                    <img src="{{ asset('backend/images/flags/spain.jpg') }}" alt="user-image" class="mr-1"
+                        height="12"> <span class="align-middle">Spanish</span>
                 </a>
 
                 <!-- item-->
                 <a href="javascript:void(0);" class="dropdown-item notify-item">
-                    <img src="{{ asset('backend/images/flags/russia.jpg') }}" alt="user-image" class="mr-1" height="12"> <span
-                        class="align-middle">Russian</span>
+                    <img src="{{ asset('backend/images/flags/russia.jpg') }}" alt="user-image" class="mr-1"
+                        height="12"> <span class="align-middle">Russian</span>
                 </a>
 
             </div>
@@ -113,8 +114,8 @@
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
                         <div class="notify-icon">
-                            <img src="{{ asset('backend/images/users/avatar-4.jpg') }}" class="img-fluid rounded-circle"
-                                alt="" />
+                            <img src="{{ asset('backend/images/users/avatar-4.jpg') }}"
+                                class="img-fluid rounded-circle" alt="" />
                         </div>
                         <p class="notify-details">Karen Robinson</p>
                         <p class="text-muted mb-0 user-msg">
@@ -207,13 +208,13 @@
             <a class="nav-link dropdown-toggle nav-user arrow-none mr-0" data-toggle="dropdown" href="#"
                 role="button" aria-haspopup="false" aria-expanded="false">
                 <span class="account-user-avatar">
-                    <img src="@if(session('sessionUserAvatar') !== null)
-                    {{ asset('storage/avatars/'.session('sessionUserAvatar'))}}
-                    @else{{ asset('backend/images/users/avatar-0.jpg') }}@endif"alt="user-image" class="rounded-circle">
+                    <img src="@if (\Auth::user()->avatar !== null) {{ asset('storage/avatars/' . \Auth::user()->avatar) }}
+                    @else{{ asset('backend/images/users/avatar-0.jpg') }} @endif"alt="user-image"
+                        class="rounded-circle">
                 </span>
                 <span>
-                    <span class="account-user-name text-capitalize">{{ session('sessionUserName') }}</span>
-                    <span class="account-position text-capitalize">Role :{{ session('sessionUserRole') }}</span>
+                    <span class="account-user-name text-capitalize">{{ \Auth::user()->fullname }}</span>
+                    <span class="account-position text-capitalize">Role : {{ session('sessionUserRole') }}</span>
                 </span>
             </a>
             <div
@@ -305,8 +306,9 @@
                 <!-- item-->
                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                     <div class="media">
-                        <img class="d-flex mr-2 rounded-circle" src="{{ asset('backend/images/users/avatar-2.jpg') }}"
-                            alt="Generic placeholder image" height="32">
+                        <img class="d-flex mr-2 rounded-circle"
+                            src="{{ asset('backend/images/users/avatar-2.jpg') }}" alt="Generic placeholder image"
+                            height="32">
                         <div class="media-body">
                             <h5 class="m-0 font-14">Erwin Brown</h5>
                             <span class="font-12 mb-0">UI Designer</span>
@@ -317,8 +319,9 @@
                 <!-- item-->
                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                     <div class="media">
-                        <img class="d-flex mr-2 rounded-circle" src="{{ asset('backend/images/users/avatar-5.jpg') }}"
-                            alt="Generic placeholder image" height="32">
+                        <img class="d-flex mr-2 rounded-circle"
+                            src="{{ asset('backend/images/users/avatar-5.jpg') }}" alt="Generic placeholder image"
+                            height="32">
                         <div class="media-body">
                             <h5 class="m-0 font-14">Jacob Deo</h5>
                             <span class="font-12 mb-0">Developer</span>

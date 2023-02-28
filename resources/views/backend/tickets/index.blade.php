@@ -167,19 +167,21 @@
         $(function() {
             $(document).on('click', '.btn-delete', function() {
                 let form = $(this).parents('form');
-                $.ajax({
-                    url: form.data('route'),
-                    type: 'POST',
-                    dataType: 'json',
-                    data: form.serialize(),
-                    success: function() {
-                        table.draw();
-                        alert("Xóa thành công");
-                    },
-                    error: function() {
-                        alert('Xóa thất bại');
-                    },
-                });
+                if (confirm("Bạn có muốn xóa không!")) {
+                    $.ajax({
+                        url: form.data('route'),
+                        type: 'POST',
+                        dataType: 'json',
+                        data: form.serialize(),
+                        success: function() {
+                            table.draw();
+                            alert("Xóa thành công");
+                        },
+                        error: function() {
+                            alert('Xóa thất bại');
+                        },
+                    });
+                }
             });
             let table = $('#table-data').DataTable({
                 dom: 'B<"float-right"l>frtip',
@@ -192,15 +194,18 @@
                 processing: true,
                 serverSide: true,
                 lengthMenu: [5, 10, 20, 50],
-                ajax: '{!! route('api.tickets.dataApi') !!}',
+                ajax: {
+                    type: "GET",
+                    url: '{!! route('api.tickets.dataApi') !!}',
+                },
                 columnDefs: [{
                     "className": "not-export",
                     "defaultContent": "-",
                     "targets": "_all"
                 }],
                 columns: [{
-                        data: 'id',
-                        name: 'id'
+                        data: 'DT_RowIndex',
+                        name: 'rank',
                     },
                     {
                         data: 'code',
@@ -224,10 +229,7 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row, meta) {
-                            return `<button style="background-color: initial;" data-id="${row.id}" class="action-icon border-0">
-                                <i class="mdi mdi-square-edit-outline"></i>
-                                </button>
-                                <form class="action-icon" data-route="${data}" method="post">
+                            return `<form class="action-icon" data-route="${data}" method="post">
                                 @method('DELETE')
                                 <button style="background-color: initial;" type="button" class="btn-delete ml-1 border-0 action-icon" ><i class="mdi mdi-delete"></i></button>
                             </form>`
@@ -235,15 +237,20 @@
                     },
                 ],
                 language: {
-                    "sProcessing": "loading....",
+                    "sProcessing": "Đang tải",
+                    "sLengthMenu": "Hiển thị _MENU_ bản ghi",
+                    "sZeroRecords": "Không có dữ liệu trong bảng",
+                    "sSearch": "",
+                    "sInfo": "",
+                    "sInfoEmpty": "",
+                    "sInfoFiltered": "(Đã lọc từ _MAX_ bản ghi)",
                     "oPaginate": {
-                        "sFirst": "<?php echo __('Đầu trang'); ?>",
-                        "sLast": "<?php echo __('Cuối trang'); ?>",
-                        "sNext": "<?php echo __('»'); ?>",
-                        "sPrevious": "<?php echo __('«'); ?>"
+                        "sFirst": "Đầu trang",
+                        "sLast": "Cuối trang",
+                        "sNext": "»",
+                        "sPrevious": "«"
                     },
-                    searchPlaceholder: "Search.."
-                }
+                },
             });
         });
     </script>

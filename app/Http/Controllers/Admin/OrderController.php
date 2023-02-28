@@ -88,12 +88,13 @@ class OrderController extends Controller
 
     public function check_out(Request $request)
     {
-        try {
+        // try {
             $order = $request->all();
             $order['address_receiver'] =  $this->ward->findOrFail($order['wards'])->path;
             $discount = $order['get_discount'];
+            $code = $order['get_code'];
 
-            unset($order['_token'], $order['provinces'], $order['districts'], $order['wards'], $order['get_total'], $order['get_discount']);
+            unset($order['_token'], $order['get_code'], $order['provinces'], $order['districts'], $order['wards'], $order['get_total'], $order['get_discount']);
 
             if (!empty(Cart::getTotal())) {
                 $order['customer_id'] = session('sessionIdCustomer');
@@ -102,8 +103,13 @@ class OrderController extends Controller
                 $order_id = $this->order->create($order)->id;
                 $cartItems = Cart::getContent();
                 $pattern = "/\(.*\)/";
-                $orders = $this->order->find($order_id);
-
+                $orders = $this->order->findOrFail($order_id);
+                if($code != null) {
+                    $ticket = $this->ticket->where('code', $code)->first();
+                    $ticket->quantity = $ticket->quantity - 1;
+                    $ticket->status = 'active';
+                    $ticket->save();
+                }
                 foreach ($cartItems as $each) {
                     if (preg_match_all($pattern, $each->name, $matches)) {
                         foreach ($matches as $value) {
@@ -128,23 +134,24 @@ class OrderController extends Controller
                 return redirect()->route('index')->with('success', 'Orders successfully!!');
             }
             return redirect()->back()->with("Empty stock, can't order");
-        } catch (\Throwable $th) {
-            return view('frontend.errors.index');
-        }
+        // } catch (\Throwable $th) {
+        //     return view('frontend.errors.index');
+        // }
     }
 
     public function get_discount(Request $request)
     {
         try {
             $tickets = $this->ticket->where('quantity', '>', 0)->where('status', '!=', 'suspended')->where('code', $request->discount)->firstOrFail();
-            if($tickets->status == 'active'){
+            if ($tickets->status == 'active') {
                 return response()->json([
                     'data' => 'Mã giảm giá của bạn đã sử dụng!'
-                ], 201);
+                ], 401);
             }
             $data = [
                 'discount' => currency_format($tickets->price),
-                'slug' => $tickets->price
+                'slug' => $tickets->price,
+                'code' => $tickets->code
             ];
             return response()->json([
                 'data' => $data
