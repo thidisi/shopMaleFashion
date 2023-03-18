@@ -26,7 +26,7 @@ class UserController extends Controller
     public function api()
     {
 
-        return DataTables::of($this->user)
+        return DataTables::of($this->user->query())
             ->editColumn('birthday', function ($object) {
                 return $object->age;
             })

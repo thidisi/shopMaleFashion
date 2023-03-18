@@ -26,7 +26,7 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = $this->catogory->leftJoin('major_categories', 'categories.major_category_id', '=', 'major_categories.id')
+        $categories = $this->category->leftJoin('major_categories', 'categories.major_category_id', '=', 'major_categories.id')
             ->latest('categories.created_at')
             ->get(['major_categories.name as name_majorCate', 'categories.*']);
         foreach ($categories as $each) {
@@ -54,7 +54,7 @@ class CategoryController extends Controller
                 'productions.*'
             )->paginate(8);
 
-        $categories = $this->catogory->leftJoin('productions', 'categories.id', '=', 'productions.category_id')
+        $categories = $this->category->leftJoin('productions', 'categories.id', '=', 'productions.category_id')
             ->selectRaw('categories.id, categories.name, count(productions.category_id) AS `count`',)
             ->groupBy('categories.name')
             ->orderBy('count', 'DESC')

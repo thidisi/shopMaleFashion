@@ -25,7 +25,7 @@ class CustomerController extends Controller
 
     public function api()
     {
-        return DataTables::of($this->customer)
+        return DataTables::of($this->customer->query())
             ->editColumn('status', function ($object) {
                 return $object->status_name;
             })

@@ -44,6 +44,9 @@ class AuthController extends Controller
                 $this->user->where('id', auth()->user()->id)->update([
                     'last_login' => now()
                 ]);
+                $user = $this->user->where("email", auth()->user()->email)->first();
+                // $tokenResult = $user->createToken('authToken')->plainTextToken;
+                // dd($tokenResult);
                 return redirect()->route("admin.dashboards");
             }
             return redirect()->back()->with('invalidLogin', 'Mật khẩu không chính xác');

@@ -18,4 +18,9 @@ class Authenticate extends Middleware
             return route('admin.login');
         }
     }
+
+    protected function unauthenticated($request, array $guards)
+    {
+        abort(response()->json(['error' => '404'], 401));
+    }
 }
