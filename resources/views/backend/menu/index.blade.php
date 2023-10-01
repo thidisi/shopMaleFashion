@@ -22,7 +22,7 @@ $title = 'Menu';
                         <div class="row mb-2">
                             <div class="col-sm-4">
                                 <a href="{{ route('admin.major-categories.create') }}" class="btn btn-danger mb-2"><i
-                                        class="mdi mdi-plus-circle mr-2"></i> Add Categories</a>
+                                        class="mdi mdi-plus-circle mr-2"></i> Add Menu</a>
                             </div>
                         </div>
                         <div class="table-responsive my-3">
@@ -46,7 +46,7 @@ $title = 'Menu';
                                                 {{ $value->name }}
                                             </td>
 
-                                            
+
                                             <td>
                                                 <span class="text-capitalize">{{ $value->status }}</span>
                                             </td>

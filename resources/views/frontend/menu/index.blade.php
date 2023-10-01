@@ -1,8 +1,8 @@
 <nav class="header__menu mobile-menu">
     <ul>
-        <li class="active"><a href="{{ route('index') }}">Trang chủ</a></li>
+        <li class="active"><a href="{{ route('index') }}">Home</a></li>
         @if (!empty($menus))
-            <li><a href="{{ route('shop') }}">Shop</a>
+            <li><a href="{{ route('shop') }}">Collection</a>
                 <ul class="dropdown">
                     @foreach ($menus as $each)
                         @if ($each->slug !== PROMOTION)

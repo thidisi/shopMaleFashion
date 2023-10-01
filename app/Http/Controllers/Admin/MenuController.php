@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MenuController extends Controller
 {
@@ -175,6 +176,7 @@ class MenuController extends Controller
             'status' => 'required',
         ]);
         $arr['created_at'] = now();
+        $arr['slug'] = Str::slug($request->input('name'), '-');
         $this->major_category->create($arr);
 
         return redirect()->route('admin.major-categories')->with('addMajorCategoryStatus', 'Add successfully!!');
@@ -200,6 +202,7 @@ class MenuController extends Controller
                 ],
                 'status' => 'required',
             ]);
+            $arr['slug'] = Str::slug($request->input('name'), '-');
             $majorCategory->update($arr);
             return redirect()->route('admin.major-categories')->with('EditMajorCategoryStatus', 'Edit successfully!!');
         } catch (\Throwable $th) {

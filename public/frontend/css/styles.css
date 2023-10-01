@@ -4,7 +4,7 @@
   Author: Colorib
   Author URI: https://www.colorib.com/
   Version: 1.0
-  Created: Colorib 
+  Created: Colorib
 ******************************************************************/
 
 /*------------------------------------------------------------------
@@ -460,7 +460,7 @@ ol {
 .header__menu ul li {
 	list-style: none;
 	display: inline-block;
-	margin-right: 45px;
+	margin-right: 36px;
 	position: relative;
 }
 
@@ -988,7 +988,7 @@ ol {
 	background: #111111;
 	box-shadow: 1px 1px 2px 0 rgb(0 0 0 / 20%);
 }
-/* 
+/*
 .product__item.sale .product__item__text .rating i {
 	color: #f7941d;
 }
@@ -3542,7 +3542,7 @@ ol {
 	.row-review {
 		margin: 0px !important;
 	}
-	
+
 }
 
 /* Wide Mobile = 480px */
@@ -3982,7 +3982,7 @@ ol {
 	.categories__text:before {
 		height: 250px;
 	}
-	
+
 	.row-review {
 		margin: 0px !important;
 	}
@@ -4148,12 +4148,12 @@ progress {color: #fa2f2f;}
 
 .boxReview-comment-item-review strong {
 	font-size: 0.8rem;
-}	
+}
 
 .boxReview-comment-item-review div div p,
 .comment-content p {
 	font-size: 0.85rem;
-}	
+}
 
 .boxReview-comment-item-title div .name-letter{
 	width: 25px;
@@ -4376,7 +4376,7 @@ progress {color: #fa2f2f;}
 .pxp-user-modal-fig img {
     height: 120px;
     width: auto;
-} 
+}
 .pxp-user-modal .modal-title {
     padding: 0 40px;
 }
@@ -4387,7 +4387,7 @@ progress {color: #fa2f2f;}
 }
 
 .pxp-user-modal .form-floating > .form-control:-webkit-autofill,
-.pxp-user-modal .form-floating > .form-control:focus, 
+.pxp-user-modal .form-floating > .form-control:focus,
 .pxp-user-modal .form-floating > .form-control:not(:placeholder-shown) {
     padding-top: 1.625rem;
     padding-bottom: .625rem;

@@ -32,7 +32,7 @@ $title = 'Menu';
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="submit" class="ml-1 float-right mt-2 btn btn-primary">Create</button>
+                            <button type="submit" class="ml-1 float-right mt-2 btn btn-primary">Edit</button>
                             <a href="{{ route('admin.major-categories') }}"
                             class="float-right mt-2 btn btn-info">Back</a>
                         </form>

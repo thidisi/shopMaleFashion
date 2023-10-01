@@ -30,12 +30,12 @@ $title = 'Silde';
                                         <input multiple class="form-control" type="file" name="fileDataNew[]" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="" class="form-label">Or Image Old</label>
-                                        {{-- @if ($each->image != '')
-                                            <img height="150" src="{{ asset("storage/$each->image") }}">
+                                        <label for="" class="form-label d-block">Or Image Old</label>
+                                        @if ($each->image != '')
+                                            <img height="150" src="{{ config('app.url') .'/storage'.'/'. json_decode($each->image)[0] }}">
                                         @else
                                             <img height="150" src="{{ asset('backend/images/products/product-1.jpg') }}">
-                                        @endif --}}
+                                        @endif
                                         <input multiple type="hidden" name="fileDataOld" value="{{ $each->image }}">
                                     </div>
                                     <div class="form-group">

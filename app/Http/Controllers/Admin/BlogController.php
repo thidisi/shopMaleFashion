@@ -12,6 +12,7 @@ use App\Models\Blog;
 use App\Models\Major_Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cookie;
 
 class BlogController extends Controller
 {
@@ -40,9 +41,13 @@ class BlogController extends Controller
 
     public function detail(Blog $blog)
     {
-
         $data['previous'] = $this->blog->find($blog->id - 1);
         $data['next'] = $this->blog->find($blog->id + 1);
+        if (Cookie::has('blog-view' . $blog->id) == false) {
+            $blog->count_view += 1;
+            $blog->save();
+            Cookie::queue(Cookie::make('blog-view' . $blog->id, $blog->id, 1));
+        }
         return view('frontend.blogs.detail', [
             'blog' => $blog,
             'data' => $data

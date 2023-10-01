@@ -1,6 +1,6 @@
 @extends('backend.layout_admin')
 @php
-$title = 'Production';
+    $title = 'Production';
 @endphp
 @section('container')
     <div class="container-fluid">
@@ -48,7 +48,6 @@ $title = 'Production';
                                         <th>Name</th>
                                         <th>Images</th>
                                         <th>Price</th>
-                                        <th>Description</th>
                                         <th>Info</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -67,23 +66,21 @@ $title = 'Production';
                                                 {{ $value->id }}
                                             </td>
                                             <td>
-                                                <span class="d-inline-block text-truncate"
-                                                    style="max-width: 150px;">{{ $value->name }}</span>
+                                                <a href="{{ route('productDetail', $value->slug) }}" title="redirect to detail">
+                                                    <span class="d-inline-block text-truncate"
+                                                        style="max-width: 150px;">{{ $value->name }}</span>
+                                                </a>
                                             </td>
                                             <td>
                                                 @foreach (json_decode($value->image) as $images)
                                                     <img class="mt-1 mb-1 ml-1" src="{{ asset("storage/$images") }}"
-                                                        alt="contact-img" title="contact-img" class="rounded mr-3"
-                                                        height="68" />
+                                                        alt="" title="" class="rounded mr-3" height="68" />
                                                 @endforeach
-                                                <input class="form-check-input" type="checkbox" id="invalidCheck" @if ($value->statusImage == 1) checked @endif>
+                                                <input class="form-check-input" type="checkbox" id="invalidCheck"
+                                                    @if ($value->statusImage == 1) checked @endif>
                                             </td>
                                             <td>
                                                 {{ $value->price }}
-                                            </td>
-                                            <td>
-                                                <span class="d-inline-block text-truncate"
-                                                    style="max-width: 150px;">{{ $value->descriptions }}</span>
                                             </td>
                                             <td>
                                                 <span>{{ $value->size }}:
@@ -116,11 +113,13 @@ $title = 'Production';
                                             </td>
 
                                             <td class="text-center">
-                                                <a href="{{ route('admin.productions.edit', $value) }}" class="action-icon">
+                                                <a href="{{ route('admin.productions.edit', $value) }}"
+                                                    class="action-icon">
                                                     <i class="mdi mdi-square-edit-outline"></i>
                                                 </a>
                                                 <form class="d-inline-block ml-2 formd-submit"
-                                                    action="{{ route('admin.productions.destroy', $value) }}" method="post">
+                                                    action="{{ route('admin.productions.destroy', $value) }}"
+                                                    method="post">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="action-icon"
@@ -146,5 +145,4 @@ $title = 'Production';
     <script src="{{ asset('backend/js/vendor/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
     <script src="{{ asset('backend/js/backend/demo.productions.js') }}"></script>
-
 @endpush
