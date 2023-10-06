@@ -32,7 +32,6 @@ $title = 'Carts';
                                         <th>Product</th>
                                         <th>Quantity</th>
                                         <th>Total</th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>

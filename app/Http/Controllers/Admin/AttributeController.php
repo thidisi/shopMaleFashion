@@ -48,7 +48,7 @@ class AttributeController extends Controller
 
     public function createValue()
     {
-        $attr = $this->attributeValue->whereNull('replace_id')
+        $attr = $this->attribute->whereNull('replace_id')
             ->with('replaces')
             ->get();
         return view('backend.attributes.createValue', [

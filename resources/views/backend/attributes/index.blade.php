@@ -34,12 +34,6 @@ $title = 'Attributes';
                             <table class="table table-centered w-100 dt-responsive nowrap" id="attributeValues-datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="all" style="width: 20px;">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1">&nbsp;</label>
-                                            </div>
-                                        </th>
                                         <th>#</th>
                                         <th>Name</th>
                                         <th>Slug</th>
@@ -52,12 +46,6 @@ $title = 'Attributes';
                                 <tbody>
                                     @foreach ($attrValue as $each)
                                         <tr>
-                                            <td>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                                    <label class="custom-control-label" for="customCheck2">&nbsp;</label>
-                                                </div>
-                                            </td>
                                             <td>
                                                 {{ $each->id }}
                                             </td>
@@ -117,12 +105,6 @@ $title = 'Attributes';
                             <table class="table table-centered w-100 dt-responsive nowrap" id="attributes-datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="all" style="width: 20px;">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1">&nbsp;</label>
-                                            </div>
-                                        </th>
                                         <th>#</th>
                                         <th class="all">Name</th>
                                         <th>Description</th>
@@ -134,12 +116,6 @@ $title = 'Attributes';
                                 <tbody>
                                     @foreach ($attr as $value)
                                         <tr>
-                                            <td>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                                    <label class="custom-control-label" for="customCheck2">&nbsp;</label>
-                                                </div>
-                                            </td>
                                             <td>
                                                 {{ $value->id }}
                                             </td>

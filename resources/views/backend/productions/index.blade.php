@@ -38,12 +38,6 @@
                             <table class="table table-centered w-100 dt-responsive nowrap" id="productions-datatable">
                                 <thead class="thead-light">
                                     <tr class="text-center">
-                                        <th class="all" style="width: 20px;">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1">&nbsp;</label>
-                                            </div>
-                                        </th>
                                         <th>#</th>
                                         <th>Name</th>
                                         <th>Images</th>
@@ -56,12 +50,6 @@
                                 <tbody>
                                     @foreach ($products as $value)
                                         <tr class="text-center">
-                                            <td>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                                    <label class="custom-control-label" for="customCheck2">&nbsp;</label>
-                                                </div>
-                                            </td>
                                             <td>
                                                 {{ $value->id }}
                                             </td>

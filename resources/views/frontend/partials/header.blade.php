@@ -257,7 +257,7 @@
                 <div class="header__nav__option">
                     <a href="#" class="search-switch"><img src="{{ asset('frontend/img/icon/search.png') }}"
                             alt=""></a>
-                    <a href="#"><img src="{{ asset('frontend/img/icon/heart.png') }}" alt=""></a>
+                    <a href="#" class="favourite-icon"><img src="{{ asset('frontend/img/icon/heart.png') }}" alt=""></a>
                     <a href="{{ route('cart') }}"><img src="{{ asset('frontend/img/icon/cart.png') }}"
                             alt="">
                         <span class="carts-total">{{ Cart::getTotalQuantity() }}</span></a>

@@ -1,22 +1,21 @@
 $(document).ready(function () {
     "use strict";
-    var table = $("#productions-datatable").DataTable({
+    var table = $("#categories-datatable").DataTable({
         language: {
             paginate: {
                 previous: "<i class='mdi mdi-chevron-left'>",
                 next: "<i class='mdi mdi-chevron-right'>",
             },
-            info: "Showing productions _START_ to _END_ of _TOTAL_",
+            info: "Showing categories _START_ to _END_ of _TOTAL_",
             lengthMenu:
-                'Display <select class=\'custom-select custom-select-sm ml-1 mr-1\'><option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="-1">All</option></select> productions',
+                'Display <select class=\'custom-select custom-select-sm ml-1 mr-1\'><option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="-1">All</option></select> categories',
         },
         pageLength: 5,
         columns: [
             { orderable: !0 },
             { orderable: !0 },
-            { orderable: !1 },
             { orderable: !0 },
-            { orderable: !1 },
+            { orderable: !0 },
             { orderable: !0 },
             { orderable: !1 },
         ],

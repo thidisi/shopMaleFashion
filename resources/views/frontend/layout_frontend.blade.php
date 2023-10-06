@@ -16,13 +16,16 @@
 
     <!-- Css Styles -->
     <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+        integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('frontend/css/font-awesome.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/elegant-icons.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/magnific-popup.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/nice-select.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/owl.carousel.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/slicknav.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('frontend/css/animation.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/styles.css') }}" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css"
         integrity="sha512-wJgJNTBBkLit7ymC6vvzM1EcSWeM9mmOu+1USHaRBbHkm6W9EgM0HY27+UtUaprntaYQJF75rc8gjxllKs5OIQ=="
@@ -34,6 +37,110 @@
     <!-- Page Preloder -->
     <div id="preloder">
         <div class="loader"></div>
+    </div>
+    <!-- Favourite Menu Begin -->
+    <div class="favourite_box">
+        <div class="favourite_box--chevron">
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+            <div class="chevron"></div>
+        </div>
+        <div class="favourite_box--container" style="height: 100%;">
+            <div class="favourite_container--title">
+                <div style="display: flex; height:48px;padding: 12px;">
+                    <div>Product</div>
+                    <div>Total</div>
+                </div>
+            </div>
+            <ul class="favourite_container--content"
+                style="max-height: 100vh;
+            overflow: auto;height: calc(100% - 48px - 34px);">
+                <li style="padding:8px;min-height: calc(100% / 6);">
+                    <a href="http://127.0.0.1:8000/ao-so-mi-regular-tui-mo-asm117-mau-bo.html">
+                        <div class="" style="margin-right:12px;float: left;">
+                            <img src="http://127.0.0.1:8000/storage/imageProducts/CjPRMlEnAx2PKeMPCTiBl0Ye0CTchgKHRRnyjSt9.jpg"
+                                alt="" width="62">
+                        </div>
+                        <div class=""
+                            style="padding-top:0;height: 84px;display: flex;
+                                align-items: center;">
+                            <div style="padding-top:8px;">
+                                <h6 style="font-size:14px; margin-bottom:4px;">ÁO SƠ MI REGULAR TÚI MỔ
+                                    ASM117 MÀU BÒ (Size:M, Blue)</h6>
+                                <h5 style="font-size:14px; "><span class="cart-price">415.000đ</span>
+                                </h5>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li style="padding:8px;min-height: calc(100% / 6);">
+                    <a href="http://127.0.0.1:8000/ao-so-mi-regular-tui-mo-asm117-mau-bo.html">
+                        <div class="" style="margin-right:12px;float: left;">
+                            <img src="http://127.0.0.1:8000/storage/imageProducts/CjPRMlEnAx2PKeMPCTiBl0Ye0CTchgKHRRnyjSt9.jpg"
+                                alt="" width="62">
+                        </div>
+                        <div class=""
+                            style="padding-top:0;height: 84px;display: flex;
+                                align-items: center;">
+                            <div style="padding-top:8px;">
+                                <h6 style="font-size:14px; margin-bottom:4px;">ÁO SƠ MI REGULAR TÚI MỔ
+                                    ASM117 MÀU BÒ (Size:M, Blue)</h6>
+                                <h5 style="font-size:14px; "><span class="cart-price">415.000đ</span>
+                                </h5>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li style="padding:8px;min-height: calc(100% / 6);">
+                    <a href="http://127.0.0.1:8000/ao-so-mi-regular-tui-mo-asm117-mau-bo.html">
+                        <div class="" style="margin-right:12px;float: left;">
+                            <img src="http://127.0.0.1:8000/storage/imageProducts/CjPRMlEnAx2PKeMPCTiBl0Ye0CTchgKHRRnyjSt9.jpg"
+                                alt="" width="62">
+                        </div>
+                        <div class=""
+                            style="padding-top:0;height: 84px;display: flex;
+                                align-items: center;">
+                            <div style="padding-top:8px;">
+                                <h6 style="font-size:14px; margin-bottom:4px;">ÁO SƠ MI REGULAR TÚI MỔ
+                                    ASM117 MÀU BÒ (Size:M, Blue)</h6>
+                                <h5 style="font-size:14px; "><span class="cart-price">415.000đ</span>
+                                </h5>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li style="padding:8px;min-height: calc(100% / 6);">
+                    <a href="http://127.0.0.1:8000/ao-so-mi-regular-tui-mo-asm117-mau-bo.html">
+                        <div class="" style="margin-right:12px;float: left;">
+                            <img src="http://127.0.0.1:8000/storage/imageProducts/CjPRMlEnAx2PKeMPCTiBl0Ye0CTchgKHRRnyjSt9.jpg"
+                                alt="" width="62">
+                        </div>
+                        <div class=""
+                            style="padding-top:0;height: 84px;display: flex;
+                                align-items: center;">
+                            <div style="padding-top:8px;">
+                                <h6 style="font-size:14px; margin-bottom:4px;">ÁO SƠ MI REGULAR TÚI MỔ
+                                    ASM117 MÀU BÒ (Size:M, Blue)</h6>
+                                <h5 style="font-size:14px; "><span class="cart-price">415.000đ</span>
+                                </h5>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <div class="favourite_container--footer">
+                <div style="text-align: center;"><button>See details</button></div>
+            </div>
+        </div>
+    </div>
+    <!-- Favourite Menu End -->
+
+    <div class="favourite" style="z-index: 999;position: fixed;right: 12px;top: 60px;">
+        <div class="logo_favourite">
+            <img src="{{ asset('frontend/img/logo_favourite.png') }}" alt="Image favourite">
+            <button type="button" class="btn_favourite--close">
+            </button>
+        </div>
     </div>
     <!-- Offcanvas Menu Begin -->
     @include('frontend.partials.navbar')
@@ -69,7 +176,9 @@
     <script src="{{ asset('frontend/js/jquery.countdown.min.js') }}"></script>
     <script src="{{ asset('frontend/js/jquery.slicknav.js') }}"></script>
     <script src="{{ asset('frontend/js/mixitup.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
+        integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('frontend/js/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"
@@ -84,8 +193,6 @@
                 }
             });
         });
-    </script>
-    <script type="text/javascript">
         var NotifiSuccess = "{{ session('success') ? session('success') : 'false' }}";
         if (NotifiSuccess !== 'false') {
             $.toast({
@@ -152,6 +259,21 @@
                     localStorage.removeItem('data');
                 }
             });
+            $('.btn_favourite--close').on('click', function(e) {
+                $('.favourite').hide();
+            });
+            $('.favourite-icon').on('click', function(e) {
+                $('.favourite').show();
+                $('.favourite_box').addClass('show');
+            });
+            $('.favourite_box--chevron').on('click', function(e) {
+                $('.favourite_box').removeClass('show');
+            });
+            $('.logo_favourite').on('click', function(e) {
+                $('.favourite_box').addClass('show');
+            });
+            console.log($('.favourite_container--content'));
+            // $('.favourite_container--content')
         });
     </script>
     @stack('js')

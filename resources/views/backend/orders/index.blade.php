@@ -18,15 +18,9 @@ $title = 'Orders';
                             <table class="table table-centered w-100 dt-responsive nowrap" id="orders-datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="all" style="width: 20px;">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1">&nbsp;</label>
-                                            </div>
-                                        </th>
                                         <th>#</th>
-                                        <th class="all">Name user</th>
-                                        <th>Info Receiver</th>
+                                        <th class="all">Users</th>
+                                        {{-- <th>Info Receiver</th> --}}
                                         <th>Total Money</th>
                                         <th>Action</th>
                                         <th>View</th>
@@ -36,18 +30,12 @@ $title = 'Orders';
                                     @foreach ($orders as $value)
                                         <tr>
                                             <td>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                                    <label class="custom-control-label" for="customCheck2">&nbsp;</label>
-                                                </div>
-                                            </td>
-                                            <td>
                                                 {{ $value->id }}
                                             </td>
                                             <td>
                                                 <span class="d-inline-block text-truncate">{{ $value->customerName }}</span>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 Name: {{ $value->name_receiver }}
                                                 <br>
                                                 Phone: {{ $value->phone_receiver }}
@@ -55,7 +43,7 @@ $title = 'Orders';
                                                 Address: {{ $value->address_receiver }}
                                                 <br>
                                                 Note: {{ $value->note }}
-                                            </td>
+                                            </td> --}}
 
                                             <td>
                                                 {{ $value->total_money }}
@@ -77,7 +65,7 @@ $title = 'Orders';
                                                         </div>
                                                     @break
 
-                                                    @default 
+                                                    @default
                                                         <div>
                                                             <span class="text-warning font-weight-bold text-center"
                                                             style="max-width: 100px;">Waiting for approval</span>
@@ -107,5 +95,5 @@ $title = 'Orders';
     <script src="{{ asset('backend/js/vendor/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
     <script src="{{ asset('backend/js/backend/demo.orders.js') }}"></script>
-    
+
 @endpush

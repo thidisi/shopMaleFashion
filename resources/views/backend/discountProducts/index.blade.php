@@ -96,6 +96,6 @@ $title = 'DiscountProducts';
     <script src="{{ asset('backend/js/vendor/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
-    <script src="{{ asset('backend/js/backend/demo.discount.js') }}"></script>
+    <script src="{{ asset('backend/js/backend/demo.discounts.js') }}"></script>
 @endpush
 

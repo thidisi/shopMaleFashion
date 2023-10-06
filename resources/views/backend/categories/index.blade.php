@@ -39,12 +39,6 @@
                             <table class="table table-centered w-100 dt-responsive nowrap" id="categories-datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="all" style="width: 20px;">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1">&nbsp;</label>
-                                            </div>
-                                        </th>
                                         <th>#</th>
                                         <th class="all">Name</th>
                                         <th>Slug</th>
@@ -56,12 +50,6 @@
                                 <tbody>
                                     @foreach ($categories as $value)
                                         <tr>
-                                            <td>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                                    <label class="custom-control-label" for="customCheck2">&nbsp;</label>
-                                                </div>
-                                            </td>
                                             <td>
                                                 {{ $value->id }}
                                             </td>
@@ -129,7 +117,7 @@
     <script src="{{ asset('backend/js/vendor/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
-    <script src="{{ asset('backend/js/backend/demo.categorie.js') }}"></script>
+    <script src="{{ asset('backend/js/backend/demo.categories.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('.delete-forms').on('submit', function(e) {
