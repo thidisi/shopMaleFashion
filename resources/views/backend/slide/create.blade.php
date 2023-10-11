@@ -31,13 +31,13 @@ $title = 'Silde';
                                         <label class="form-label">sortOrder</label>
                                         <select class="form-control select2" data-toggle="select2" name="sort_order" id="">
                                             @foreach ($sortOrder as $key => $value)
-                                                <option value="{{ $key + 1 }}">
-                                                    {{ $value }}
+                                                <option value="{{ $value }}">
+                                                    {{ $key }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="col-xl-6">
                                     <div class="form-group">

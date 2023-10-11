@@ -21,7 +21,7 @@ class CreateDiscountTable extends Migration
             $table->enum('status', [
                 'active',
                 'suspended',
-            ])->default('active');
+            ])->default(App\Models\Discount::DISCOUNT_STATUS['ACTIVE']);
             $table->timestamps();
         });
     }

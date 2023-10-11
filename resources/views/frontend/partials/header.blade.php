@@ -226,15 +226,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">FAQs</a>
-                        </div>
-                        <div class="header__top__hover">
-                            <span>Usd <i class="arrow_carrot-down"></i></span>
-                            <ul>
-                                <li>USD</li>
-                                <li>EUR</li>
-                                <li>USD</li>
-                            </ul>
+                            <a href="{{ route('contact') }}">FAQs</a>
                         </div>
                     </div>
                 </div>
@@ -245,7 +237,7 @@
         <div class="row">
             <div class="col-lg-3 col-md-3 col-sm-12 header-mobi">
                 <div class="header__logo">
-                    <a href="{{ route('index') }}"><img src="{{ asset(" storage/$about->logo") }}"
+                    <a href="{{ route('index') }}"><img src="{{ asset("storage/$about->logo") }}"
                             alt=""></a>
                 </div>
                 <div class="canvas__open"><i class="fa fa-bars"></i></div>

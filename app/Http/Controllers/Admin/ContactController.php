@@ -64,7 +64,7 @@ class ContactController extends Controller
             'email' => 'required|email',
             'message' => 'required',
         ]);
-        $arr['status'] = NOT_ACTIVE;
+        $arr['status'] = Contact::CONTACT_STATUS["PENDING"];
         $this->contact->create($arr);
         return redirect()->back()->with('success', 'Get messages successfully!!');
     }

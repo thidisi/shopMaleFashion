@@ -208,13 +208,13 @@
             <a class="nav-link dropdown-toggle nav-user arrow-none mr-0" data-toggle="dropdown" href="#"
                 role="button" aria-haspopup="false" aria-expanded="false">
                 <span class="account-user-avatar">
-                    <img src="@if (\Auth::user()->avatar !== null) {{ asset('storage/avatars/' . \Auth::user()->avatar) }}
+                    <img src="@if (\Auth::user()->avatar !== null) {{ \Auth::user()->avatar }}
                     @else{{ asset('backend/images/users/avatar-0.jpg') }} @endif"alt="user-image"
                         class="rounded-circle">
                 </span>
                 <span>
-                    <span class="account-user-name text-capitalize">{{ \Auth::user()->fullname }}</span>
-                    <span class="account-position text-capitalize">Role : {{ session('sessionUserRole') }}</span>
+                    <span class="account-user-name text-capitalize">{{ \Auth::user()->username }}</span>
+                    <span class="account-position text-capitalize">Role : {{ \Auth::user()->level }}</span>
                 </span>
             </a>
             <div
@@ -249,11 +249,13 @@
                 </a>
 
                 <!-- item-->
-                <a href="{{ route('admin.logout') }}" class="dropdown-item notify-item">
-                    <i class="mdi mdi-logout mr-1"></i>
-                    <span>Logout</span>
-                </a>
-
+                <form action="{{ route('admin.logout') }}" method="post">
+                    @csrf
+                    <button type="submit" class="dropdown-item notify-item">
+                        <i class="mdi mdi-logout mr-1"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
             </div>
         </li>
 

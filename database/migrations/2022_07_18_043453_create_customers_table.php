@@ -17,10 +17,14 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('email')->unique();
-            $table->string('password');
-            $table->float('phone');
-            $table->string('address')->nullable();
-            $table->integer('status')->default(1);
+            $table->string('password', 100)->nullable();
+            $table->string('phone', 15)->unique();
+            $table->text('address', 255)->nullable();
+            $table->enum('status', [
+                'active',
+                'inactive',
+                'pending',
+            ])->default(App\Models\Customer::CUSTOMER_STATUS['ACTIVE']);
             $table->string('token')->nullable();
             $table->timestamps();
             $table->softDeletes();

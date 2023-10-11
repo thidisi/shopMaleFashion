@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTicketRequest;
 use App\Models\Customer;
 use App\Models\Ticket;
-use DataTables;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -14,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Yajra\DataTables\DataTables;
 
 class TicketController extends Controller
 {
@@ -102,7 +102,7 @@ class TicketController extends Controller
             }
             return redirect()->back()->with('addTicketStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->back();
         }
     }
 

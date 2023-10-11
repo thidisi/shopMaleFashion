@@ -32,24 +32,35 @@ use Laravel\Socialite\Facades\Socialite;
 */
 
 // group name
-Route::prefix('admin')
-    ->name('admin.')
+// Route::prefix('admin')
+//     ->name('admin.')
+//     ->group(function () {
+//         Route::get('login', [AuthController::class, 'index'])->name('login');
+//         Route::post('handle', [AuthController::class, 'handleLogin'])->name('handle.login');
+//         Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+//         Route::get('register', [AuthController::class, 'register'])->name('register');
+//         Route::post('register', [AuthController::class, 'registering'])->name('registering');
+//         Route::get('/auth/redirect/{provider}', function ($provider) {
+//             return Socialite::driver($provider)->redirect();
+//         })->name('auth.redirect');
+//         Route::get('/auth/callback/{provider}', [AuthController::class, 'callback'])->name('auth.callback');
+//     });
+Route::controller(AuthController::class)
+    ->prefix("auth")
     ->group(function () {
-        Route::get('login', [AuthController::class, 'index'])->name('login');
-        Route::post('handle', [AuthController::class, 'handleLogin'])->name('handle.login');
-        Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-        Route::get('register', [AuthController::class, 'register'])->name('register');
-        Route::post('register', [AuthController::class, 'registering'])->name('registering');
-        Route::get('/auth/redirect/{provider}', function ($provider) {
+        Route::post('handle', 'handleLogin')->name('admin.handle.login');
+        Route::post('register', 'registering')->name('admin.registering');
+        Route::get('redirect/{provider}', function ($provider) {
             return Socialite::driver($provider)->redirect();
-        })->name('auth.redirect');
-        Route::get('/auth/callback/{provider}', [AuthController::class, 'callback'])->name('auth.callback');
+        })->name('admin.auth.redirect');
+        Route::get('callback/{provider}', 'callback')->name('auth.callback');
     });
 
 Route::prefix('admin')
     ->name('admin.')
     ->middleware('auth:sanctum')
     ->group(function () {
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('dashboards', [DashboardController::class, 'index'])->name('dashboards');
         Route::get('users', [UserController::class, 'index'])->name('users');
         Route::get('users/api', [UserController::class, 'api'])->name('users.api');

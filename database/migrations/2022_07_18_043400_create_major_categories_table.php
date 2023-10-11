@@ -17,7 +17,11 @@ class CreateMajorCategoriesTable extends Migration
             $table->id();
             $table->string('name',100)->unique();
             $table->string('slug')->nullable();
-            $table->integer('status')->default(0);
+            $table->enum('status', [
+                'show',
+                'hot_default',
+                'hide',
+            ])->default(App\Models\Major_Category::MENU_STATUS['SHOW']);
             $table->timestamps();
             $table->softDeletes();
         });

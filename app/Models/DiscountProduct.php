@@ -24,11 +24,11 @@ class DiscountProduct extends Model
 
     public function discounts()
     {
-        return $this->belongsTo(Discount::class);
+        return $this->belongsTo(Discount::class, 'discount_id');
     }
 
     public function productions()
     {
-        return $this->belongsTo(Production::class);
+        return $this->belongsTo(Production::class, 'production_id');
     }
 }

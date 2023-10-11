@@ -18,6 +18,11 @@ class DatabaseSeeder extends Seeder
             DistrictSeeder::class,
             ProvinceSeeder::class,
             WardSeeder::class,
+            MenuSeeder::class,
+            AboutSeeder::class,
+            AttributeSeeder::class,
+            CategorySeeder::class,
+            SlideSeeder::class,
         ]);
     }
 }

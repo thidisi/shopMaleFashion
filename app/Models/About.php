@@ -24,9 +24,23 @@ class About extends Model
         "logo",
         "address",
         "address_second",
+        "branch",
+        "branch_second",
         "link_address_fb",
         "link_address_youtube",
         "link_address_zalo",
         "link_address_instagram",
+    ];
+
+    public $timestamps = true;
+
+    /**
+     * Return the created_at configuration array for this model.
+     *
+     * @return array
+     */
+    protected $casts = [
+        'created_at' => 'date:d-m-Y',
+        'updated_at' => 'date:d-m-Y'
     ];
 }

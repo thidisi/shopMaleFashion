@@ -19,7 +19,10 @@ class CreateAttributesValuesTable extends Migration
             $table->string('name',100)->unique();
             $table->string('slug');
             $table->string('descriptions')->nullable();
-            $table->integer('status')->default(1);
+            $table->enum('status', [
+                'active',
+                'inactive',
+            ])->default(App\Models\AttributeValue::ATTRIBUTE_VALUE_STATUS['ACTIVE']);
             $table->timestamps();
             $table->softDeletes();
         });

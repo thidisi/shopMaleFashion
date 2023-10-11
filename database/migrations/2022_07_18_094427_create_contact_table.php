@@ -17,9 +17,12 @@ class CreateContactTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
-            $table->string('address');
             $table->string('message');
-            $table->boolean('status')->default(false);
+            $table->enum('status', [
+                'active',
+                'inactive',
+                'pending',
+            ])->default(App\Models\Contact::CONTACT_STATUS['PENDING']);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -13,22 +13,16 @@
         <div class="row product__filter">
             @foreach ($products as $each)
                 @php
-                    $productPrice = 1;
-                    if ($each->statusDiscount == 'active' && $each->discountPrice != null) {
-                        $productPrice = $each->discountPrice;
-                    }
-                    
                     $date = $each->created_at;
                     $date_end = Carbon\Carbon::now()->addDays(-7);
-                    $checkDiscount = $each->discountPrice != null && $each->statusDiscount == 'active';
                     $checkDate = $date >= $date_end;
                 @endphp
                 <div
-                    class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix @if ($checkDiscount) hot-sales @endif @if ($checkDate) new-arrivals @endif">
+                    class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix @if ($each->discount != 1 && $each->discountStatus == 'active') hot-sales @endif @if ($checkDate) new-arrivals @endif">
                     <div class="product__item">
                         <div class="product__item__pic set-bg" id="wishlist_productimage{{ $each->id }}"
-                            @if ($each->statusImage == ACTIVE) data-setbg="{{ asset("storage/$each->image") }}" @endif>
-                            @if ($each->quantity <= 0 && $each->statusImage == ACTIVE)
+                            @if ($each->product_images->status == 'active') data-setbg="{{ asset("storage/$each->image") }}" @endif>
+                            @if ($each->quantity <= 0 && $each->product_images->status == 'active')
                                 <div
                                     style="
                                 background-color: #ffffff5e;
@@ -43,8 +37,8 @@
                                 font-size: 1.6rem;">
                                     Hết hàng</div>
                             @endif
-                            @if ($checkDiscount)
-                                <span class="item-sale">-{{ (1 - $each->discountPrice) * 100 }}%</span>
+                            @if ($each->discount != 1 && $each->discountStatus == 'active')
+                                <span class="item-sale">-{{ (1 - $each->discount) * 100 }}%</span>
                             @endif
                             @if ($checkDate)
                                 <span class="label">New</span>
@@ -74,14 +68,14 @@
                                 @endfor
                             </div>
                             <h5>
-                                {{ currency_format($each->price * $productPrice) }}
-                                @if ($each->discountPrice != null && $each->statusDiscount == 'active')
+                                {{ currency_format($each->price * $each->discount) }}
+                                @if ($each->discount != 1 && $each->discountStatus == 'active')
                                     <em id="wishlist_productpriceold{{ $each->id }}"
                                         style="text-decoration:line-through">{{ currency_format($each->price) }}</em>
                                 @endif
                             </h5>
                             <input type="hidden" id="wishlist_productprice{{ $each->id }}"
-                                value="{{ currency_format($each->price * $productPrice) }}">
+                                value="{{ currency_format($each->price * $each->discount) }}">
                         </div>
                     </div>
                 </div>

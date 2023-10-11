@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductionController;
 use App\Http\Controllers\CartController;
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::get('login', [AuthController::class, 'login'])->name('admin.login');
+Route::get('register', [AuthController::class, 'register'])->name('admin.register');
 Route::get('/404.html', [HomeController::class, 'errors'])->name('errors');
 Route::post('/signUp', [HomeController::class, 'signUp'])->name('signUp');
 Route::post('/handleLogin', [HomeController::class, 'handleLogin'])->name('handleLogin');
@@ -34,8 +37,7 @@ Route::get('/shop.html', [CategoryController::class, 'view'])->name('shop');
 Route::get('shop/{menu:slug}.html', [MenuController::class, 'view'])->name('menu');
 
 Route::get('/blogs.html', [BlogController::class, 'view'])->name('blogs');
-Route::get('/blogs-details-{blog}.html', [BlogController::class, 'detail'])->name('blogs.detail');
-
+Route::get('/blogs/{blog:slug}.html', [BlogController::class, 'detail'])->name('blogs.detail');
 
 Route::get('/contact.html', [ContactController::class, 'view'])->name('contact');
 Route::post('/contact.html', [ContactController::class, 'store'])->name('contact.store');
@@ -55,5 +57,3 @@ Route::post('/reviews', [CommentController::class, 'review_products'])->name('re
 Route::post('/comments', [CommentController::class, 'add_comments'])->name('addComments');
 
 Route::get('/{production:slug}.html', [ProductionController::class, 'view'])->name('productDetail');
-
-

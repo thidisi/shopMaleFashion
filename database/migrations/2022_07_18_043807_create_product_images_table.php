@@ -17,7 +17,10 @@ class CreateProductImagesTable extends Migration
             $table->id();
             $table->foreignId('production_id')->constrained();
             $table->text('image');
-            $table->integer('status')->default(1);
+            $table->enum('status', [
+                'active',
+                'inactive',
+            ])->default(App\Models\ProductImage::PRODUCT_IMAGE_STATUS['ACTIVE']);
             $table->timestamps();
             $table->softDeletes();
         });

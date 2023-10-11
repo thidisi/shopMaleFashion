@@ -33,7 +33,7 @@ $title = 'Orders';
                                                 {{ $value->id }}
                                             </td>
                                             <td>
-                                                <span class="d-inline-block text-truncate">{{ $value->customerName }}</span>
+                                                <span class="d-inline-block text-truncate">{{ $value->customers->name }}</span>
                                             </td>
                                             {{-- <td>
                                                 Name: {{ $value->name_receiver }}
@@ -51,14 +51,14 @@ $title = 'Orders';
 
                                             <td>
                                                 @switch($value->action)
-                                                    @case(ACTIVE)
+                                                    @case('active')
                                                         <div>
                                                             <span class="text-success font-weight-bold text-center"
                                                                 style="max-width: 100px;">Order approved</span>
                                                         </div>
                                                     @break
 
-                                                    @case(CANCEL)
+                                                    @case('inactive')
                                                         <div>
                                                             <span class="text-danger font-weight-bold text-center"
                                                                 style="max-width: 100px;">Order has been cancelled</span>

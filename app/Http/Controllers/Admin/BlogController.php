@@ -13,6 +13,7 @@ use App\Models\Major_Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -23,7 +24,7 @@ class BlogController extends Controller
 
     public function index()
     {
-        $blogs = $this->blog->latest()->paginate(5);
+        $blogs = $this->blog->latest('created_at')->paginate(5);
         return view('backend.blogs.index', [
             'blogs' => $blogs
         ]);
@@ -31,7 +32,7 @@ class BlogController extends Controller
 
     public function view()
     {
-        $blogs = $this->blog->where('status', '=', NameStatusEnum::ACTIVE)
+        $blogs = $this->blog->where('status', '=', BLOG::BLOG_STATUS['ACTIVE'])
             ->latest('created_at')
             ->paginate(9);
         return view('frontend.blogs.index', [
@@ -61,14 +62,18 @@ class BlogController extends Controller
 
     public function store(StoreBlogRequest $request)
     {
-        $path = Storage::disk('public')->put('imageBlog', $request->file('image'));
-        $status = $request->input('status') ? '1' : '2';
-        $arr = $request->validated();
-        $arr['image'] = $path;
-        $arr['status'] = $status;
-
-        $this->blog->create($arr);
-        return redirect()->route('admin.blogs')->with('addBlogsSuccess', 'Add successfully!!');
+        try {
+            $path = Storage::disk('public')->put('imageBlog', $request->file('image'));
+            $status = $request->input('status') ? BLOG::BLOG_STATUS['ACTIVE'] : BLOG::BLOG_STATUS['INACTIVE'];
+            $arr = $request->validated();
+            $arr['image'] = $path;
+            $arr['status'] = $status;
+            $arr['slug'] = Str::slug($request->input('title'), '-');
+            $this->blog->create($arr);
+            return redirect()->route('admin.blogs')->with('addBlogsSuccess', 'Add successfully!!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('AddAttrStatusErr', 'Add error!!');
+        }
     }
 
     public function edit(Blog $blog)
@@ -83,8 +88,9 @@ class BlogController extends Controller
         try {
             $blog = $this->blog->find($blogId);
             $blog->title = $request->input('title');
+            $blog->slug = Str::slug($request->input('title'), '-');
             $blog->content = $request->input('content');
-            $blog->status = $request->input('status') ? '1' : '2';
+            $blog->status = $request->input('status') ? BLOG::BLOG_STATUS['ACTIVE'] : BLOG::BLOG_STATUS['INACTIVE'];
 
             $nameAvatar = null;
             if ($request->hasFile('photo_new')) {
@@ -106,7 +112,7 @@ class BlogController extends Controller
                 return redirect()->route('admin.blogs')->with('BlogErrors', 'Edit Failed Blog table');
             }
         } catch (\Throwable $th) {
-            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
+            return redirect()->back()->with('EditAttrStatusErr', 'Edit error!!');
         }
     }
 
@@ -114,9 +120,9 @@ class BlogController extends Controller
     {
         try {
             $this->blog->destroy($blogId);
-            return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
+            return redirect()->back()->with('deleteSuccess', 'Deleted successfully');
         } catch (\Throwable $th) {
-            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
+            return redirect()->back()->with('EditAttrStatusErr', 'Edit not successfully!!');
         }
     }
 }

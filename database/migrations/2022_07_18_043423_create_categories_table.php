@@ -18,8 +18,11 @@ class CreateCategoriesTable extends Migration
             $table->foreignId('major_category_id')->constrained();
             $table->string('name')->unique();
             $table->text('slug');
-            $table->string('avatar')->nullable();
-            $table->integer('status')->default(1);
+            $table->text('avatar', 255)->nullable();
+            $table->enum('status', [
+                'active',
+                'inactive',
+            ])->default(App\Models\Category::CATEGORY_STATUS['ACTIVE']);
             $table->timestamps();
             $table->softDeletes();
         });

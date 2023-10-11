@@ -19,8 +19,8 @@ class Authenticate extends Middleware
         }
     }
 
-    protected function unauthenticated($request, array $guards)
-    {
-        abort(response()->json(['error' => '404'], 401));
-    }
+    // protected function unauthenticated($request, array $guards)
+    // {
+    //     abort(response()->json(['error' => '404'], 401));
+    // }
 }

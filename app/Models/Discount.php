@@ -18,8 +18,21 @@ class Discount extends Model
 
     const DISCOUNT_STATUS = [
         'ACTIVE' => 'active',
-        'CLOSE'           => 'suspended',
+        'CLOSE'  => 'suspended',
     ];
+
+    const DISCOUNT_LIST = [
+        '10%' => '10',
+        '20%'  => '19',
+        '29%'  => '29',
+        '49%'  => '49',
+        '59%'  => '59',
+        '69%'  => '69',
+        '79%'  => '79',
+        '89%'  => '89',
+        '99%'  => '99',
+    ];
+
 
     protected $fillable = [
         "date_start",
@@ -30,7 +43,7 @@ class Discount extends Model
 
     public function discount_product()
     {
-        return $this->hasMany(DiscountProduct::class, 'discount_id', 'id');
+        return $this->hasMany(DiscountProduct::class, 'discount_id');
     }
 
     public function getFormatDateStartAttribute()

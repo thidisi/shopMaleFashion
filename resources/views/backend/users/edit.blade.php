@@ -1,6 +1,6 @@
 @extends('backend.layout_admin')
 @php
-$title = 'Users';
+    $title = 'Users';
 @endphp
 @section('container')
     <div class="container-fluid">
@@ -24,20 +24,20 @@ $title = 'Users';
                             </div>
                         @endif
                         <div class="form-group ml-2">
-                            <div class="mb-3">
+                            {{-- <div class="mb-3">
                                 <label class="form-label">Full name</label>
                                 <input type="text" class="form-control" name="fullname" value="{{ $each->fullname }}">
-                            </div>
+                            </div> --}}
                             <div class="mb-3">
-                                <label class="form-label">address</label>
+                                <label class="form-label">Address</label>
                                 <input type="text" class="form-control" name="address" value="{{ $each->address }}">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">phone</label>
+                                <label class="form-label">Phone</label>
                                 <input type="text" class="form-control" name="phone" value="{{ $each->phone }}">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">birthday</label>
+                                <label class="form-label">Birthday</label>
                                 <input type="date" class="form-control" name="birthday" value="{{ $each->birthday }}">
                             </div>
                             <div class="mb-3">
@@ -47,7 +47,7 @@ $title = 'Users';
                             <label for="" class="form-label">Or Avatar Old</label>
                             <div class="mb-3">
                                 @if ($each->avatar != '')
-                                    <img height="150" src="{{ asset('storage/avatars/'.$each->avatar)}}">
+                                    <img height="150" src="{{ asset('storage/avatars/' . $each->avatar) }}">
                                 @else
                                     <img height="150" src="{{ asset('backend/images/users/avatar-0.jpg') }}">
                                 @endif
@@ -55,23 +55,23 @@ $title = 'Users';
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Gender</label>
-                                <select class="form-control" name="gender" id="">
-                                    <option value="0" @if ($each->gender === 0) selected @endif>
+                                <select class="form-control" name="gender">
+                                    <option value="male" @if ($each->gender == 'male') selected @endif>
                                         Male
                                     </option>
-                                    <option value="1" @if ($each->gender === 1) selected @endif>
+                                    <option value="female" @if ($each->gender == 'female') selected @endif>
                                         Female
                                     </option>
                                 </select>
                             </div>
-                            @if (\Auth()->user()->email == strtolower($roles[2]))
+                            @if (\Auth()->user()->level == \App\Models\User::USER_LEVEL['ADMIN'])
                                 <div class="mb-3">
                                     <label class="form-label">Roles</label>
-                                    <select class="form-control" name="level" id="">
+                                    <select class="form-control" name="level">
                                         @foreach ($roles as $key => $value)
-                                            <option value="{{ ($key + 1) }}"
-                                                @if ($each->level === $key + 1) selected @endif>
-                                                {{ $value }}
+                                            <option value="{{ $value }}"
+                                                @if ($each->level == $value) selected @endif>
+                                                {{ $key }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -83,7 +83,8 @@ $title = 'Users';
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
                                 <div class="float-right">
-                                    <input type="checkbox" id="switch3" @if ($each->status == 1) checked @endif data-switch="success" name="status" />
+                                    <input type="checkbox" id="switch3" @if ($each->status == \App\Models\User::USER_STATUS['ACTIVE']) checked @endif
+                                        data-switch="success" name="status" />
                                     <label for="switch3" data-on-label="Yes" data-off-label="No"></label>
                                 </div>
                             </div>

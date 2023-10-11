@@ -21,17 +21,9 @@ class AttributeController extends Controller
 
     public function index()
     {
-        $attr = $this->attribute->get();
-        $attrValue = Attribute::Join('attribute_values', 'attribute_values.attribute_id', '=', 'attributes.id')
-            ->select(['attributes.name as attr_name', 'attribute_values.*'])
-            ->whereNull('attribute_values.deleted_at')
-            ->get();
-        foreach ($attr as $each) {
-            $each->status = $each->status_name;
-        }
-        foreach ($attrValue as $value) {
-            $value->status = $value->status_name;
-        }
+        $attr = $this->attribute->latest('created_at')->get();
+        $attrValue = $this->attributeValue->with('attributes')->latest('created_at')->get();
+        // dd($attr);
         return view('backend.attributes.index', [
             'attr' => $attr,
             'attrValue' => $attrValue,
@@ -58,22 +50,28 @@ class AttributeController extends Controller
 
     public function store(StoreAttributeRequest $request)
     {
-        $status = $request->input('status') ? '1' : '2';
-        $arr = $request->validated();
-        $arr['status'] = $status;
-        $this->attribute->create($arr);
-
-        return redirect()->route('admin.attributes')->with('addAttrStatus', 'Add successfully!!');
+        try {
+            $status = $request->input('status') ? Attribute::ATTRIBUTE_STATUS['ACTIVE'] : Attribute::ATTRIBUTE_STATUS['INACTIVE'];
+            $arr = $request->validated();
+            $arr['status'] = $status;
+            $this->attribute->create($arr);
+            return redirect()->route('admin.attributes')->with('addAttrStatus', 'Add successfully!!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('AddAttrStatusErr', 'Add not error!!');
+        }
     }
 
     public function storeValue(StoreAttrValueRequest $request)
     {
-        $status = $request->input('status') ? '1' : '2';
-        $arr = $request->validated();
-        $arr['status'] = $status;
-        $this->attributeValue->create($arr);
-
-        return redirect()->route('admin.attributes')->with('addAttrStatus', 'Add successfully!!');
+        try {
+            $status = $request->input('status') ? AttributeValue::ATTRIBUTE_VALUE_STATUS['ACTIVE'] : AttributeValue::ATTRIBUTE_VALUE_STATUS['INACTIVE'];
+            $arr = $request->validated();
+            $arr['status'] = $status;
+            $this->attributeValue->create($arr);
+            return redirect()->route('admin.attributes')->with('addAttrStatus', 'Add successfully!!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('AddAttrStatusErr', 'Add not error!!');
+        }
     }
 
     public function edit(Attribute $attribute)
@@ -108,7 +106,7 @@ class AttributeController extends Controller
             $attribute->save();
             return redirect()->route('admin.attributes')->with('EditAttrStatus', 'Edit successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
+            return redirect()->back()->with('EditAttrStatusErr', 'Edit not error!!');
         }
     }
 
@@ -124,7 +122,7 @@ class AttributeController extends Controller
             $attrValue->save();
             return redirect()->route('admin.attributes')->with('EditAttrStatus', 'Edit successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->back()->with('EditAttrStatusErr', 'Sửa không thành công!!');
+            return redirect()->back()->with('EditAttrStatusErr', 'Edit not error!!');
         }
     }
 

@@ -81,6 +81,9 @@
                     <li>
                         <a href="{{ route('admin.discountProducts') }}">Discount Products</a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.tickets.index') }}">Tickets</a>
+                    </li>
                 </ul>
             </li>
             <li class="side-nav-item">

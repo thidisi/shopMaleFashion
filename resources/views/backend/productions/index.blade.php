@@ -54,36 +54,35 @@
                                                 {{ $value->id }}
                                             </td>
                                             <td>
-                                                <a href="{{ route('productDetail', $value->slug) }}" title="redirect to detail">
+                                                <a href="{{ route('productDetail', $value->slug) }}"
+                                                    title="redirect to detail">
                                                     <span class="d-inline-block text-truncate"
                                                         style="max-width: 150px;">{{ $value->name }}</span>
                                                 </a>
                                             </td>
                                             <td>
-                                                @foreach (json_decode($value->image) as $images)
+                                                @foreach (json_decode($value->product_images->image) as $images)
                                                     <img class="mt-1 mb-1 ml-1" src="{{ asset("storage/$images") }}"
                                                         alt="" title="" class="rounded mr-3" height="68" />
                                                 @endforeach
                                                 <input class="form-check-input" type="checkbox" id="invalidCheck"
-                                                    @if ($value->statusImage == 1) checked @endif>
+                                                    @if ($value->product_images->status == 'active') checked @endif>
                                             </td>
                                             <td>
                                                 {{ $value->price }}
                                             </td>
                                             <td>
-                                                <span>{{ $value->size }}:
-                                                    @foreach ($value->infos as $info)
-                                                        {{ $info->name }}
-                                                    @endforeach
-                                                </span>
-                                                <br>
-                                                <span>
-                                                    {{ $value->color }}:
-                                                    @foreach ($value->infoColor as $infoColor)
-                                                        {{ $infoColor->name }}
-                                                    @endforeach
-                                                </span>
-                                                <br>
+                                                @foreach ($attrs as $infoAttr)
+                                                    @if (!empty($value->infoAttr[$infoAttr->id]))
+                                                        <span>
+                                                            {{ $infoAttr->name }}:
+                                                            @foreach ($value->infoAttr["$infoAttr->id"] as $info)
+                                                                {{ $info->name }}
+                                                            @endforeach
+                                                        </span>
+                                                        <br>
+                                                    @endif
+                                                @endforeach
                                                 <span>
                                                     Quantity: {{ $value->quantity }}
                                                 </span>
@@ -95,7 +94,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <span
-                                                    @if ($value->status == 'Active') class="badge badge-success" @else class="badge badge-danger" @endif>
+                                                    @if ($value->status == 'active') class="badge badge-success" @else class="badge badge-danger" @endif>
                                                     {{ $value->status }}
                                                 </span>
                                             </td>

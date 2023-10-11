@@ -116,7 +116,7 @@ $title = 'Users';
                         orderable: true,
                         searchable: false,
                         render: function(data, type, row, meta) {
-                            return "Name: " + row.fullname + " - " + row.gender + "<br>Phone: " + (
+                            return "Name: " + row.username + " - " + row.gender + "<br>Phone: " + (
                                 row.phone ? row
                                 .phone : '') + "<br>Age: " + (row.birthday ? row.birthday : '');
                         }

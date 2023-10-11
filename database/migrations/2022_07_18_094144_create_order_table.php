@@ -16,12 +16,18 @@ class CreateOrderTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained();
-            $table->string('name_receiver',100);
-            $table->float('phone_receiver');
+            $table->string('name_receiver', 100);
+            $table->string('phone_receiver', 15);
             $table->string('address_receiver');
             $table->float('total_money');
             $table->string('note')->nullable();
-            $table->integer('action')->default(1);
+            $table->enum('action', [
+                'active',
+                'inactive',
+                'pending',
+            ])->default(App\Models\Order::ORDER_STATUS['PENDING']);
+            $table->unsignedBigInteger('ticket_id')->nullable();
+            $table->foreign('ticket_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -29,7 +29,7 @@ $title = 'Blogs';
                                 <h5
                                     style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                     {{ $each->title }}</h5>
-                                <a href="{{ route('blogs.detail', $each->id) }}">Read More</a>
+                                <a href="{{ route('blogs.detail', $each->slug) }}">Read More</a>
                             </div>
                         </div>
                     </div>

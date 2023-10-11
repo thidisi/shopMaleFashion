@@ -198,6 +198,7 @@
                             $("#btn_discount").removeClass("bg-secondary").prop("disabled",
                                 false);
                         }, 2500);
+
                         $("#get_discount").find('p').remove();
                         $('#get_discount').append(
                             `<p>Discount <span>- ${response.data.discount}</span></p>`)

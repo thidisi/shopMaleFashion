@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\Discount;
 use App\Models\DiscountProduct;
 use App\Models\Major_Category;
+use App\Models\ProductImage;
 use App\Models\Production;
 use App\Models\Slide;
 use Illuminate\Http\Request;
@@ -23,9 +24,20 @@ use Illuminate\Support\Facades\View;
 
 class HomeController extends Controller
 {
+    public function __construct(Customer $customer, Slide $slide, Blog $blog, Production $product, DiscountProduct $discountProduct, ProductImage $productImage, Discount $discount)
+    {
+        $this->customer = $customer;
+        $this->slide = $slide;
+        $this->blog = $blog;
+        $this->product = $product;
+        $this->discount = $discount;
+        $this->discountProduct = $discountProduct;
+        $this->productImage = $productImage;
+    }
+
     public function errors()
     {
-       
+
         return view('errors.404');
     }
 
@@ -33,81 +45,54 @@ class HomeController extends Controller
     {
         $check_cookie = Cookie::get('remember');
         if (!empty($check_cookie)) {
-            $customer = Customer::query()->where('token', $check_cookie)->first();
+            $customer = $this->customer->where('token', $check_cookie)->first();
             session()->put('sessionEmailCustomer', $customer->email);
             session()->put('sessionIdCustomer', $customer->id);
             session()->put('sessionCustomerName', $customer->name);
         }
     }
-    
+
     public function index()
     {
         self::check_cookies();
-        $slides = Slide::leftJoin('major_categories', 'slide.major_category_id', '=', 'major_categories.id')
-            ->where('slide.sort_order', '=', SortOrderSlideEnum::SLIDER)
-            ->where('slide.status', '=', NameStatusEnum::ACTIVE)
-            ->get(['major_categories.slug as menu_slug', 'slide.*']);
+        $slides = $this->slide->with('major_categories')->where('slide.status', '=', Slide::SLIDE_STATUS['ACTIVE'])->get();
+        $slideOrders = Slide::SLIDE_ORDER;
 
-        $banners = Slide::leftJoin('major_categories', 'slide.major_category_id', '=', 'major_categories.id')
-            ->where('slide.sort_order', '=', SortOrderSlideEnum::BANNER)
-            ->where('slide.status', '=', NameStatusEnum::ACTIVE)
-            ->get(['major_categories.slug as menu_slug', 'slide.*']);
-
-        $instagram = Slide::leftJoin('major_categories', 'slide.major_category_id', '=', 'major_categories.id')
-            ->where('slide.sort_order', '=', SortOrderSlideEnum::INSTAGRAM)
-            ->where('slide.status', '=', NameStatusEnum::ACTIVE)
-            ->get(['major_categories.slug as slug', 'slide.*']);
-
-        $blogs = Blog::where('status', '=', NameStatusEnum::ACTIVE)
+        $blogs = $this->blog->where('status', '=', NameStatusEnum::ACTIVE)
             ->latest('created_at')
             ->paginate(3);
 
-        $discountProduct = DiscountProduct::leftJoin('productions', 'productions.id', '=', 'discount_product.production_id')
-            ->rightJoin('product_images', 'productions.id', '=', 'product_images.production_id')
-            ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-            ->select(
-                'productions.id as id',
-                'productions.name as name',
-                'productions.price as price',
-                'product_images.image as image',
-                'discounts.date_start as date_start',
-                'discounts.date_end as date_end',
-                'discounts.discount_price as discount_price',
-            )
-            ->where('discounts.date_end', '>', now())
-            ->where('discounts.status', \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'])
-            ->where('productions.quantity', '>', '0')
-            ->oldest('discounts.date_end')
+        $discountProduct = $this->discountProduct->with(['discounts', 'productions'])
+            ->whereHas('discounts', function ($query) {
+                $query->where('date_end', '>', now());
+                $query->where('status', Discount::DISCOUNT_STATUS['ACTIVE']);
+                $query->oldest('date_end');
+            })
+            ->whereHas('productions', function ($query) {
+                $query->where('quantity', '>', 0);
+            })
             ->first();
-            
+        $discountProduct->productImage = json_decode($this->productImage->where('production_id', $discountProduct->productions->id)->first(['id', 'image', 'status'])->image)[0];
 
-        $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
-            ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
-            ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-            ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-            ->where('productions.status', '=', ACTIVE)
-            ->latest('productions.count_view')
-            ->select(
-                'product_images.image as image',
-                'product_images.status as statusImage',
-                'categories.name as categoryName',
-                'discounts.discount_price as discountPrice',
-                'discounts.status as statusDiscount',
-                'productions.*'
-            )->paginate(8);
-        foreach ($products as $each) {
-            $each->image = json_decode($each->image)[0];
-            if ($each->statusDiscount == \App\Models\Discount::DISCOUNT_STATUS['ACTIVE']) {
-                $each->discountPrice = (100 - $each->discountPrice) / 100;
+        $products = $this->product->with(['categories', 'product_images', 'discount_products'])
+            ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
+            ->latest('created_at')->get();
+        $products = $products->map(function ($query) {
+            $query->image = json_decode($query->product_images->image)[0];
+            $query->discount = 1;
+            $query->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
+            if (!empty($query->discount_products)) {
+                $query->discount = (100 - $this->discount->find($query->discount_products->discount_id)->discount_price) / 100;
+                $query->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
             }
-            $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
-        }
+            $query->review = DB::table('production_comments')->where('production_id', '=', $query->id)->avg('review');
+            return $query;
+        });
 
         return view('frontend.home.index', [
+            'slideOrders' => $slideOrders,
             'slides' => $slides,
-            'banners' => $banners,
             'products' => $products,
-            'instagram' => $instagram,
             'blogs' => $blogs,
             'discountProduct' => $discountProduct,
         ]);
@@ -119,7 +104,7 @@ class HomeController extends Controller
             $customer = Customer::query()
                 ->where('email', $request->emailUser)
                 ->firstOrFail();
-            if ($customer !== null) {
+            if ($customer != null) {
                 $hasPassword = $customer->password;
                 $password = $request->passwordUser;
                 $token = Hash::make(uniqid('user_', true));
@@ -128,7 +113,7 @@ class HomeController extends Controller
                     $remember = $token;
                 }
                 if (Hash::check($password, $hasPassword)) {
-                    if ($customer->status === ACTIVE) {
+                    if ($customer->status == 'active') {
                         $customer->token = $remember;
                         $customer->save();
                         $request->session()->put('sessionEmailCustomer', $customer->email);
@@ -168,7 +153,7 @@ class HomeController extends Controller
     public function forgotPassword(Request $request)
     {
         try {
-            $customer = Customer::query()->where('email', $request->get('emailReset'))->where('status', ACTIVE)->firstOrFail();
+            $customer = Customer::query()->where('email', $request->get('emailReset'))->where('status', 'active')->firstOrFail();
             $token = \Str::random(26);
             $check = DB::table('forgot_password')->where('customer_id', $customer->id)->count();
             if ($check != ACTIVE) {
@@ -176,7 +161,7 @@ class HomeController extends Controller
                     'customer_id' => $customer->id,
                     'token' => $token
                 ]);
-            }else {
+            } else {
                 DB::table('forgot_password')->update([
                     'customer_id' => $customer->id,
                     'token' => $token
@@ -194,7 +179,7 @@ class HomeController extends Controller
             ];
             $message['subject'] = "Shop ko biet dau";
             $users[]['email'] = $customer->email;
-            SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
+            // SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
             return response('Please check your email for the code!!', 200);
         } catch (\Throwable $e) {
             return response('Email does not exist or has been disabled!!', 404);

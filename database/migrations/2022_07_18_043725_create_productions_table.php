@@ -22,7 +22,10 @@ class CreateProductionsTable extends Migration
             $table->string('slug');
             $table->text('descriptions')->nullable();
             $table->integer('count_view')->default(0);
-            $table->integer('status')->default(1);
+            $table->enum('status', [
+                'active',
+                'inactive',
+            ])->default(App\Models\Production::PRODUCTION_STATUS['ACTIVE']);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -30,15 +30,6 @@ class UserController extends Controller
             ->editColumn('birthday', function ($object) {
                 return $object->age;
             })
-            ->editColumn('gender', function ($object) {
-                return $object->gender_name;
-            })
-            ->editColumn('level', function ($object) {
-                return $object->role_name;
-            })
-            ->editColumn('status', function ($object) {
-                return $object->status_name;
-            })
             ->addColumn('edit', function ($object) {
                 return route('admin.users.edit', $object);
             })
@@ -50,7 +41,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = UserRoleEnum::getKeys();
+        $roles = User::USER_LEVEL;
         return view('backend.users.edit', [
             'each' => $user,
             'roles' => $roles,
@@ -61,13 +52,11 @@ class UserController extends Controller
     {
         try {
             $user = $this->user->findOrFail($id);
-            $fullname = $request->input('fullname');
             $address = $request->input('address');
             $phone = $request->input('phone');
             $birthday = $request->input('birthday');
             $birthday = date('Y-m-d', strtotime($birthday));
             $gender = $request->input('gender');
-            $gender = $gender === '0' || $gender === '1' ? $gender : '0';
             $roles = $request->input('level');
             $status = $request->input('status') ? '1' : '2';
 
@@ -82,7 +71,6 @@ class UserController extends Controller
                 $nameAvatar = $request->input('photo_old');
             }
 
-            $user->fullname = $fullname;
             $user->address = $address;
             $user->phone = $phone;
             $user->birthday = $birthday;

@@ -39,9 +39,9 @@ $title = 'Discounts';
                                             </p>
                                         @endif
                                         <select class="form-control select2" data-toggle="select2" name="discount_price">
-                                            @foreach ($promotions as $value)
+                                            @foreach ($promotions as $key => $value)
                                                 <option value="{{ $value }}" @if($value == $each->discount_price) selected @endif>
-                                                    {{ $value }}%
+                                                    {{ $key }}
                                                 </option>
                                             @endforeach
                                         </select>

@@ -27,10 +27,7 @@ class MenuController extends Controller
 
     public function index()
     {
-        $majorCategories = $this->major_category->latest()->paginate(5);
-        foreach ($majorCategories as $each) {
-            $each->status = $each->status_name;
-        }
+        $majorCategories = $this->major_category->latest('created_at')->paginate(5);
         return view('backend.menu.index', [
             'majorCategories' => $majorCategories,
         ]);
@@ -163,7 +160,7 @@ class MenuController extends Controller
 
     public function create()
     {
-        $status = MenuStatusEnum::getKeys();
+        $status = Major_Category::MENU_STATUS;
         return view('backend.menu.create', [
             'status' => $status,
         ]);
@@ -175,7 +172,6 @@ class MenuController extends Controller
             'name' => "required|unique:major_categories|min:2|max:255",
             'status' => 'required',
         ]);
-        $arr['created_at'] = now();
         $arr['slug'] = Str::slug($request->input('name'), '-');
         $this->major_category->create($arr);
 

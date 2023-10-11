@@ -19,11 +19,10 @@ $title = 'Products';
             <div class="row">
                 <div class="col-lg-3 col-md-3">
                     <ul class="nav nav-tabs nice-scroll" role="tablist">
-
                         @foreach (json_decode($each->image) as $key => $images)
                         <li class="nav-item" style="cursor: pointer;">
                             <a class="nav-link @if (head(json_decode($each->image)) == $images) active @endif" data-toggle="tab" href="#tabImages-{{ $key + 1 }}" role="tab">
-                                <div class="product__thumb__pic set-bg" @if ($each->statusImage == ACTIVE) data-setbg="{{ asset("storage/$images") }}" @endif>
+                                <div class="product__thumb__pic set-bg" @if ($each->statusImage == 'active') data-setbg="{{ asset("storage/$images") }}" @endif>
                                     @if (last(json_decode($each->image)) == $images)
                                     <i class="fa fa-play"></i>
                                     @endif
@@ -39,7 +38,7 @@ $title = 'Products';
                         @if (last(json_decode($each->image)) == $images)
                         <div class="tab-pane" id="tabImages-{{ $key + 1 }}" role="tabpanel">
                             <div class="product__details__pic__item">
-                                @if ($each->statusImage == ACTIVE)
+                                @if ($each->statusImage == 'active')
                                 <img src="{{ asset("storage/$images") }}" alt="product_img">
                                 @endif
                                 <a href="https://www.youtube.com/watch?v=3O19l0_la5M&list=RDMM3O19l0_la5M&start_radio=1" class="video-popup"><i class="fa fa-play"></i></a>
@@ -48,7 +47,7 @@ $title = 'Products';
                         @endif
                         <div class="tab-pane @if (head(json_decode($each->image)) == $images) active @endif" id="tabImages-{{ $key + 1 }}" role="tabpanel">
                             <div class="product__details__pic__item">
-                                @if ($each->statusImage == ACTIVE)
+                                @if ($each->statusImage == 'active')
                                 <img id="wishlist_productimage{{ $each->id }}" src="{{ asset("storage/$images") }}" alt="product_img">
                                 @endif
                             </div>
@@ -92,7 +91,7 @@ $title = 'Products';
                                 <div class="product__details__option__size">
                                     <span>Size:</span>
                                     @foreach ($each->infos as $value)
-                                    @if ($value->status == ACTIVE)
+                                    @if ($value->status == 'active')
                                     <label class="@if (head($each->infos)[0]->name == $value->name) active @endif" for="{{ $value->name }}">
                                         {{ $value->name }}
                                         <input type="radio" id="{{ $value->name }}" @if (head($each->infos)[0]->name == $value->name) checked @endif
@@ -107,7 +106,7 @@ $title = 'Products';
                                     <span>Color:</span>
 
                                     @foreach ($each->infos2 as $value)
-                                    @if ($value->status == ACTIVE)
+                                    @if ($value->status == 'active')
                                     <label class="{{ $value->class }}" for="{{ $value->name }}">
                                         <input type="radio" id="{{ $value->name }}" @if (head($each->infos2)[0]->name == $value->name) checked @endif
                                         value="{{ $value->name }}" name="color">
@@ -206,7 +205,7 @@ $title = 'Products';
                                             <p class="text-review">How would you rate this product</p>
                                         </div>
                                         <div class="d-flex justify-content-center align-items-center">
-                                            <button type="button" class="btn-review 
+                                            <button type="button" class="btn-review
                                             @if (session('sessionIdCustomer') == null) signIn @endif" @if (session('sessionIdCustomer') !==null) @if (!in_array(session('sessionIdCustomer'), $check_review['customer_id'])) data-toggle="modal" data-target="#centermodal" @else onClick="alert('Bạn đã review sản phẩm này rồi!!')" @endif @else data-toggle="modal" data-target="#loginModal" @endif>Review</button>
                                             <div class="modal fade" id="centermodal" tabindex="-1" role="dialog" aria-hidden="true">
                                                 <div class="modal-dialog full-width modal-dialog-centered">
@@ -258,7 +257,7 @@ $title = 'Products';
                                     <div class="boxReview-comment my-3 mx-2">
                                         @if (count($show_reviews) > 0)
                                         @foreach ($show_reviews as $value)
-                                        @if ($value->action === ACTIVE)
+                                        @if ($value->action === 'active')
                                         <div class="boxReview-comment-item">
                                             <div class="boxReview-comment-item-title d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center">
@@ -323,7 +322,7 @@ $title = 'Products';
                                     <div class="boxComment my-3 mx-2">
                                         @if (count($show_comments) > 0)
                                         @foreach ($show_comments as $show_comment)
-                                        <div class="boxComment-item" @if ($show_comment->status === NOT_ACTIVE) style="opacity: 0.7;" @endif>
+                                        <div class="boxComment-item" @if ($show_comment->status === 'inactive') style="opacity: 0.7;" @endif>
                                             <div class="boxComment-content">
                                                 <div class="boxReview-comment-item-title d-flex justify-content-between align-items-center my-3">
                                                     <div class="d-flex align-items-center">
@@ -342,14 +341,14 @@ $title = 'Products';
                                                             {{ $show_comment->content }}
                                                         </p>
                                                     </div>
-                                                    <button @if ($show_comment->status === ACTIVE) onclick="rep_cmt({{ $show_comment->id }})" @endif
+                                                    <button @if ($show_comment->status === 'active') onclick="rep_cmt({{ $show_comment->id }})" @endif
                                                         class="btn-rep-cmt">
                                                         <div><svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 12 10.8">
                                                                 <path id="chat" d="M3.48,8.32V4.6H1.2A1.2,1.2,0,0,0,0,5.8V9.4a1.2,1.2,0,0,0,1.2,1.2h.6v1.8l1.8-1.8h3A1.2,1.2,0,0,0,7.8,9.4V8.308a.574.574,0,0,1-.12.013H3.48ZM10.8,1.6H5.4A1.2,1.2,0,0,0,4.2,2.8V7.6H8.4l1.8,1.8V7.6h.6A1.2,1.2,0,0,0,12,6.4V2.8a1.2,1.2,0,0,0-1.2-1.2Z" transform="translate(0 -1.6)" fill="#fa2f2f"></path>
                                                             </svg></div>&nbsp;Reply
                                                     </button>
                                                 </div>
-                                                @if ($show_comment->status === NOT_ACTIVE)
+                                                @if ($show_comment->status === 'inactive')
                                                 <span class="ml-3 p-1 d-block" style="font-size: 0.9rem;font-weight: 600;">->*This
                                                     comment is currently pending
                                                     approval*</span>
@@ -357,7 +356,7 @@ $title = 'Products';
                                                 <div class="boxComment-list-items">
                                                     @if (count($show_comment->parents) > 0)
                                                     @foreach ($show_comment->parents as $comment_parent)
-                                                    <div class="boxComment-list-item" @if ($comment_parent->status === NOT_ACTIVE) style="opacity: 0.7;" @endif>
+                                                    <div class="boxComment-list-item" @if ($comment_parent->status === 'inactive') style="opacity: 0.7;" @endif>
                                                         <div class="boxReview-comment-item-title d-flex justify-content-between align-items-center my-3">
                                                             <div class="d-flex align-items-center">
                                                                 <p class="mr-2 d-flex align-items-center justify-content-center name-letter text-uppercase" @if ($comment_parent->status === 4) style="color:#fa2f2f;" @endif>
@@ -375,7 +374,7 @@ $title = 'Products';
                                                                     {{ $comment_parent->content }}
                                                                 </p>
                                                             </div>
-                                                            <button @if ($comment_parent->status === ACTIVE) onclick="rep_cmt ({{ $comment_parent->parent_id }})" @endif
+                                                            <button @if ($comment_parent->status === 'active') onclick="rep_cmt ({{ $comment_parent->parent_id }})" @endif
                                                                 class="btn-rep-cmt">
                                                                 <div><svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 12 10.8">
                                                                         <path id="chat" d="M3.48,8.32V4.6H1.2A1.2,1.2,0,0,0,0,5.8V9.4a1.2,1.2,0,0,0,1.2,1.2h.6v1.8l1.8-1.8h3A1.2,1.2,0,0,0,7.8,9.4V8.308a.574.574,0,0,1-.12.013H3.48ZM10.8,1.6H5.4A1.2,1.2,0,0,0,4.2,2.8V7.6H8.4l1.8,1.8V7.6h.6A1.2,1.2,0,0,0,12,6.4V2.8a1.2,1.2,0,0,0-1.2-1.2Z" transform="translate(0 -1.6)" fill="#fa2f2f">
@@ -384,7 +383,7 @@ $title = 'Products';
                                                                 &nbsp;Reply
                                                             </button>
                                                         </div>
-                                                        @if ($comment_parent->status === NOT_ACTIVE)
+                                                        @if ($comment_parent->status === 'inactive')
                                                         <span class="ml-3 p-1 d-block" style="font-size: 0.9rem;font-weight: 600;">-&gt;*This
                                                             comment is currently pending
                                                             approval*</span>
@@ -451,7 +450,7 @@ $title = 'Products';
             @endphp
             <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
                 <div class="product__item">
-                    <div class="product__item__pic set-bg" id="wishlist_productimage{{ $value->id }}" @if ($value->statusImage == ACTIVE) data-setbg="{{ asset("storage/$image") }}" @endif>
+                    <div class="product__item__pic set-bg" id="wishlist_productimage{{ $value->id }}" @if ($value->statusImage == 'active') data-setbg="{{ asset("storage/$image") }}" @endif>
                         @if ($value->discountPrice != null && $value->statusDiscount == 'active')
                         <span class="item-sale">-{{ (1 - $value->discountPrice) * 100 }}%</span>
                         @endif

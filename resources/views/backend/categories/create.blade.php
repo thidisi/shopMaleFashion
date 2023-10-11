@@ -40,7 +40,7 @@ $title = 'Categories';
                         <input class="form-control" type="file" name="avatar">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Major Category Id</label>
+                        <label class="form-label">Major Categories</label>
                         <select class="form-control" name="major_category_id" id="">
                             @foreach ($major_categories as $value)
                                 <option value="{{ $value->id }}">

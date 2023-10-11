@@ -30,6 +30,12 @@ class Customer extends Model
         "token",
     ];
 
+    const CUSTOMER_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+        'PENDING' => 'pending',
+    ];
+
     public function orders()
     {
         return $this->hasMany(Order::class, 'customer_id', 'id');

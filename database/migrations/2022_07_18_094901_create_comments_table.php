@@ -16,9 +16,13 @@ class CreateCommentsTable extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained();
-            $table->string('content');
-            $table->integer('status')->default(1);
-            $table->foreignId('parent_id');
+            $table->text('content');
+            $table->enum('status', [
+                'active',
+                'inactive',
+                'pending',
+            ])->default(App\Models\Comment::COMMENT_STATUS['PENDING']);
+            $table->foreignId('parent_id')->nullable()->references('id')->on('comments')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -6,6 +6,7 @@ use App\Enums\SortOrderSlideEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Major_Category;
+use App\Models\Slide;
 
 class UpdateSlideRequest extends FormRequest
 {
@@ -46,7 +47,7 @@ class UpdateSlideRequest extends FormRequest
             ],
             'sort_order' => [
                 'required',
-                Rule::in(SortOrderSlideEnum::asArray()),
+                Rule::in(Slide::SLIDE_ORDER),
             ],
         ];
     }

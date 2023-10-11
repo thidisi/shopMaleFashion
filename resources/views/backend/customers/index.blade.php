@@ -142,7 +142,7 @@ $title = ucfirst($titles);
                         searchable: true,
                         render: function(data, type, row, meta) {
                             if (row.checkLevel == 'true') {
-                                if (row.status === 'Active') {
+                                if (row.status === 'active') {
                                     return `<span class="text-success">${row.status}</span>` +
                                         `<form class="action-icon" action="${row.edit}" method="post">
                                             @csrf
@@ -158,7 +158,7 @@ $title = ucfirst($titles);
                                         </form>`;
                                 }
                             } else {
-                                if (row.status === 'Active') {
+                                if (row.status == 'active') {
                                     return `<span class="text-success">${row.status}</span>`;
                                 } else {
                                     return `<span class="text-danger">${row.status}</span>`;

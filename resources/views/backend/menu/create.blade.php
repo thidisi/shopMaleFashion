@@ -26,8 +26,8 @@ $title = 'Menu';
                                 <label class="form-label">Status</label>
                                 <select class="form-control" name="status" id="">
                                     @foreach ($status as $key => $value)
-                                        <option value="{{ $key + 1 }}">
-                                            {{ $value }}
+                                        <option value="{{ $value }}">
+                                            {{ $key }}
                                         </option>
                                     @endforeach
                                 </select>

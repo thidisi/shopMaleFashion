@@ -25,7 +25,12 @@ class ProductImage extends Model
         "status",
     ];
 
-    
+    const PRODUCT_IMAGE_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+    ];
+
+
     public function productions()
     {
         return $this->belongsTo(Production::class);

@@ -69,14 +69,14 @@ $title = 'Slide';
                                             </td>
                                             <td>
                                                 <span class="d-inline-block text-truncate"
-                                                    style="max-width: 150px;">{{ $value->menu }}</span>
+                                                    style="max-width: 150px;">{{ $value->major_categories->name }}</span>
                                             </td>
                                             <td>
                                                 <span class="text-capitalize">{{ $value->sort_order }}</span>
                                             </td>
                                             <td class="text-center">
                                                 <span
-                                                    @if ($value->status == 'Active') class="badge badge-success" @else class="badge badge-danger" @endif>
+                                                    @if ($value->status == 'active') class="badge badge-success" @else class="badge badge-danger" @endif>
                                                     {{ $value->status }}
                                                 </span>
                                             </td>

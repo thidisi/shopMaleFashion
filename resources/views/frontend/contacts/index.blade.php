@@ -74,7 +74,7 @@
 @push('js')
     <script type="text/javascript">
         $(document).ready(function() {
-            function Disabled(time,data) {
+            function Disabled(time, data) {
                 if (time > 0) {
                     let times = data ? data : time;
                     $('.site-btn').addClass("bg-secondary").prop("disabled", true)
@@ -113,20 +113,21 @@
                 },
                 messages: {
                     "name": {
-                        required: "Không được bỏ trống",
-                        minlength: "Tên không được nhỏ hơn 3 kí tự"
+                        required: "Not be empty",
+                        minlength: "Name cannot be less than 3 characters!!"
                     },
                     "email": {
-                        required: "Vui lòng nhập email của bạn",
-                        email: "Email không đúng định dạng!!"
+                        required: "Please enter your email",
+                        email: "Email invalidate!!"
                     },
                     "message": {
-                        required: "Không được bỏ trống",
+                        required: "Not be empty",
                     },
                 },
                 submitHandler: function(form) {
+                    form.submit();
                     localStorage.setItem("timeDisabled", 29);
-                    Disabled(29,30);
+                    Disabled(29, 30);
                 }
             });
         })

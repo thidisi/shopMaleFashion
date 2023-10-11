@@ -26,9 +26,6 @@ class CustomerController extends Controller
     public function api()
     {
         return DataTables::of($this->customer->query())
-            ->editColumn('status', function ($object) {
-                return $object->status_name;
-            })
             ->addColumn('edit', function ($object) {
                 return route('admin.customers.update', $object);
             })
@@ -36,7 +33,7 @@ class CustomerController extends Controller
                 return route('admin.customers.destroy', $object);
             })
             ->addColumn('checkLevel', function () {
-                if (session('sessionUserRole') == 'admin' || session('sessionUserRole') == 'manager') {
+                if (auth()->user()->level == 'admin' || auth()->user()->level == 'manager') {
                     return 'true';
                 } else {
                     return 'false';
@@ -49,10 +46,10 @@ class CustomerController extends Controller
     {
         try {
             $customer = $this->customer->findOrFail($customerId);
-            if ($customer->status == ACTIVE) {
-                $customer->status = NOT_ACTIVE;
+            if ($customer->status == 'active') {
+                $customer->status = 'inactive';
             } else {
-                $customer->status = ACTIVE;
+                $customer->status = 'active';
             }
             $customer->save();
             return response('Updated successfully!!', 200);

@@ -29,6 +29,11 @@ class Production extends Model
         "status",
     ];
 
+    const PRODUCTION_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+    ];
+
     public function categories()
     {
         return $this->belongsTo(Category::class, 'category_id');
@@ -36,12 +41,12 @@ class Production extends Model
 
     public function product_images()
     {
-        return $this->hasMany(ProductImage::class, 'production_id', 'id');
+        return $this->hasOne(ProductImage::class, 'production_id');
     }
 
-    public function discount_product()
+    public function discount_products()
     {
-        return $this->hasMany(DiscountProduct::class, 'production_id', 'id');
+        return $this->hasOne(DiscountProduct::class, 'production_id');
     }
 
     public function attribute_values()

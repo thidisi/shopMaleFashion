@@ -63,56 +63,51 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        @foreach ($each->image as $value)
-                                            <label for="" class="form-label">Image New</label>
-                                            <div class="float-right">
-                                                <input type="checkbox" id="switch4"
-                                                    @if ($value->status == 1) checked @endif data-switch="success"
-                                                    name="status_image" />
-                                                <label for="switch4" data-on-label="Yes" data-off-label="No"></label>
-                                            </div>
-                                            @if ($errors->has('fileData'))
-                                                <p class="text-capitalize text-danger">{{ $errors->first('fileData') }}</p>
-                                            @endif
-                                            <input multiple class="form-control" type="file" name="fileDataNew[]" />
-                                            <div class="mb-2 mt-3">
-                                                <label for="" class="form-label">Or Image Old</label>
-                                                @foreach (json_decode($value->image) as $images)
-                                                    <img class="mt-1 mb-1 ml-1" src="{{ asset("storage/$images") }}"
-                                                        alt="contact-img" title="contact-img" class="rounded mr-3"
-                                                        height="68" />
-                                                @endforeach
-                                                <input multiple type="hidden" name="fileDataOld"
-                                                    value="{{ $value->image }}">
-                                            </div>
-                                        @endforeach
+                                        <label for="" class="form-label">Image New</label>
+                                        <div class="float-right">
+                                            <input type="checkbox" id="switch4"
+                                                @if ($each->product_images->status == 'active') checked @endif data-switch="success"
+                                                name="status_image" />
+                                            <label for="switch4" data-on-label="Yes" data-off-label="No"></label>
+                                        </div>
+                                        @if ($errors->has('fileData'))
+                                            <p class="text-capitalize text-danger">{{ $errors->first('fileData') }}</p>
+                                        @endif
+                                        <input multiple class="form-control" type="file" name="fileDataNew[]" />
+                                        <div class="mb-2 mt-3">
+                                            <label for="" class="form-label">Or Image Old</label>
+                                            @foreach (json_decode($each->product_images->image) as $images)
+                                                <img class="mt-1 mb-1 ml-1" src="{{ asset("storage/$images") }}"
+                                                    alt="contact-img" title="contact-img" class="rounded mr-3"
+                                                    height="68" />
+                                            @endforeach
+                                            <input multiple type="hidden" name="fileDataOld"
+                                                value="{{ $each->product_images->image }}">
+                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Choose Size</label>
                                         <select class="form-control select2" id="selectSize" data-toggle="select2">
-                                            @foreach ($attrSize as $value)
-                                                <option value="{{ $value->replace_id }}"
-                                                    @foreach ($each->attr as $keySize => $infoSize)
-                                                        @if ($value->id == $keySize)
-                                                        selected
-                                                         @endif @endforeach>
-                                                    {{ $value->name }}
-                                                </option>
+                                            @foreach ($attrs as $attrSize)
+                                                @if (!empty($attrSize->infoAttr) && !empty($attrSize->replace_id))
+                                                    <option value="{{ $attrSize->infoAttr }}"
+                                                        @foreach ($attrSize->infoAttr as $value) @if ($value->attribute_id == $attrKey['size']->id) selected @endif @endforeach>
+                                                        {{ $attrSize->name }}
+                                                    </option>
+                                                @endif
                                             @endforeach
                                         </select>
                                         <div class="mt-1">
                                             <select class="form-control select2" id="selectSizeValue" data-toggle="select2"
-                                                name="attrValue1[]" multiple>
-                                                @foreach ($attrSize as $valueSize)
-                                                    @foreach ($each->attr as $keySize => $infoSize)
-                                                        @if ($valueSize->id == $keySize)
-                                                            @foreach ($valueSize->replace_id as $eachSize)
-                                                                <option value="{{ $eachSize->id }}"
-                                                                    @foreach ($infoSize as $checkId) @if ($eachSize->id == $checkId->id) selected @endif @endforeach>
-                                                                    {{ $eachSize->name }} </option>
-                                                            @endforeach>
-                                                        @endif
-                                                    @endforeach>
+                                                name="attrValues[]" multiple>
+                                                @foreach ($attrs as $attr)
+                                                    @if ($attr->id == $attrKey['size']->id)
+                                                        @foreach ($attr->infoAttr as $value)
+                                                            <option value="{{ $value->id }}" @foreach ($attrValue as $attrv) @if ($value->id == $attrv->id) selected @endif @endforeach>
+                                                                {{ $value->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
                                                 @endforeach
                                             </select>
                                         </div>
@@ -120,16 +115,15 @@
                                     <div class="mb-3">
                                         <label class="form-label">Choose Color</label>
                                         <select class="form-control select2" data-toggle="select2" name="attrValue">
-                                            @foreach ($attrColor as $valueColor)
-                                                <option value="{{ $valueColor->id }}"
-                                                    @foreach ($each->attr as $keyColor => $infoColor)
-                                                        @if ($valueColor->attribute_id == $keyColor)
-                                                        @foreach ($infoColor as $eachColor)
-                                                            @if ($valueColor->id == $eachColor->id) selected @endif @endforeach
-                                                    @endif
-                                            @endforeach>
-                                            {{ $valueColor->name }}
-                                            </option>
+                                            @foreach ($attrs as $attr)
+                                                @if (!empty($attr->infoAttr) && empty($attr->replace_id))
+                                                    @foreach ($attr->infoAttr as $value)
+                                                        <option value="{{ $value->id }}"
+                                                            @if ($value->id == $attrKey['color']->id) selected @endif>
+                                                            {{ $value->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>
@@ -137,7 +131,9 @@
                                         <label class="form-label">Status</label>
                                         <div class="float-right">
                                             <input type="checkbox" id="switch3"
-                                                @if ($each->status == 1) checked @endif data-switch="success"
+                                                @if ($each->status == 'active')
+                                                checked
+                                                @endif data-switch="success"
                                                 name="status" />
                                             <label for="switch3" data-on-label="Yes" data-off-label="No"></label>
                                         </div>
@@ -160,13 +156,11 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
-            var data = $('#selectSize option:selected').val();
-            // // if($("#selectSizeValue").val())
-            // console.log($("#selectSizeValue").val().length > 0);
+            // var data = $('#selectSize option:selected').val();
             // data = JSON.parse(data);
-            // // for (let each of data) {
-            // //     $('#selectSizeValue').append(`<option value="${each.id}" selected>${each.name}</option>`);
-            // // }
+            // for (let each of data) {
+            //     $('#selectSizeValue').append(`<option value="${each.id}">${each.name}</option>`);
+            // }
             $("#selectSize").change(function() {
                 $('#selectSizeValue').html('');
                 for (let each of JSON.parse($(this).val())) {

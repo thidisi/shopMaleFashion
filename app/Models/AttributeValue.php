@@ -26,10 +26,26 @@ class AttributeValue extends Model
         "status",
     ];
 
+    const ATTRIBUTE_VALUE_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+    ];
+
+    public $timestamps = true;
+
+    /**
+     * Return the created_at configuration array for this model.
+     *
+     * @return array
+     */
+    protected $casts = [
+        'created_at' => 'date:d-m-Y',
+        'updated_at' => 'date:d-m-Y'
+    ];
 
     public function attributes()
     {
-        return $this->belongsTo(Attribute::class);
+        return $this->belongsTo(Attribute::class, 'attribute_id');
     }
 
     public function productions()

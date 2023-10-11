@@ -28,9 +28,15 @@ class Order extends Model
         "action",
     ];
 
+    const ORDER_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+        'PENDING' => 'pending',
+    ];
+
     public function customers()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 
     public function productions()

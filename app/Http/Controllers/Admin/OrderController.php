@@ -24,30 +24,29 @@ class OrderController extends Controller
     /**
      * Construct
      */
-    public function __construct(Order $order, ProductImage $productImage, DiscountProduct $discountProduct, Province $province, District $district, Ward $ward, Ticket $ticket)
+    public function __construct(Order $order, ProductImage $productImage, DiscountProduct $discountProduct, Province $province, District $district, Ward $ward, Ticket $ticket, Production $production)
     {
         $this->order = $order;
         $this->productImage = $productImage;
         $this->discountProduct = $discountProduct;
         $this->ward = $ward;
+        $this->production = $production;
         $this->ticket = $ticket;
     }
 
     public function index()
     {
-        $orders = $this->order->leftJoin('customers', 'customers.id', '=', 'orders.customer_id')
-            ->latest('orders.created_at')
-            ->get(['customers.name as customerName', 'orders.*']);
-
+        $orders = $this->order->with('customers')->latest('created_at')->get();
         $date = Carbon::now()->addDays(10);
-        foreach ($orders as $order) {
-            if ($order->action == CANCEL && $date == now()) {
+        $orders->map(function ($query) use ($date) {
+            if ($query->action == 'inactive' && $date == now()) {
                 DB::table('order_detail')
-                    ->where('order_id', '=', $order->id)
+                    ->where('order_id', '=', $query->id)
                     ->update(['deleted_at' => now()]);
-                $this->order->where('id', '=', $order->id)->delete();
+                $this->order->find($query->id)->delete();
             }
-        }
+            return $query;
+        });
 
         return view('backend.orders.index', [
             'orders' => $orders,
@@ -76,7 +75,7 @@ class OrderController extends Controller
     {
         try {
             $orders = $this->order->findOrFail($request->id);
-            if ($action == ACTIVE) {
+            if ($action == 'active') {
                 foreach ($orders->productions as $value) {
                     $value->quantity -= $value->pivot->quantity;
                     $value->save();
@@ -92,53 +91,53 @@ class OrderController extends Controller
     public function check_out(Request $request)
     {
         try {
-        $order = $request->all();
-        $order['address_receiver'] =  $this->ward->findOrFail($order['wards'])->path;
-        $discount = $order['get_discount'];
-        $code = $order['get_code'];
+            $order = $request->all();
+            $order['address_receiver'] =  $this->ward->findOrFail($order['wards'])->path;
+            $discount = $order['get_discount'];
+            $code = $order['get_code'];
 
-        unset($order['_token'], $order['get_code'], $order['provinces'], $order['districts'], $order['wards'], $order['get_total'], $order['get_discount']);
+            unset($order['_token'], $order['get_code'], $order['provinces'], $order['districts'], $order['wards'], $order['get_total'], $order['get_discount']);
 
-        if (!empty(Cart::getTotal())) {
-            $order['customer_id'] = session('sessionIdCustomer');
-            $order['total_money'] = Cart::getTotal() - $discount;
-            $order['action'] = NOT_ACTIVE;
-            $order_id = $this->order->create($order)->id;
-            $cartItems = Cart::getContent();
-            $pattern = "/\(.*\)/";
-            $orders = $this->order->findOrFail($order_id);
-            if ($code != null) {
-                $ticket = $this->ticket->where('code', $code)->first();
-                $ticket->quantity = $ticket->quantity - 1;
-                $ticket->status = 'active';
-                $ticket->save();
-            }
-            foreach ($cartItems as $each) {
-                if (preg_match_all($pattern, $each->name, $matches)) {
-                    foreach ($matches as $value) {
-                        $dataAttr["$each->id"] = trim($value['0'], "()");
+            if (!empty(Cart::getTotal())) {
+                $order['customer_id'] = session('sessionIdCustomer');
+                $order['total_money'] = Cart::getTotal() - $discount;
+                $order['action'] = Order::ORDER_STATUS['PENDING'];
+                $order_id = $this->order->create($order)->id;
+                $cartItems = Cart::getContent();
+                $pattern = "/\(.*\)/";
+                $orders = $this->order->findOrFail($order_id);
+                if ($code != null) {
+                    $ticket = $this->ticket->where('code', $code)->first();
+                    $ticket->quantity = $ticket->quantity - 1;
+                    $ticket->status = 'active';
+                    $ticket->save();
+                }
+                foreach ($cartItems as $each) {
+                    if (preg_match_all($pattern, $each->name, $matches)) {
+                        foreach ($matches as $value) {
+                            $dataAttr["$each->id"] = trim($value['0'], "()");
+                        }
+                    }
+                    $orders->productions()->attach(
+                        [
+                            $each->id => ['quantity' => $each->quantity, 'attr' => $dataAttr["$each->id"]],
+                        ]
+                    );
+                    $productId["$each->id"] = $each->quantity;
+                }
+                if (!empty($productId)) {
+                    foreach ($productId as $key => $value) {
+                        $product = $this->production->find($key);
+                        $product->count_view += $value;
+                        $product->save();
                     }
                 }
-                $orders->productions()->attach(
-                    [
-                        $each->id => ['quantity' => $each->quantity, 'attr' => $dataAttr["$each->id"]],
-                    ]
-                );
-                $productId["$each->id"] = $each->quantity;
+                Cart::clear();
+                return redirect()->route('index')->with('success', 'Orders successfully!!');
             }
-            if (!empty($productId)) {
-                foreach ($productId as $key => $value) {
-                    $product = Production::find($key);
-                    $product->count_view += $value;
-                    $product->save();
-                }
-            }
-            Cart::clear();
-            return redirect()->route('index')->with('success', 'Orders successfully!!');
-        }
-        return redirect()->back()->with("Empty stock, can't order");
+            return redirect()->back()->with("Empty stock, can't order");
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->back()->with("Empty stock, can't order");
         }
     }
 

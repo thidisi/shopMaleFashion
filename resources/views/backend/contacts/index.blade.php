@@ -47,17 +47,17 @@ $title = 'Contacts';
 
                                             <td>
                                                 @switch($value->status)
-                                                    @case(ACTIVE)
+                                                    @case('active')
                                                         <div>
                                                             <span class="text-success font-weight-bold text-center"
-                                                                style="max-width: 100px;"> approved</span>
+                                                                style="max-width: 100px;"> Approved</span>
                                                         </div>
                                                     @break
 
-                                                    @case(CANCEL)
+                                                    @case('inactive')
                                                         <div>
                                                             <span class="text-danger font-weight-bold text-center"
-                                                                style="max-width: 100px;"> has been cancelled</span>
+                                                                style="max-width: 100px;"> Has been cancelled</span>
                                                         </div>
                                                     @break
 

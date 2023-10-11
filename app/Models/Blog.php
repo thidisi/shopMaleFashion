@@ -19,10 +19,28 @@ class Blog extends Model
 
     protected $fillable = [
         "title",
+        "slug",
         "content",
         "image",
         "count_view",
         "status"
+    ];
+
+    const BLOG_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+    ];
+
+    public $timestamps = true;
+
+    /**
+     * Return the created_at configuration array for this model.
+     *
+     * @return array
+     */
+    protected $casts = [
+        'created_at' => 'date:d-m-Y',
+        'updated_at' => 'date:d-m-Y'
     ];
 
     public function getFormatDateAttribute()

@@ -16,7 +16,7 @@ class CreateProductionAttributeValueTable extends Migration
         Schema::create('production_attr_value', function (Blueprint $table) {
             $table->foreignId('production_id')->constrained();
             $table->foreignId('attribute_value_id')->constrained();
-            $table->primary(array('production_id', 'attribute_value_id'));
+            $table->primary(['production_id', 'attribute_value_id']);
             $table->timestamps();
             $table->softDeletes();
         });

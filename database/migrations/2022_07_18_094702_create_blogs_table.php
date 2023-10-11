@@ -15,11 +15,15 @@ class CreateBlogsTable extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('image');
-            $table->string('content');
-            $table->integer('count_view');
-            $table->integer('status')->default(1);
+            $table->string('title', 200)->unique();
+            $table->string('slug', 200)->nullable();
+            $table->string('image', 255);
+            $table->longtext('content');
+            $table->integer('count_view')->default('0');
+            $table->enum('status', [
+                'active',
+                'inactive',
+            ])->default(App\Models\Blog::BLOG_STATUS['ACTIVE']);
             $table->timestamps();
             $table->softDeletes();
         });

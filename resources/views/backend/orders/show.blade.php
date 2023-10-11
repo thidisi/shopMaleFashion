@@ -51,14 +51,14 @@ $title = 'Orders';
                                 </tbody>
                             </table>
                             <div class="mt-2">
-                                @if ($order->action == NOT_ACTIVE)
-                                    <form action="{{ route('admin.orders.action', ACTIVE) }}" method="post"
+                                @if ($order->action == 'pending')
+                                    <form action="{{ route('admin.orders.action', 'active') }}" method="post"
                                     class=" float-right">
                                     @csrf
                                         <input type="hidden" name="id" value="{{ $order->id }}" />
                                         <button type="submit" class="btn btn-info">Browser</button>
                                     </form>
-                                    <form action="{{ route('admin.orders.action', CANCEL) }}" method="post"
+                                    <form action="{{ route('admin.orders.action', 'inactive') }}" method="post"
                                     class="mr-2 float-right">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $order->id }}" />

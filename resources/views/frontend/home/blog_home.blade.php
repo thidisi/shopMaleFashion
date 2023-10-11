@@ -17,7 +17,7 @@
                         <div class="blog__item__text">
                             <span><img src="{{ asset('frontend/img/icon/calendar.png') }}" alt="">{{ $each->format_date }}</span>
                             <h5 style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" >{{ $each->title }}</h5>
-                            <a href="{{ route('blogs.detail', $each->id) }}">Read More</a>
+                            <a href="{{ route('blogs.detail', $each->slug) }}">Read More</a>
                         </div>
                     </div>
                 </div>

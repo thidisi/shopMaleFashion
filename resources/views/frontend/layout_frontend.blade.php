@@ -18,7 +18,8 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap.min.css') }}" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
         integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('frontend/css/font-awesome.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/elegant-icons.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/magnific-popup.css') }}" type="text/css">
@@ -29,7 +30,8 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/styles.css') }}" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css"
         integrity="sha512-wJgJNTBBkLit7ymC6vvzM1EcSWeM9mmOu+1USHaRBbHkm6W9EgM0HY27+UtUaprntaYQJF75rc8gjxllKs5OIQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
     @stack('css')
 </head>
 
@@ -55,78 +57,6 @@
             <ul class="favourite_container--content"
                 style="max-height: 100vh;
             overflow: auto;height: calc(100% - 48px - 34px);">
-                <li style="padding:8px;min-height: calc(100% / 6);">
-                    <a href="http://127.0.0.1:8000/ao-so-mi-regular-tui-mo-asm117-mau-bo.html">
-                        <div class="" style="margin-right:12px;float: left;">
-                            <img src="http://127.0.0.1:8000/storage/imageProducts/CjPRMlEnAx2PKeMPCTiBl0Ye0CTchgKHRRnyjSt9.jpg"
-                                alt="" width="62">
-                        </div>
-                        <div class=""
-                            style="padding-top:0;height: 84px;display: flex;
-                                align-items: center;">
-                            <div style="padding-top:8px;">
-                                <h6 style="font-size:14px; margin-bottom:4px;">ÁO SƠ MI REGULAR TÚI MỔ
-                                    ASM117 MÀU BÒ (Size:M, Blue)</h6>
-                                <h5 style="font-size:14px; "><span class="cart-price">415.000đ</span>
-                                </h5>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li style="padding:8px;min-height: calc(100% / 6);">
-                    <a href="http://127.0.0.1:8000/ao-so-mi-regular-tui-mo-asm117-mau-bo.html">
-                        <div class="" style="margin-right:12px;float: left;">
-                            <img src="http://127.0.0.1:8000/storage/imageProducts/CjPRMlEnAx2PKeMPCTiBl0Ye0CTchgKHRRnyjSt9.jpg"
-                                alt="" width="62">
-                        </div>
-                        <div class=""
-                            style="padding-top:0;height: 84px;display: flex;
-                                align-items: center;">
-                            <div style="padding-top:8px;">
-                                <h6 style="font-size:14px; margin-bottom:4px;">ÁO SƠ MI REGULAR TÚI MỔ
-                                    ASM117 MÀU BÒ (Size:M, Blue)</h6>
-                                <h5 style="font-size:14px; "><span class="cart-price">415.000đ</span>
-                                </h5>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li style="padding:8px;min-height: calc(100% / 6);">
-                    <a href="http://127.0.0.1:8000/ao-so-mi-regular-tui-mo-asm117-mau-bo.html">
-                        <div class="" style="margin-right:12px;float: left;">
-                            <img src="http://127.0.0.1:8000/storage/imageProducts/CjPRMlEnAx2PKeMPCTiBl0Ye0CTchgKHRRnyjSt9.jpg"
-                                alt="" width="62">
-                        </div>
-                        <div class=""
-                            style="padding-top:0;height: 84px;display: flex;
-                                align-items: center;">
-                            <div style="padding-top:8px;">
-                                <h6 style="font-size:14px; margin-bottom:4px;">ÁO SƠ MI REGULAR TÚI MỔ
-                                    ASM117 MÀU BÒ (Size:M, Blue)</h6>
-                                <h5 style="font-size:14px; "><span class="cart-price">415.000đ</span>
-                                </h5>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li style="padding:8px;min-height: calc(100% / 6);">
-                    <a href="http://127.0.0.1:8000/ao-so-mi-regular-tui-mo-asm117-mau-bo.html">
-                        <div class="" style="margin-right:12px;float: left;">
-                            <img src="http://127.0.0.1:8000/storage/imageProducts/CjPRMlEnAx2PKeMPCTiBl0Ye0CTchgKHRRnyjSt9.jpg"
-                                alt="" width="62">
-                        </div>
-                        <div class=""
-                            style="padding-top:0;height: 84px;display: flex;
-                                align-items: center;">
-                            <div style="padding-top:8px;">
-                                <h6 style="font-size:14px; margin-bottom:4px;">ÁO SƠ MI REGULAR TÚI MỔ
-                                    ASM117 MÀU BÒ (Size:M, Blue)</h6>
-                                <h5 style="font-size:14px; "><span class="cart-price">415.000đ</span>
-                                </h5>
-                            </div>
-                        </div>
-                    </a>
-                </li>
             </ul>
             <div class="favourite_container--footer">
                 <div style="text-align: center;"><button>See details</button></div>
@@ -168,7 +98,9 @@
     <!-- Search End -->
 
     <!-- Js Plugins -->
-    <script src="{{ asset('frontend/js/jquery-3.3.1.min.js') }}"></script>
+    {{-- <script src="{{ asset('frontend/js/jquery-3.3.1.min.js') }}"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="{{ asset('frontend/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('frontend/js/jquery.nice-select.min.js') }}"></script>
     <script src="{{ asset('frontend/js/jquery.nicescroll.min.js') }}"></script>
@@ -176,15 +108,16 @@
     <script src="{{ asset('frontend/js/jquery.countdown.min.js') }}"></script>
     <script src="{{ asset('frontend/js/jquery.slicknav.js') }}"></script>
     <script src="{{ asset('frontend/js/mixitup.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
-        integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"
+        integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('frontend/js/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"
         integrity="sha512-zlWWyZq71UMApAjih4WkaRpikgY9Bz1oXIW5G0fED4vk14JjGlQ1UmkGM392jEULP8jbNMiwLWdM8Z87Hu88Fw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             $.ajaxSetup({
@@ -213,7 +146,26 @@
                 icon: 'success'
             })
         });
+
+        function updateWishList() {
+            $('.favourite_container--content').html('');
+            if (Array.isArray(JSON.parse(localStorage.getItem('data')))) {
+                for (let each of JSON.parse(localStorage.getItem('data'))) {
+                    if (each.size) {
+                        $('.favourite_container--content').append(
+                            `<li><a href="${each.url}"><div class="" style="margin-right:12px;float: left;"><img src="${each.image}" alt="" width="62"></div><div class="" style="padding-top:0;height: 84px;display: flex;align-items: center;"><div style="padding-top:8px;"><h6 style="font-size:14px; margin-bottom:4px;">${each.name +  "(Size:"+ each.size + "," + each.color + ")"}</h6><h5 style="font-size:14px; "><span class="cart-price">${each.price}</span></h5></div></div><a></li>`
+                        );
+                    } else {
+                        $('.favourite_container--content').append(
+                            `<li><a href="${each.url}"><div class="" style="margin-right:12px;float: left;"><img src="${each.image}" alt="" width="62"></div><div class="" style="padding-top:0;height: 84px;display: flex;align-items: center;"><div style="padding-top:8px;"><h6 style="font-size:14px; margin-bottom:4px;">${each.name}</h6><h5 style="font-size:14px; "><span class="cart-price">${each.price}</span></h5></div></div><a></li>`
+                        );
+                    }
+
+                }
+            }
+        }
         $(document).ready(function() {
+            updateWishList();
             $('.button_wishlist').on('click', function(e) {
                 let id = $(this).attr("data-id");
                 let name = $('#wishlist_productname' + id).val();
@@ -256,11 +208,16 @@
                     localStorage.setItem('data', JSON.stringify(old_data));
                 } else {
                     alert('Bạn đã thêm vào mục yêu thích sản phẩm rồi!!');
-                    localStorage.removeItem('data');
+                    const data_remove = old_data.filter(object => {
+                        return object.id != id;
+                    });
+                    localStorage.setItem('data', JSON.stringify(data_remove));
                 }
+                updateWishList();
             });
             $('.btn_favourite--close').on('click', function(e) {
                 $('.favourite').hide();
+                e.stopPropagation();
             });
             $('.favourite-icon').on('click', function(e) {
                 $('.favourite').show();
@@ -272,8 +229,7 @@
             $('.logo_favourite').on('click', function(e) {
                 $('.favourite_box').addClass('show');
             });
-            console.log($('.favourite_container--content'));
-            // $('.favourite_container--content')
+
         });
     </script>
     @stack('js')

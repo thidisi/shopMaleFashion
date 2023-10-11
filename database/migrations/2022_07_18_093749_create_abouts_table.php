@@ -15,17 +15,19 @@ class CreateAboutsTable extends Migration
     {
         Schema::create('abouts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('phone');
-            $table->string('phone_second')->nullable();
-            $table->string('email');
-            $table->string('logo');
-            $table->string('address');
-            $table->string('address_second')->nullable();
-            $table->string('address_third')->nullable();
-            $table->string('link_address_fb')->nullable();
-            $table->string('link_address_youtube')->nullable();
-            $table->string('link_address_zalo')->nullable();
+            $table->string('title', 100);
+            $table->string('phone', 15);
+            $table->string('phone_second', 15)->nullable();
+            $table->string('email', 100)->unique();
+            $table->string('logo', 255);
+            $table->text('branch')->nullable();
+            $table->text('branch_second')->nullable();
+            $table->text('address');
+            $table->text('address_second')->nullable();
+            $table->text('address_third')->nullable();
+            $table->string('link_address_fb', 255)->nullable();
+            $table->string('link_address_youtube', 255)->nullable();
+            $table->string('link_address_zalo', 255)->nullable();
             $table->string('link_address_instagram')->nullable();
             $table->timestamps();
         });

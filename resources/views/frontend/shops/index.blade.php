@@ -183,7 +183,7 @@ $title = 'Shop';
                                     if ($product->statusDiscount == 'active' && $product->discountPrice != null) {
                                         $productPrice = $product->discountPrice;
                                     }
-                                    
+
                                     $date = $product->created_at;
                                     $date_end = Carbon\Carbon::now()->addDays(-7);
                                 @endphp
@@ -191,7 +191,7 @@ $title = 'Shop';
                                     <div class="product__item sale">
                                         <div class="product__item__pic set-bg"
                                             id="wishlist_productimage{{ $product->id }}"
-                                            @if ($product->statusImage == ACTIVE) data-setbg="{{ asset("storage/$product->image") }}" @endif>
+                                            @if ($product->statusImage == 'active') data-setbg="{{ asset("storage/$product->image") }}" @endif>
                                             @if ($product->discountPrice != null && $product->statusDiscount == 'active')
                                                 <span class="item-sale">
                                                     -{{ (1 - $product->discountPrice) * 100 }}%</span>

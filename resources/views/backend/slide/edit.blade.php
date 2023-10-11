@@ -42,9 +42,9 @@ $title = 'Silde';
                                         <label class="form-label">sortOrder</label>
                                         <select class="form-control" name="sort_order" id="">
                                             @foreach ($sortOrder as $key => $value)
-                                                <option value="{{ $key + 1 }}"
-                                                    @if ($each->sort_order == $key + 1) selected @endif>
-                                                    {{ $value }}
+                                                <option value="{{ $value }}"
+                                                    @if ($each->sort_order == $value) selected @endif>
+                                                    {{ $key }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -73,7 +73,7 @@ $title = 'Silde';
                                         <label class="form-label">Status</label>
                                         <div class="float-right">
                                             <input type="checkbox" id="switch3"
-                                                @if ($each->status == 1) checked @endif data-switch="success"
+                                                @if ($each->status == \App\Models\Slide::SLIDE_STATUS['ACTIVE']) checked @endif data-switch="success"
                                                 name="status" />
                                             <label for="switch3" data-on-label="Yes" data-off-label="No"></label>
                                         </div>

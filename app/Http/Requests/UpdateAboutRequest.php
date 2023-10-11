@@ -56,7 +56,7 @@ class UpdateAboutRequest extends FormRequest
                 'string',
             ],
             'branch' => [
-                'required',
+                'nullable',
                 'string',
             ],
             'branch_second' => [

@@ -26,6 +26,23 @@ class Category extends Model
         "major_category_id",
     ];
 
+    const CATEGORY_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+    ];
+
+    public $timestamps = true;
+
+    /**
+     * Return the created_at configuration array for this model.
+     *
+     * @return array
+     */
+    protected $casts = [
+        'created_at' => 'date:d-m-Y',
+        'updated_at' => 'date:d-m-Y'
+    ];
+
     public function major_categories()
     {
         return $this->belongsTo(Major_Category::class, 'major_category_id');

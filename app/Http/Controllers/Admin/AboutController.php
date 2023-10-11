@@ -18,7 +18,7 @@ class AboutController extends Controller
 
     public function index()
     {
-        $about = $this->about->first();
+        $about = $this->about->firstOrFail();
         return view('backend.abouts.index', [
             'each' => $about
         ]);
@@ -26,13 +26,13 @@ class AboutController extends Controller
 
     public function update(UpdateAboutRequest $request, $aboutId)
     {
-        try {
+        // try {
             $about = $this->about->findOrFail($aboutId);
 
             $about->title = $request->get('title');
             $about->email = $request->get('email');
             $about->phone = $request->get('phone');
-            $about->phone_second = $request->get('phone_second') ? $request->get('phone_second') : 'During the update';
+            $about->phone_second = $request->get('phone_second') ? $request->get('phone_second') : null;
             $about->address = $request->get('address');
             $about->address_second = $request->get('address_second') ? $request->get('address_second') : 'During the update';
             $about->branch = $request->get('branch');
@@ -61,8 +61,8 @@ class AboutController extends Controller
                 }
                 return redirect()->route('admin.abouts')->with('EditAboutErrors', 'Edit Failed Blog table');
             }
-        } catch (\Throwable $th) {
-            return redirect()->route('index');
-        }
+        // } catch (\Throwable $th) {
+        //     return redirect()->route('index');
+        // }
     }
 }

@@ -58,7 +58,7 @@ $title = 'Blogs';
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-6">
                             @if(!empty($data['previous']))
-                            <a href="{{ route('blogs.detail', $data['previous']->id) }}" class="blog__details__btns__item">
+                            <a href="{{ route('blogs.detail', $data['previous']->slug) }}" class="blog__details__btns__item">
                                 <p><span class="arrow_left"></span> Previous Pod</p>
                                 <h5>{{ $data['previous']->title }}</h5>
                             </a>
@@ -66,7 +66,7 @@ $title = 'Blogs';
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-6">
                             @if(!empty($data['next']))
-                            <a href="{{ route('blogs.detail', $data['next']->id) }}" class="blog__details__btns__item blog__details__btns__item--next">
+                            <a href="{{ route('blogs.detail', $data['next']->slug) }}" class="blog__details__btns__item blog__details__btns__item--next">
                                 <p>Next Pod <span class="arrow_right"></span></p>
                                 <h5>{{ $data['next']->title }}</h5>
                             </a>

@@ -67,7 +67,7 @@ $title = 'Blogs';
                                             </td>
 
                                             <td class="text-center">
-                                                @if ($value->status == 1)
+                                                @if ($value->status == 'active')
                                                     <span class="badge badge-success">Active</span>
                                                 @else
                                                     <span class="badge badge-danger">Not active</span>

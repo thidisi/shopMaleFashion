@@ -33,7 +33,7 @@ $title = 'AttributeValues';
                                 <textarea class="form-control" name="descriptions" rows="5" placeholder="Enter some brief about desciption.."></textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Attribute Id</label>
+                                <label class="form-label">Attribute</label>
                                 <select class="form-control select2" data-toggle="select2" name="attribute_id">
                                     @foreach ($attr as $value)
                                         @if (!empty($value->replaces))

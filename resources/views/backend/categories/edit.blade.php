@@ -43,7 +43,7 @@ $title = 'Categories';
                                 <input type="hidden" name="photo_old" value="{{ $each->avatar }}">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Major Category Id</label>
+                                <label class="form-label">Major Categories</label>
                                 <select class="form-control" name="major_category_id" id="">
                                     @foreach ($major_categories as $value)
                                         <option value="{{ $value->id }}" @if ($value->id == $each->major_category_id) selected @endif>
@@ -55,7 +55,7 @@ $title = 'Categories';
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
                                 <div class="float-right">
-                                    <input type="checkbox" id="switch3" @if ($each->status == 1) checked @endif data-switch="success" name="status" />
+                                    <input type="checkbox" id="switch3" @if ($each->status == 'active') checked @endif data-switch="success" name="status" />
                                     <label for="switch3" data-on-label="Yes" data-off-label="No"></label>
                                 </div>
                             </div>

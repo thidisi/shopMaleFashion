@@ -24,14 +24,7 @@ class SlideController extends Controller
 
     public function index()
     {
-        $slides = $this->slide->leftJoin('major_categories', 'slide.major_category_id', '=', 'major_categories.id')
-            ->latest('slide.created_at')
-            ->select('major_categories.name as menu', 'slide.*')->paginate(3);
-
-        foreach ($slides as $each) {
-            $each->sort_order = $each->sort_order_name;
-            $each->status = $each->status_name;
-        }
+        $slides = $this->slide->with('major_categories')->latest('created_at')->paginate(3);
         return view('backend.slide.index', [
             'slides' => $slides
         ]);
@@ -39,8 +32,8 @@ class SlideController extends Controller
 
     public function create()
     {
-        $sortOrder = SortOrderSlideEnum::getKeys();
-        $menu = $this->major_category->where('status', '!=', MenuStatusEnum::HOT_DEFAULT)->get();
+        $sortOrder = Slide::SLIDE_ORDER;
+        $menu = $this->major_category->where('status', '!=', Major_Category::MENU_STATUS['HOT_DEFAULT'])->get();
         return view('backend.slide.create', [
             'sortOrder' => $sortOrder,
             'menu' => $menu,
@@ -57,10 +50,8 @@ class SlideController extends Controller
             }
         }
 
-        $status = $request->input('status') ? '1' : '2';
         $arr = $request->validated();
         $arr['image'] = json_encode($data);
-        $arr['status'] = $status;
 
         $this->slide->create($arr);
         return redirect()->route('admin.slides')->with('addSlideSuccess', 'Add successfully!!');
@@ -68,8 +59,8 @@ class SlideController extends Controller
 
     public function edit(Slide $slide)
     {
-        $sortOrder = SortOrderSlideEnum::getKeys();
-        $menu = $this->major_category->where('status', '!=', MenuStatusEnum::HOT_DEFAULT)->get();
+        $sortOrder = Slide::SLIDE_ORDER;
+        $menu = $this->major_category->where('status', '!=', Major_Category::MENU_STATUS['HOT_DEFAULT'])->get();
         return view('backend.slide.edit', [
             'each' => $slide,
             'sortOrder' => $sortOrder,
@@ -85,7 +76,7 @@ class SlideController extends Controller
             $slide->slug = $request->input('slug');
             $slide->major_category_id = $request->input('major_category_id');
             $slide->sort_order = $request->input('sort_order');
-            $slide->status = $request->input('status') ? '1' : '2';
+            $slide->status = $request->input('status') ? Slide::SLIDE_STATUS['ACTIVE'] : Slide::SLIDE_STATUS['INACTIVE'];
 
             $nameImage = null;
             if ($request->hasFile('fileDataNew')) {

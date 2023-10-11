@@ -71,12 +71,12 @@
                                                     style="max-width: 150px;">{{ $value->slug }}</span>
                                             </td>
                                             <td>
-                                                {{ $value->name_majorCate }}
+                                                {{ $value->major_categories->name }}
                                             </td>
 
                                             <td class="text-center">
                                                 <span
-                                                    @if ($value->status == 'Active') class="badge badge-success" @else class="badge badge-danger" @endif>
+                                                    @if ($value->status == 'active') class="badge badge-success" @else class="badge badge-danger" @endif>
                                                     {{ $value->status }}
                                                 </span>
                                             </td>

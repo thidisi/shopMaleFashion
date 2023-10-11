@@ -56,7 +56,7 @@
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
                                 <div class="float-right">
-                                    <input type="checkbox" id="switch3" @if ($each->status == 1) checked @endif
+                                    <input type="checkbox" id="switch3" @if ($each->status == 'active') checked @endif
                                         data-switch="success" name="status" />
                                     <label for="switch3" data-on-label="Yes" data-off-label="No"></label>
                                 </div>

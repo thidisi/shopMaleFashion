@@ -20,8 +20,8 @@
         @csrf
         @auth
             <div class="form-group">
-                <label>Full Name</label>
-                <input class="form-control" type="text" disabled value="{{ auth()->user()->fullName }}">
+                <label>User Name</label>
+                <input class="form-control" type="text" disabled value="{{ auth()->user()->username }}">
             </div>
             <div class="form-group">
                 <label>Email address</label>
@@ -33,13 +33,13 @@
             </div>
         @endauth
         @guest
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="name">Full Name</label>
                 <input class="form-control" type="text" id="name" placeholder="Enter your name" name="fullName">
                 @if ($errors->has('fullName'))
                     <p class="error-noti">{{ $errors->first('fullName') }}</p>
                 @endif
-            </div>
+            </div> --}}
             <div class="form-group">
                 <label for="emailaddress">Email address</label>
                 <input class="form-control" type="email" id="emailaddress" placeholder="Enter your email" name="email">

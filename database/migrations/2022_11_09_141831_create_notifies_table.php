@@ -16,7 +16,7 @@ class CreateNotifiesTable extends Migration
         Schema::create('notifies', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150);
-            $table->string('type', 50)->default('Hệ thống');
+            $table->string('type', 50)->default('System');
             $table->text('products')->nullable();
             $table->text('discounts')->nullable();
             $table->text('orders')->nullable();

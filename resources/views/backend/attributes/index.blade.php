@@ -58,11 +58,11 @@ $title = 'Attributes';
                                                     style="max-width: 150px;">{{ $each->descriptions }}</span>
                                             </td>
 
-                                            <td>{{ $each->attr_name }}</td>
+                                            <td>{{ $each->attributes->name }}</td>
 
                                             <td>
                                                 <span
-                                                    @if ($each->status == 'Active') class="badge badge-success" @else class="badge badge-danger" @endif>
+                                                    @if ($each->status == 'active') class="badge badge-success" @else class="badge badge-danger" @endif>
                                                     {{ $each->status }}
                                                 </span>
                                             </td>
@@ -135,7 +135,7 @@ $title = 'Attributes';
                                             </td>
                                             <td>
                                                 <span
-                                                    @if ($value->status == 'Active') class="badge badge-success" @else class="badge badge-danger" @endif>
+                                                    @if ($value->status == 'active') class="badge badge-success" @else class="badge badge-danger" @endif>
                                                     {{ $value->status }}
                                                 </span>
                                             </td>

@@ -18,7 +18,7 @@ class CreateOrderDetailTable extends Migration
             $table->foreignId('production_id')->constrained();
             $table->primary(['production_id', 'order_id']);
             $table->integer('quantity');
-            $table->string('attr');
+            $table->string('attr', 255);
             $table->timestamps();
             $table->softDeletes();
         });

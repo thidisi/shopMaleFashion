@@ -35,7 +35,7 @@ class DiscountController extends Controller
 
     public function create()
     {
-        $promotions = DiscountPriceEnum::getValues();
+        $promotions = Discount::DISCOUNT_LIST;
         return view('backend.discounts.create', [
             'promotions' => $promotions
         ]);
@@ -43,7 +43,7 @@ class DiscountController extends Controller
 
     public function edit(Discount $discount)
     {
-        $promotions = DiscountPriceEnum::getValues();
+        $promotions = Discount::DISCOUNT_LIST;
         return view('backend.discounts.edit', [
             'each' => $discount,
             'promotions' => $promotions
@@ -63,7 +63,7 @@ class DiscountController extends Controller
             $this->discount->create($arr);
             return redirect()->route('admin.discounts')->with('addDiscountStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->back();
         }
     }
 
@@ -76,11 +76,11 @@ class DiscountController extends Controller
             $discount->date_start = date_format(date_create_from_format('j-M-Y', $date_start), 'Y-m-d');
             $discount->date_end = date_format(date_create_from_format('j-M-Y', $date_end), 'Y-m-d');
             $discount->discount_price = $request->discount_price;
-            $discount->status = $request->status ? \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'] : \App\Models\Discount::DISCOUNT_STATUS['CLOSE'];
+            $discount->status = $request->status ? Discount::DISCOUNT_STATUS['ACTIVE'] : Discount::DISCOUNT_STATUS['CLOSE'];
             $discount->save();
             return redirect()->route("admin.discounts")->with('EditDiscountStatus', 'Edit successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->back();
         }
     }
 
@@ -91,7 +91,7 @@ class DiscountController extends Controller
             $this->discountProduct->where('discount_id', $discountId)->delete();
             return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->back();
         }
     }
 }

@@ -22,7 +22,6 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'username',
-        'fullname',
         'password',
         'address',
         'phone',
@@ -34,23 +33,47 @@ class User extends Authenticatable
         'last_login'
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token'
+    ];
+
+    const USER_GENDER = [
+        'Male' => 'male',
+        'Female' => 'female',
+    ];
+
+    const USER_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+        'PENDING' => 'pending',
+    ];
+
+    const USER_LEVEL = [
+        'STAFF' => 'staff',
+        'MANAGER' => 'manager',
+        'ADMIN' => 'admin',
+    ];
+
+    public $timestamps = true;
+
+    /**
+     * Return the created_at configuration array for this model.
+     *
+     * @return array
+     */
+    protected $casts = [
+        'created_at' => 'date:d-m-Y',
+        'updated_at' => 'date:d-m-Y'
+    ];
+
     public function getAgeAttribute()
     {
         return date_diff(date_create($this->birthday), date_create())->y;
-    }
-
-    public function getRoleNameAttribute()
-    {
-        return strtolower(UserRoleEnum::getKeys($this->level)[0]);
-    }
-
-    public function getGenderNameAttribute()
-    {
-        return ($this->gender == 0) ? 'Male' : 'Female';
-    }
-
-    public function getStatusNameAttribute()
-    {
-        return ($this->status == 1) ? 'Active' : 'Not active';
     }
 }

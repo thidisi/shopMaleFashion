@@ -15,14 +15,16 @@ class CreateAttributesTable extends Migration
     {
         Schema::create('attributes', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100)->unique();
+            $table->string('name', 100)->unique();
             $table->string('slug');
             $table->string('descriptions')->nullable();
-            $table->integer('status')->default(1);
-            $table->foreignId('replace_id');
+            $table->enum('status', [
+                'active',
+                'inactive',
+            ])->default(App\Models\Attribute::ATTRIBUTE_STATUS['ACTIVE']);
+            $table->foreignId('replace_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
         });
     }
 

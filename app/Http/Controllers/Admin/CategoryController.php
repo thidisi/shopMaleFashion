@@ -26,12 +26,7 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = $this->category->leftJoin('major_categories', 'categories.major_category_id', '=', 'major_categories.id')
-            ->latest('categories.created_at')
-            ->get(['major_categories.name as name_majorCate', 'categories.*']);
-        foreach ($categories as $each) {
-            $each->status = $each->status_name;
-        }
+        $categories = $this->category->with('major_categories')->latest('created_at')->get();
         return view('backend.categories.index', [
             'categories' => $categories,
         ]);
@@ -77,7 +72,7 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $majorCategories = $this->major_category->where('status', '!=', MenuStatusEnum::HOT_DEFAULT)->get();
+        $majorCategories = $this->major_category->where('status', '!=', Major_Category::MENU_STATUS['HOT_DEFAULT'])->get();
         return view('backend.categories.create', [
             'major_categories' => $majorCategories
         ]);
@@ -89,7 +84,7 @@ class CategoryController extends Controller
         if ($request->file('avatar')) {
             $path = Storage::disk('public')->put('avatarCategories', $request->file('avatar'));
         }
-        $status = $request->input('status') ? '1' : '2';
+        $status = $request->input('status') ? Category::CATEGORY_STATUS['ACTIVE'] : Category::CATEGORY_STATUS['INACTIVE'];
         $arr = $request->validated();
         $arr['avatar'] = $path;
         $arr['status'] = $status;
@@ -100,7 +95,7 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        $majorCategories = $this->major_category->where('status', '!=', MenuStatusEnum::HOT_DEFAULT)->get();
+        $majorCategories = $this->major_category->where('status', '!=', Major_Category::MENU_STATUS['HOT_DEFAULT'])->get();
         return view('backend.categories.edit', [
             'each' => $category,
             'major_categories' => $majorCategories
@@ -113,7 +108,7 @@ class CategoryController extends Controller
             $category = $this->category->findOrFail($categoryId);
             $category->name = $request->input('name');
             $category->slug = $request->input('slug');
-            $category->status = $request->input('status') ? '1' : '2';
+            $category->status = $request->input('status') ? Category::CATEGORY_STATUS['ACTIVE'] : Category::CATEGORY_STATUS['INACTIVE'];
             $category->major_category_id = $request->input('major_category_id');
 
             $nameAvatar = null;
@@ -126,7 +121,6 @@ class CategoryController extends Controller
                 $nameAvatar = $request->input('photo_old');
             }
             $category->avatar = $nameAvatar;
-
             if (is_numeric($categoryId) && $categoryId > 0) {
                 $category->update();
                 return redirect()->route("admin.categories")->with('EditCategoryStatus', 'Edit successfully!!');
