@@ -53,21 +53,15 @@ class OrderController extends Controller
         ]);
     }
 
-    public function show(Order $order)
+    public function show($id)
     {
-        foreach ($order->productions as $value) {
-            $value['image'] = $this->productImage->where('production_id', '=', $value->id)->get();
-            $value['discount'] = $this->discountProduct->leftJoin('productions', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->where('discounts.status', 'active')
-                ->where('productions.id', '=', $value->id)
-                ->get('discounts.discount_price as discount_price');
-        }
-        // dd($this->order->with(['tickets', 'productions'])->find($order->id));
-
+        $order = $this->order->with(['tickets', 'productions'])->findOrFail($id);
+        $order->productions->map(function ($query) {
+            $query->image = json_decode($this->productImage->find($query->id)->image)[0];
+            $query->discount = $this->discountProduct->with('discounts')->find($query->id)->discounts;
+            return $query;
+        });
         return view('backend.orders.show', [
-            'orders' => $order->productions,
-            'total' => $order->total_money,
             'order' => $order,
         ]);
     }
@@ -81,11 +75,15 @@ class OrderController extends Controller
                     $value->quantity -= $value->pivot->quantity;
                     $value->save();
                 }
+            } elseif (!empty($orders->ticket_id)) {
+                $ticket = $this->ticket->find($orders->ticket_id);
+                $ticket->status = 'pending';
+                $ticket->save();
             }
             $orders->update(["action" => "$action"]);
             return redirect()->route('admin.orders')->with('UpdateOrderSuccess', 'Update successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 

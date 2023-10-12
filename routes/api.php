@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,12 +17,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-
 Route::get('address', [CartController::class, 'getAddress'])->name('address');
 
 Route::post('getDiscount', [OrderController::class, 'get_discount'])->name('get_discount');

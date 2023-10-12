@@ -1,10 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\ContactController;
-use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\TestController;
-use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\File;
 
 /*
@@ -20,7 +15,6 @@ use Illuminate\Support\Facades\File;
 foreach (File::allFiles(__DIR__ . '/frontend') as $routeFile) {
     require $routeFile->getPathname();
 }
-
 
 // Route::get('tests', [TestController::class, 'test']);
 // // Route::post('tests/ee', [TestController::class, 'check'])->name('test.check');

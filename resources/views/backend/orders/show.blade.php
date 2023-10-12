@@ -1,6 +1,6 @@
 @extends('backend.layout_admin')
 @php
-$title = 'Orders';
+    $title = 'Orders';
 @endphp
 @section('container')
     <div class="container-fluid">
@@ -20,23 +20,20 @@ $title = 'Orders';
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($orders as $value)
+                                    @foreach ($order->productions as $value)
                                         <tr>
                                             <td>
-                                                @foreach ($value->image as $images)
-                                                @php $image = json_decode($images->image)[0] @endphp
-                                                    <img class="ml-2 mr-2" src="{{ asset("storage/$image") }}"
-                                                        alt="contact-img" title="contact-img" class="rounded mr-3"
-                                                        height="100" />
-                                                @endforeach
+                                                <img class="ml-2 mr-2" src="{{ asset("storage/$value->image") }}"
+                                                    alt="contact-img" title="contact-img" class="rounded mr-3"
+                                                    height="100" />
                                                 <span class="d-inline-block">{{ $value->name }}</span>
                                             </td>
                                             <td>
                                                 Price: {{ $value->price }}
                                                 <br>
-                                                @foreach ($value->discount as $each)
-                                                    Discount: {{ $each->discount_price }} %
-                                                @endforeach
+                                                @if (!empty($value->discount))
+                                                    Discount: {{ $value->discount->discount_price }} %
+                                                @endif
                                             </td>
 
                                             <td>
@@ -53,19 +50,26 @@ $title = 'Orders';
                             <div class="mt-2">
                                 @if ($order->action == 'pending')
                                     <form action="{{ route('admin.orders.action', 'active') }}" method="post"
-                                    class=" float-right">
-                                    @csrf
+                                        class=" float-right">
+                                        @csrf
                                         <input type="hidden" name="id" value="{{ $order->id }}" />
                                         <button type="submit" class="btn btn-info">Browser</button>
                                     </form>
                                     <form action="{{ route('admin.orders.action', 'inactive') }}" method="post"
-                                    class="mr-2 float-right">
+                                        class="mr-2 float-right">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $order->id }}" />
                                         <button class="btn btn-danger">Cancel</button>
                                     </form>
                                 @endif
-                                <h4 class="float-right mr-4">Total: <span class="text-danger">${{ $total }}</span></h4>
+                                <h4 class="float-right mr-4">Total: <span
+                                        class="text-danger">${{ $order->total_money }}</span>
+                                </h4>
+                                @if (!empty($order->tickets))
+                                    <h4 class="float-right mr-4">Sale: <span class="text-danger">-
+                                            ${{ $order->tickets->price }}</span>
+                                    </h4>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-4 float-right">
@@ -79,7 +83,7 @@ $title = 'Orders';
     </div>
 @endsection
 @push('js')
-{{-- <script type="text/javascript">
+    {{-- <script type="text/javascript">
         $(document).ready(function() {
             $('#delete-form').on('submit', function(e) {
                 e.preventDefault();
