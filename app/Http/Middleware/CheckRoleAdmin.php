@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Enums\UserRoleEnum;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -15,10 +14,13 @@ class CheckRoleAdmin
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $permission = 'staff')
     {
-        if(strtolower(UserRoleEnum::getKeys(auth()->user()->level)[0]) == 'staff') {
-            return redirect()->route('admin.login');
+        if (auth()->user()->level != 'admin') {
+            if ($permission == 'manager' && auth()->user()->level == 'manager') {
+                return $next($request);
+            }
+            return abort('404');
         }
         return $next($request);
     }

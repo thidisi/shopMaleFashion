@@ -22,11 +22,9 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-// Route::middleware('auth:sanctum')->prefix("/")->group(function () {
-    Route::get('address', [CartController::class, 'getAddress'])->middleware('auth:sanctum')->name('address');
+Route::get('address', [CartController::class, 'getAddress'])->name('address');
 
-    Route::post('getDiscount', [OrderController::class, 'get_discount'])->name('get_discount');
+Route::post('getDiscount', [OrderController::class, 'get_discount'])->name('get_discount');
 
-    Route::get('setDataTicket', [TicketController::class, 'get_data'])->name('tickets.get_data');
-    Route::get('getDataTicket', [TicketController::class, 'api_data'])->name('tickets.dataApi');
-// });
+Route::get('setDataTicket', [TicketController::class, 'get_data'])->middleware('auth:sanctum')->name('tickets.get_data');
+Route::get('getDataTicket', [TicketController::class, 'api_data'])->middleware('auth:sanctum')->name('tickets.dataApi');

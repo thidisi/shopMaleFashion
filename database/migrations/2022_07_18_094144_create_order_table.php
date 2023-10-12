@@ -27,7 +27,7 @@ class CreateOrderTable extends Migration
                 'pending',
             ])->default(App\Models\Order::ORDER_STATUS['PENDING']);
             $table->unsignedBigInteger('ticket_id')->nullable();
-            $table->foreign('ticket_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

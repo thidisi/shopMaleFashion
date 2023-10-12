@@ -31,3 +31,16 @@ if (!function_exists('getWebURL')) {
         return config('app.url') . $segment . ($queryString ? '?' . http_build_query($queryParams) : '');
     }
 }
+
+if (!function_exists('checkPermissionToRedirect')) {
+    function checkPermissionToRedirect($permission = 'staff')
+    {
+        if (auth()->user()->level != 'admin') {
+            if ($permission == 'manager' && auth()->user()->level == 'manager') {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+}

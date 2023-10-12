@@ -35,6 +35,11 @@ class Ticket extends Model
         'data_customer' => 'array',
     ];
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'ticket_id');
+    }
+
     public function getFormatDateEndAttribute()
     {
         return date("d-M-Y", strtotime($this->date_end)) . "\n";

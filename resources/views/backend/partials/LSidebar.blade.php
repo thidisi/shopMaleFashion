@@ -35,21 +35,25 @@
                 </a>
             </li>
             <li class="side-nav-item">
-                <a href="javascript: void(0);" class="side-nav-link"  style="overflow: hidden;">
+                <a href="javascript: void(0);" class="side-nav-link" style="overflow: hidden;">
                     <i class="uil-copy-alt"></i>
                     <span> Pages </span>
                     <span class="menu-arrow"></span>
                 </a>
                 <ul class="side-nav-second-level mm-collapse" aria-expanded="false">
+                    @if (checkPermissionToRedirect('manager'))
                     <li class="side-nav-item">
                         <a href="{{ route('admin.slides') }}">Slides</a>
                     </li>
+                    @endif
                     <li class="side-nav-item">
                         <a href="{{ route('admin.blogs') }}">Blogs</a>
                     </li>
-                    <li class="side-nav-item">
-                        <a href="{{ route('admin.abouts') }}">About</a>
-                    </li>
+                    @if (checkPermissionToRedirect('manager'))
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.abouts') }}">About</a>
+                        </li>
+                    @endif
                     <li class="side-nav-item">
                         <a href="{{ route('admin.contacts') }}">Contacts</a>
                     </li>
@@ -60,18 +64,22 @@
                 </ul>
             </li>
             <li class="side-nav-item">
-                <a class="side-nav-link" href="javascript: void(0);" aria-expanded="false"  style="overflow: hidden;">
+                <a class="side-nav-link" href="javascript: void(0);" aria-expanded="false" style="overflow: hidden;">
                     <i class="uil-store"></i>
                     Ecommerce
                     <span class="menu-arrow"></span>
                 </a>
                 <ul class="side-nav-second-level mm-collapse" aria-expanded="false">
-                    <li>
-                        <a href="{{ route('admin.categories') }}">Categories</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.attributes') }}">Attributes</a>
-                    </li>
+                    @if (checkPermissionToRedirect('manager'))
+                        <li>
+                            <a href="{{ route('admin.categories') }}">Categories</a>
+                        </li>
+                    @endif
+                    @if (checkPermissionToRedirect('manager'))
+                        <li>
+                            <a href="{{ route('admin.attributes') }}">Attributes</a>
+                        </li>
+                    @endif
                     <li>
                         <a href="{{ route('admin.productions') }}">Productions</a>
                     </li>
@@ -81,33 +89,42 @@
                     <li>
                         <a href="{{ route('admin.discountProducts') }}">Discount Products</a>
                     </li>
+                    @if (checkPermissionToRedirect('manager'))
                     <li>
                         <a href="{{ route('admin.tickets.index') }}">Tickets</a>
                     </li>
+                    @endif
                 </ul>
             </li>
             <li class="side-nav-item">
-                <a class="side-nav-link" href="{{ route('admin.orders') }}"  style="overflow: hidden;">
+                <a class="side-nav-link" href="{{ route('admin.orders') }}" style="overflow: hidden;">
                     <i class="uil-tag-alt"></i>
                     Orders</a>
             </li>
+            @if (checkPermissionToRedirect('manager'))
             <li class="side-nav-item">
-                <a class="side-nav-link" href="{{ route('admin.major-categories') }}"  style="overflow: hidden;">
+                <a class="side-nav-link" href="{{ route('admin.major-categories') }}" style="overflow: hidden;">
                     <i class="uil-window-maximize"></i>
                     Menu</a>
             </li>
-            <li class="side-nav-item">
-                <a class="side-nav-link" href="{{ route('admin.customers') }}"  style="overflow: hidden;">
-                    <i class="uil-users-alt"></i>
-                    <span> Customers </span></a>
-            </li>
-            <li class="side-nav-item">
-                <a href="{{ route('admin.users') }}" class="side-nav-link" aria-expanded="false"  style="overflow: hidden;">
-                    <i class="uil-user-plus"></i>
-                    {{-- <span class="badge badge-success float-right">4</span> --}}
-                    <span> Users </span>
-                </a>
-            </li>
+            @endif
+            @if (checkPermissionToRedirect('manager'))
+                <li class="side-nav-item">
+                    <a class="side-nav-link" href="{{ route('admin.customers') }}" style="overflow: hidden;">
+                        <i class="uil-users-alt"></i>
+                        <span> Customers </span></a>
+                </li>
+            @endif
+            @if (checkPermissionToRedirect('manager'))
+                <li class="side-nav-item">
+                    <a href="{{ route('admin.users') }}" class="side-nav-link" aria-expanded="false"
+                        style="overflow: hidden;">
+                        <i class="uil-user-plus"></i>
+                        {{-- <span class="badge badge-success float-right">4</span> --}}
+                        <span> Users </span>
+                    </a>
+                </li>
+            @endif
         </ul>
 
         <div class="clearfix"></div>

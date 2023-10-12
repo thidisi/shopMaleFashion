@@ -88,9 +88,20 @@
                                 <ul class="checkout__total__products">
                                     @foreach ($cartItems as $key => $value)
                                         <li class="d-flex">
-                                            <div class="mr-1">{{ $value->name }} <b class="text-danger">x
-                                                    {{ $value->quantity }}</b></div><span class="font-weight-bold">
-                                                {{ currency_format($value->price) }}</span>
+                                            <div class="mr-1">{{ $value->name }}
+                                                <b class="text-danger">x
+                                                    {{ $value->quantity }}
+                                                </b>
+                                            </div>
+                                            <div class="mr-1">
+                                                <span class="font-weight-bold">
+                                                {{ currency_format($value->price) }}
+                                                </span>
+                                                <br>
+                                                <span class="font-weight-bold">
+                                                    Sale: {{ $value->conditions->getValue() }}
+                                                </span>
+                                            </div>
                                         </li>
                                     @endforeach
                                 </ul>

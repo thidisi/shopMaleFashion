@@ -140,6 +140,7 @@ $title = ucfirst($titles);
                         data: 'status',
                         orderable: true,
                         searchable: true,
+                        visible: {{ checkPermissionToRedirect('manager') ? 'true' : 'false' }},
                         render: function(data, type, row, meta) {
                             if (row.checkLevel == 'true') {
                                 if (row.status === 'active') {
@@ -170,6 +171,7 @@ $title = ucfirst($titles);
                         data: 'destroy',
                         orderable: false,
                         searchable: false,
+                        visible: {{ checkPermissionToRedirect() ? 'true' : 'false' }},
                         render: function(data, type, row, meta) {
                             if (row.checkLevel == 'true') {
                                 return `
@@ -182,7 +184,7 @@ $title = ucfirst($titles);
                             } else {
                                 return 'You don’t have License'
                             }
-                        }
+                        },
                     },
                 ]
             });

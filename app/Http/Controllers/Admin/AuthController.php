@@ -70,7 +70,7 @@ class AuthController extends Controller
                 $this->user->where('email', $data->email)->delete();
                 $user = new User();
                 $user->email = $data->email;
-                $user->level = 'admin';
+                $user->level = 'staff';
             }
             $user->username   = $data->name;
             $user->avatar = $data->avatar;

@@ -62,31 +62,31 @@ Route::prefix('admin')
     ->group(function () {
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('dashboards', [DashboardController::class, 'index'])->name('dashboards');
-        Route::get('users', [UserController::class, 'index'])->name('users');
+        Route::get('users', [UserController::class, 'index'])->middleware('check.role:'. 'manager')->name('users');
         Route::get('users/api', [UserController::class, 'api'])->name('users.api');
         Route::get('users/edit/{user}', [UserController::class, 'edit'])
-            ->middleware('check.role.admin')
+            ->middleware('check.role:'. 'manager')
             ->name('users.edit');
-        Route::put('users/edit/{user}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('users/{userId}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::put('users/edit/{user}', [UserController::class, 'update'])->middleware('check.role:'. 'manager')->name('users.update');
+        Route::delete('users/{userId}', [UserController::class, 'destroy'])->middleware('check.role:'. 'manager')->name('users.destroy');
 
-        Route::get('customers', [CustomerController::class, 'index'])->name('customers');
-        Route::get('customers/api', [CustomerController::class, 'api'])->name('customers.api');
-        Route::put('customers/{userId}', [CustomerController::class, 'update'])->name('customers.update');
-        Route::delete('customers/{userId}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+        Route::get('customers', [CustomerController::class, 'index'])->middleware('check.role:'. 'manager')->name('customers');
+        Route::get('customers/api', [CustomerController::class, 'api'])->middleware('check.role:'. 'manager')->name('customers.api');
+        Route::put('customers/{userId}', [CustomerController::class, 'update'])->middleware('check.role:'. 'manager')->name('customers.update');
+        Route::delete('customers/{userId}', [CustomerController::class, 'destroy'])->middleware('check.role:'. 'manager')->name('customers.destroy');
 
-        Route::get('major-categories', [MenuController::class, 'index'])->name('major-categories');
-        Route::get('major-categories/create', [MenuController::class, 'create'])->name('major-categories.create');
-        Route::post('major-categories/create', [MenuController::class, 'store'])->name('major-categories.store');
-        Route::get('major-categories/edit/{majorCategory}', [MenuController::class, 'edit'])->name('major-categories.edit');
-        Route::put('major-categories/edit/{majorCategory}', [MenuController::class, 'update'])->name('major-categories.update');
+        Route::get('major-categories', [MenuController::class, 'index'])->middleware('check.role:'. 'manager')->name('major-categories');
+        Route::get('major-categories/create', [MenuController::class, 'create'])->middleware('check.role:'. 'manager')->name('major-categories.create');
+        Route::post('major-categories/create', [MenuController::class, 'store'])->middleware('check.role:'. 'manager')->name('major-categories.store');
+        Route::get('major-categories/edit/{majorCategory}', [MenuController::class, 'edit'])->middleware('check.role:'. 'manager')->name('major-categories.edit');
+        Route::put('major-categories/edit/{majorCategory}', [MenuController::class, 'update'])->middleware('check.role:'. 'manager')->name('major-categories.update');
 
-        Route::get('categories', [CategoryController::class, 'index'])->name('categories');
-        Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
-        Route::post('categories/create', [CategoryController::class, 'store'])->name('categories.store');
-        Route::get('categories/edit/{category}', [CategoryController::class, 'edit'])->name('categories.edit');
-        Route::put('categories/edit/{category}', [CategoryController::class, 'update'])->name('categories.update');
-        Route::delete('categories/{categoryId}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('categories', [CategoryController::class, 'index'])->middleware('check.role:'. 'manager')->name('categories');
+        Route::get('categories/create', [CategoryController::class, 'create'])->middleware('check.role:'. 'manager')->name('categories.create');
+        Route::post('categories/create', [CategoryController::class, 'store'])->middleware('check.role:'. 'manager')->name('categories.store');
+        Route::get('categories/edit/{category}', [CategoryController::class, 'edit'])->middleware('check.role:'. 'manager')->name('categories.edit');
+        Route::put('categories/edit/{category}', [CategoryController::class, 'update'])->middleware('check.role:'. 'manager')->name('categories.update');
+        Route::delete('categories/{categoryId}', [CategoryController::class, 'destroy'])->middleware('check.role:'. 'manager')->name('categories.destroy');
 
         Route::get('blogs', [BlogController::class, 'index'])->name('blogs');
         Route::get('blogs/create', [BlogController::class, 'create'])->name('blogs.create');
@@ -95,12 +95,12 @@ Route::prefix('admin')
         Route::put('blogs/edit/{blog}', [BlogController::class, 'update'])->name('blogs.update');
         Route::delete('blogs/{blogId}', [BlogController::class, 'destroy'])->name('blogs.destroy');
 
-        Route::get('slides', [SlideController::class, 'index'])->name('slides');
-        Route::get('slides/create', [SlideController::class, 'create'])->name('slides.create');
-        Route::post('slides/create', [SlideController::class, 'store'])->name('slides.store');
-        Route::get('slides/edit/{slide}', [SlideController::class, 'edit'])->name('slides.edit');
-        Route::put('slides/edit/{slide}', [SlideController::class, 'update'])->name('slides.update');
-        Route::delete('slides/{slideId}', [SlideController::class, 'destroy'])->name('slides.destroy');
+        Route::get('slides', [SlideController::class, 'index'])->middleware('check.role:'. 'manager')->name('slides');
+        Route::get('slides/create', [SlideController::class, 'create'])->middleware('check.role:'. 'manager')->name('slides.create');
+        Route::post('slides/create', [SlideController::class, 'store'])->middleware('check.role:'. 'manager')->name('slides.store');
+        Route::get('slides/edit/{slide}', [SlideController::class, 'edit'])->middleware('check.role:'. 'manager')->name('slides.edit');
+        Route::put('slides/edit/{slide}', [SlideController::class, 'update'])->middleware('check.role:'. 'manager')->name('slides.update');
+        Route::delete('slides/{slideId}', [SlideController::class, 'destroy'])->middleware('check.role:'. 'manager')->name('slides.destroy');
 
         Route::get('attributes', [AttributeController::class, 'index'])->name('attributes');
         Route::get('attributes/create', [AttributeController::class, 'create'])->name('attributes.create');
@@ -140,9 +140,9 @@ Route::prefix('admin')
         Route::get('orders/show/{order}', [OrderController::class, 'show'])->name('orders.show');
         Route::post('orders/action/{action?}', [OrderController::class, 'action'])->name('orders.action');
 
-        Route::get('abouts', [AboutController::class, 'index'])->name('abouts');
-        Route::get('abouts/edit/{about}', [AboutController::class, 'edit'])->name('abouts.edit');
-        Route::put('abouts/edit/{about}', [AboutController::class, 'update'])->name('abouts.update');
+        Route::get('abouts', [AboutController::class, 'index'])->middleware('check.role:'. 'manager')->name('abouts');
+        Route::get('abouts/edit/{about}', [AboutController::class, 'edit'])->middleware('check.role:'. 'manager')->name('abouts.edit');
+        Route::put('abouts/edit/{about}', [AboutController::class, 'update'])->middleware('check.role:'. 'manager')->name('abouts.update');
 
         Route::get('contacts', [ContactController::class, 'index'])->name('contacts');
         Route::get('contacts/seen-mail/{contact}', [ContactController::class, 'seenMail'])->name('contacts.seenMail');
@@ -152,7 +152,7 @@ Route::prefix('admin')
         Route::post('comments/feedback', [CommentController::class, 'feedback'])->name('comments.feedback');
         Route::post('comments/{comment}', [CommentController::class, 'action'])->name('comments.action');
 
-        Route::get('tickets', [TicketController::class, 'index'])->name('tickets.index');
-        Route::delete('tickets/{ticketId}', [TicketController::class, 'destroy'])->name('tickets.destroy');
-        Route::post('tickets/store', [TicketController::class, 'store'])->name('tickets.store');
+        Route::get('tickets', [TicketController::class, 'index'])->middleware('check.role:'. 'manager')->name('tickets.index');
+        Route::delete('tickets/{ticketId}', [TicketController::class, 'destroy'])->middleware('check.role:'. 'manager')->name('tickets.destroy');
+        Route::post('tickets/store', [TicketController::class, 'store'])->middleware('check.role:'. 'manager')->name('tickets.store');
     });

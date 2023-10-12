@@ -1,6 +1,6 @@
 @extends('backend.layout_admin')
 @php
-$title = 'Users';
+    $title = 'Users';
 @endphp
 @push('css')
     <link rel="stylesheet" type="text/css"
@@ -134,16 +134,17 @@ $title = 'Users';
                     },
                     {
                         data: 'address',
-                        name: 'address'
+                        name: 'address',
                     },
                     {
                         data: 'level',
-                        name: 'level'
+                        name: 'level',
                     },
                     {
                         data: 'status',
                         orderable: true,
                         searchable: true,
+                        visible: {{ checkPermissionToRedirect() ? 'true' : 'false' }},
                         render: function(data, type, row, meta) {
                             return row.status + "<br>Last_login: " + (row.last_login ? row
                                 .last_login : '');
@@ -153,22 +154,32 @@ $title = 'Users';
                         data: 'edit',
                         orderable: false,
                         searchable: false,
+                        visible: {{ checkPermissionToRedirect('manager') ? 'true' : 'false' }},
                         render: function(data, type, row, meta) {
-                            return `<a href="${data}" class="action-icon"><i class="mdi mdi-square-edit-outline"></i></a>`
+                            if (row.level != 'admin') {
+                                return `<a href="${data}" class="action-icon"><i class="mdi mdi-square-edit-outline"></i></a>`;
+                            } else {
+                                return ''
+                            }
                         }
                     },
                     {
                         data: 'destroy',
                         orderable: false,
                         searchable: false,
+                        visible: {{ checkPermissionToRedirect() ? 'true' : 'false' }},
                         render: function(data, type, row, meta) {
-                            return `
+                            if (row.level != 'admin') {
+                                return `
                                 <form class="action-icon" action="${data}" method="post">
                                     @csrf
                                     @method('DELETE')
                                     <button style="background-color: initial;" type="button" class="btn-delete ml-1 border-0 action-icon" ><i class="mdi mdi-delete"></i></button>
                                 </form>
                         `
+                            } else {
+                                return ''
+                            }
                         }
                     },
                 ]

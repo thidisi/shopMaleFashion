@@ -498,6 +498,9 @@
                                 });
                                 $("#change_password")[0].reset();
                                 $("#change_password-btn").prop("disabled", false);
+                                $('#showChangePassword').modal('hide');
+                                $('#loginModal').modal('show');
+
                             }
                         },
                         error: function(response) {

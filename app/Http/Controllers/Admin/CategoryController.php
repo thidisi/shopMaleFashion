@@ -38,7 +38,7 @@ class CategoryController extends Controller
             ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
             ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
             ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-            ->where('productions.status', '=', ACTIVE)
+            ->where('productions.status', '=', 'active')
             ->latest('productions.created_at')
             ->select(
                 'product_images.image as image',

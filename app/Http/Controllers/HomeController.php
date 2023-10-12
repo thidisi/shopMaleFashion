@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\MenuStatusEnum;
 use App\Enums\NameStatusEnum;
 use App\Enums\SortOrderSlideEnum;
+use App\Events\Customer\ForgotPassword;
 use App\Jobs\SendEmail;
 use App\Models\About;
 use App\Models\Blog;
@@ -154,9 +155,9 @@ class HomeController extends Controller
     {
         try {
             $customer = Customer::query()->where('email', $request->get('emailReset'))->where('status', 'active')->firstOrFail();
-            $token = \Str::random(26);
+            $token = random_int(100000, 999999);
             $check = DB::table('forgot_password')->where('customer_id', $customer->id)->count();
-            if ($check != ACTIVE) {
+            if ($check == 0) {
                 DB::table('forgot_password')->insert([
                     'customer_id' => $customer->id,
                     'token' => $token
@@ -167,19 +168,8 @@ class HomeController extends Controller
                     'token' => $token
                 ]);
             }
-            $message = [
-                'body' => "<div class='border border-secondary p-3' style='font-size: 1rem;color: black;'>
-                <p><em>Hello $customer->name,</em></p>
-                <p><em>
-                We received a request to reset your account password for this email address. To begin the process of resetting your account's password, click on the code below.&nbsp;</em></p>
-                <p><em>Code: $token</em></p>
-                <p><em>Thank you !.<br>
-                Shop Male Fashion;<br>
-                </em></p></div>",
-            ];
-            $message['subject'] = "Shop ko biet dau";
-            $users[]['email'] = $customer->email;
-            // SendEmail::dispatch($message, $users)->delay(now()->addMinute(1));
+            $params = $token;
+            event(new ForgotPassword($customer, $params));
             return response('Please check your email for the code!!', 200);
         } catch (\Throwable $e) {
             return response('Email does not exist or has been disabled!!', 404);

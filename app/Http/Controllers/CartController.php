@@ -44,7 +44,7 @@ class CartController extends Controller
         try {
             $customer = $this->customer->findOrFail(session('sessionIdCustomer'));
             $cartItems = Cart::getContent();
-            if(!Cart::isEmpty()){
+            if (!Cart::isEmpty()) {
                 $data['getSubTotal'] = 0;
                 foreach (Cart::getContent() as $value) {
                     $data['getSubTotal'] += ($value->price * $value->quantity);
@@ -59,7 +59,7 @@ class CartController extends Controller
             }
             return view('frontend.carts.checkoutNone');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -75,40 +75,17 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-        $product = $this->product->find($request->id);
-        $checkQuantity = $product->quantity - $request->quantity;
-        $productName = $request->name . ' (Size:' . $request->size . ', ' . $request->color . ')';
-        $saleCondition = new \Darryldecode\Cart\CartCondition(array(
-            'name' => "SALE $request->discount%",
-            'type' => 'tax',
-            'value' => "-$request->discount%",
-        ));
-        if (Cart::isEmpty()) {
-            if ($checkQuantity >= 0) {
-                Cart::add([
-                    'id' => $request->id,
-                    'name' => $productName,
-                    'price' => $request->price,
-                    'quantity' => $request->quantity,
-                    'attributes' => array(
-                        'image' => $request->image,
-                        'discounts' => $request->discount,
-                    ),
-                    'conditions' => $saleCondition
-                ]);
-                return response('Thêm sản phẩm thành công!', 200);
-            }
-            return response('Sản phẩm bạn vừa thêm đã hết hàng rồi!', 299);
-        } else {
-            $cartItems = Cart::getContent();
-            $dataId["$request->id"] = 0;
-            foreach ($cartItems as $each) {
-                $dataId["$each->id"] = $each->quantity;
-            }
-            $checkAddQuantity = $dataId["$request->id"] + $request->quantity;
-            if ($checkAddQuantity <= 10) { // Check product quantity when adding
-                $checkQ = $checkQuantity - $dataId["$request->id"];
-                if ($checkQ >= 0) { // Check remaining product quantity
+        try {
+            $product = $this->product->findOrFail($request->id);
+            $checkQuantity = $product->quantity - $request->quantity;
+            $productName = $request->name . ' (Size:' . $request->size . ', ' . $request->color . ')';
+            $saleCondition = new \Darryldecode\Cart\CartCondition(array(
+                'name' => "SALE $request->discount%",
+                'type' => 'tax',
+                'value' => "-$request->discount%",
+            ));
+            if (Cart::isEmpty()) {
+                if ($checkQuantity >= 0) {
                     Cart::add([
                         'id' => $request->id,
                         'name' => $productName,
@@ -121,50 +98,89 @@ class CartController extends Controller
                         'conditions' => $saleCondition
                     ]);
                     return response('Thêm sản phẩm thành công!', 200);
-                } else {
-                    return response('Sản phẩm bạn vừa thêm đã hết hàng rồi!', 299);
                 }
+                return response('Sản phẩm bạn vừa thêm đã hết hàng rồi!', 299);
             } else {
-                return response('Sản phẩm bạn vừa thêm đã đạt giới hạn mua rồi!', 299);
+                $cartItems = Cart::getContent();
+                $dataId["$request->id"] = 0;
+                foreach ($cartItems as $each) {
+                    $dataId["$each->id"] = $each->quantity;
+                }
+                $checkAddQuantity = $dataId["$request->id"] + $request->quantity;
+                if ($checkAddQuantity <= 10) { // Check product quantity when adding
+                    $checkQ = $checkQuantity - $dataId["$request->id"];
+                    if ($checkQ >= 0) { // Check remaining product quantity
+                        Cart::add([
+                            'id' => $request->id,
+                            'name' => $productName,
+                            'price' => $request->price,
+                            'quantity' => $request->quantity,
+                            'attributes' => array(
+                                'image' => $request->image,
+                                'discounts' => $request->discount,
+                            ),
+                            'conditions' => $saleCondition
+                        ]);
+                        return response('Thêm sản phẩm thành công!', 200);
+                    } else {
+                        return response('Sản phẩm bạn vừa thêm đã hết hàng rồi!', 299);
+                    }
+                } else {
+                    return response('Sản phẩm bạn vừa thêm đã đạt giới hạn mua rồi!', 299);
+                }
             }
+        } catch (\Throwable $th) {
+            return redirect()->route('errors');
         }
     }
 
     public function updateCart(Request $request)
     {
-        $product = $this->product->find($request->id);
-        $checkQuantity = $product->quantity - $request->quantity;
-        if ($checkQuantity >= 0) {
-            Cart::update($request->id, array(
-                'quantity' => array(
-                    'relative' => false,
-                    'value' => $request->quantity
-                ),
-            ));
-            $data['getSubTotal'] = 0;
-            foreach (Cart::getContent() as $value) {
-                $data['getSubTotal'] += ($value->price * $value->quantity);
+        try {
+            $product = $this->product->findOrFail($request->id);
+            $checkQuantity = $product->quantity - $request->quantity;
+            if ($checkQuantity >= 0) {
+                Cart::update($request->id, array(
+                    'quantity' => array(
+                        'relative' => false,
+                        'value' => $request->quantity
+                    ),
+                ));
+                $data['getSubTotal'] = 0;
+                foreach (Cart::getContent() as $value) {
+                    $data['getSubTotal'] += ($value->price * $value->quantity);
+                }
+                $data['getSubTotal'] = currency_format($data['getSubTotal']);
+                $data['getTotal'] = currency_format(Cart::getTotal());
+                return response()->json([
+                    'message' => __("Update sản phẩm thành công!"),
+                    'data' => $data
+                ], 200);
+            } else {
+                return response()->json(['message' => __("Sản phẩm bạn vừa thêm đã hết hàng rồi!")], 201);
             }
-            $data['getSubTotal'] = currency_format($data['getSubTotal']);
-            $data['getTotal'] = currency_format(Cart::getTotal());
-            return response()->json([
-                'message' => __("Update sản phẩm thành công!"),
-                'data' => $data
-            ], 200);
-        } else {
-            return response()->json(['message' => __("Sản phẩm bạn vừa thêm đã hết hàng rồi!")], 201);
+        } catch (\Throwable $th) {
+            return redirect()->route('errors');
         }
     }
 
     public function removeCart($cartId)
     {
-        Cart::remove($cartId);
-        return response('Xóa sản phẩm thành công!', 200);
+        try {
+            Cart::remove($cartId);
+            return response('Xóa sản phẩm thành công!', 200);
+        } catch (\Throwable $th) {
+            return redirect()->route('errors');
+        }
     }
 
     public function clearAllCart()
     {
-        Cart::clear();
-        return redirect()->route('cart')->with('success', 'Clears successfully!!');
+        try {
+            Cart::clear();
+            return redirect()->route('cart')->with('success', 'Clears successfully!!');
+        } catch (\Throwable $th) {
+            return redirect()->route('errors');
+        }
     }
 }

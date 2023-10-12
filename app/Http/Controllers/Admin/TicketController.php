@@ -58,8 +58,8 @@ class TicketController extends Controller
     public function get_data(): JsonResponse
     {
         try {
-            $customers = $this->customer->where('status', ACTIVE)->get(['id', 'name'])->toArray();
-            $total_customer = $this->customer->where('status', ACTIVE)->count();
+            $customers = $this->customer->where('status', 'active')->get(['id', 'name'])->toArray();
+            $total_customer = $this->customer->where('status', 'active')->count();
             $data = [
                 'customers' => $customers,
                 'total_customer' => $total_customer
@@ -89,7 +89,7 @@ class TicketController extends Controller
                 }
             } else {
                 $data['quantity'] = $data['data'];
-                $getData = $this->customer->where('status', ACTIVE)->inRandomOrder()->limit($data['quantity'])->get(['id', 'name', 'email']);
+                $getData = $this->customer->where('status', 'active')->inRandomOrder()->limit($data['quantity'])->get(['id', 'name', 'email']);
                 foreach ($getData as $each) {
                     $data['data_customer'][] = json_encode($each);
                 }

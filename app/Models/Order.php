@@ -24,6 +24,7 @@ class Order extends Model
         "phone_receiver",
         "address_receiver",
         "total_money",
+        "ticket_id",
         "note",
         "action",
     ];
@@ -39,6 +40,11 @@ class Order extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
+    public function tickets()
+    {
+        return $this->belongsTo(Ticket::class, 'ticket_id');
+    }
+
     public function productions()
     {
         return $this->belongsToMany(Production::class, 'order_detail', 'order_id', 'production_id')
@@ -46,9 +52,4 @@ class Order extends Model
         ->withPivot('attr')
         ->withTimestamps();
     }
-
-    // public function getStatusNameAttribute()
-    // {
-    //     return ($this->status == 1) ? "Active" : "Not active";
-    // }
 }

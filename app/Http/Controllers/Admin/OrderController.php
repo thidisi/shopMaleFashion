@@ -63,6 +63,7 @@ class OrderController extends Controller
                 ->where('productions.id', '=', $value->id)
                 ->get('discounts.discount_price as discount_price');
         }
+        // dd($this->order->with(['tickets', 'productions'])->find($order->id));
 
         return view('backend.orders.show', [
             'orders' => $order->productions,
@@ -111,6 +112,8 @@ class OrderController extends Controller
                     $ticket->quantity = $ticket->quantity - 1;
                     $ticket->status = 'active';
                     $ticket->save();
+                    $orders->ticket_id = $ticket->id;
+                    $orders->save();
                 }
                 foreach ($cartItems as $each) {
                     if (preg_match_all($pattern, $each->name, $matches)) {
