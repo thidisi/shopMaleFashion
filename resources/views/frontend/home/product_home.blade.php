@@ -15,10 +15,9 @@
                 @php
                     $date = $each->created_at;
                     $date_end = Carbon\Carbon::now()->addDays(-7);
-                    $checkDate = $date >= $date_end;
                 @endphp
                 <div
-                    class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix @if ($each->discount != 1 && $each->discountStatus == 'active') hot-sales @endif @if ($checkDate) new-arrivals @endif">
+                    class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix @if ($each->discount != 1 && $each->discountStatus == 'active') hot-sales @endif @if ($date >= $date_end) new-arrivals @endif">
                     <div class="product__item">
                         <div class="product__item__pic set-bg" id="wishlist_productimage{{ $each->id }}"
                             @if ($each->product_images->status == 'active') data-setbg="{{ asset("storage/$each->image") }}" @endif>
@@ -40,7 +39,7 @@
                             @if ($each->discount != 1 && $each->discountStatus == 'active')
                                 <span class="item-sale">-{{ (1 - $each->discount) * 100 }}%</span>
                             @endif
-                            @if ($checkDate)
+                            @if ($date >= $date_end)
                                 <span class="label">New</span>
                             @endif
                             <ul class="product__hover">
@@ -52,7 +51,7 @@
                                 <li><a href="#"><img src="{{ asset('frontend/img/icon/compare.png') }}"
                                             alt="">
                                         <span>Compare</span></a></li>
-                                <li><a href="{{ route('productDetail', Str::slug($each->name, '-')) }}"><img
+                                <li><a id="wishlist_producturl{{ $each->id }}" href="{{ route('productDetail', Str::slug($each->name, '-')) }}"><img
                                             src="{{ asset('frontend/img/icon/search.png') }}" alt=""></a></li>
                             </ul>
                         </div>

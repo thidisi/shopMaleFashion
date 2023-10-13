@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\About;
+use App\Models\AttributeValue;
 use App\Models\Category;
+use App\Models\Discount;
 use App\Models\Major_Category;
 use App\Models\Production;
 use Carbon\Carbon;
@@ -17,11 +19,13 @@ use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    public function __construct(Category $category, Production $production, Major_Category $major_category)
+    public function __construct(Category $category, Production $product, Major_Category $major_category, Discount $discount, AttributeValue $attributeValue)
     {
         $this->category = $category;
-        $this->production = $production;
+        $this->product = $product;
         $this->major_category = $major_category;
+        $this->discount = $discount;
+        $this->attributeValue = $attributeValue;
     }
 
     public function index()
@@ -34,39 +38,47 @@ class CategoryController extends Controller
 
     public function view()
     {
-        $products = $this->production->Join('product_images', 'productions.id', '=', 'product_images.production_id')
-            ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
-            ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-            ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-            ->where('productions.status', '=', 'active')
-            ->latest('productions.created_at')
-            ->select(
-                'product_images.image as image',
-                'product_images.status as statusImage',
-                'categories.name as categoryName',
-                'discounts.discount_price as discountPrice',
-                'discounts.status as statusDiscount',
-                'productions.*'
-            )->paginate(8);
-
-        $categories = $this->category->leftJoin('productions', 'categories.id', '=', 'productions.category_id')
-            ->selectRaw('categories.id, categories.name, count(productions.category_id) AS `count`',)
-            ->groupBy('categories.name')
-            ->orderBy('count', 'DESC')
-            ->get();
+        $products = $this->product->with(['categories', 'product_images', 'discount_products'])
+            ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
+            ->latest('created_at')->paginate(16);
 
         foreach ($products as $each) {
-            $each->image = json_decode($each->image)[0];
-            if ($each->statusDiscount == 'active') {
-                $each->discountPrice = (100 - $each->discountPrice) / 100;
+            $each->image = json_decode($each->product_images->image)[0];
+            $each->discount = 1;
+            $each->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
+            if (!empty($each->discount_products)) {
+                $each->discount = (100 - $this->discount->find($each->discount_products->discount_id)->discount_price) / 100;
+                $each->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
             }
-            $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
+            $each->review = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
         }
 
+        $categories = $this->category->with('productions')->whereStatus(Category::CATEGORY_STATUS['ACTIVE'])->get();
+        $categories->map(function ($query) {
+            $query->count = $query->productions->count();
+            return $query;
+        });
+
+        $filter_price_list = [
+            '0-49000' => '0' . ' - ' . currency_format(49000),
+            '49000-99000' => currency_format(49000) . ' - ' . currency_format(99000),
+            '99000-199000' => currency_format(99000) . ' - ' . currency_format(199000),
+            '199000-299000' => currency_format(199000) . ' - ' . currency_format(299000),
+            '299000-399000' => currency_format(299000) . ' - ' . currency_format(399000),
+            '399000-599000' => currency_format(399000) . ' - ' . currency_format(599000),
+            '599000' => currency_format(599000) . ' +',
+        ];
+
+        $filter_color_list = $this->attributeValue->with('attributes')
+            ->whereHas('attributes', function ($query) {
+                $query->whereNull('replace_id');
+            })->whereStatus('active')->get();
 
         return view('frontend.shops.index', [
             'categories' => $categories,
             'products' => $products,
+            'filter_price_list' => $filter_price_list,
+            'filter_color_list' => $filter_color_list,
         ]);
     }
 

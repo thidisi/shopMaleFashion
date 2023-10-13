@@ -49,9 +49,8 @@
         </div>
         <div class="favourite_box--container" style="height: 100%;">
             <div class="favourite_container--title">
-                <div style="display: flex; height:48px;padding: 12px;">
-                    <div>Product</div>
-                    <div>Total</div>
+                <div style="display: flex; height:48px;padding: 12px;justify-content: center;">
+                    <div>Wishlist favourite</div>
                 </div>
             </div>
             <ul class="favourite_container--content"

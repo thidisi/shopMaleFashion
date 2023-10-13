@@ -13,6 +13,7 @@ use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Customer;
+use App\Models\Discount;
 use App\Models\District;
 use App\Models\Major_Category;
 use App\Models\ProductImage;
@@ -31,13 +32,14 @@ class ProductionController extends Controller
     /**
      * Construct
      */
-    public function __construct(Production $product, Category $category, Attribute $attribute, AttributeValue $attributeValue, ProductImage $productImage)
+    public function __construct(Production $product, Category $category, Attribute $attribute, AttributeValue $attributeValue, ProductImage $productImage, Discount $discount)
     {
         $this->product = $product;
         $this->category = $category;
         $this->attribute = $attribute;
         $this->attributeValue = $attributeValue;
         $this->productImage = $productImage;
+        $this->discount = $discount;
     }
 
     public function index()
@@ -178,6 +180,31 @@ class ProductionController extends Controller
         }
 
         return view('frontend.errors.index');
+    }
+
+    public function filter_list(Request $request)
+    {
+        $products = $this->product->with(['categories', 'product_images', 'discount_products'])
+            ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
+            ->latest('created_at')->get();
+
+        foreach ($products as $each) {
+            $each->image = json_decode($each->product_images->image)[0];
+            $each->discount = 1;
+            $each->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
+            if (!empty($each->discount_products)) {
+                $each->discount = (100 - $this->discount->find($each->discount_products->discount_id)->discount_price) / 100;
+                $each->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
+            }
+            $each->review = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
+        }
+        return response()->json([
+            'products' => $products,
+            'url' => config('app.url'),
+    ], 200);
+        // if($request->ajax()){
+
+        // }
     }
 
     public function create(Request $request)

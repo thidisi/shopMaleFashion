@@ -77,7 +77,7 @@ class HomeController extends Controller
 
         $products = $this->product->with(['categories', 'product_images', 'discount_products'])
             ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
-            ->latest('created_at')->get();
+            ->latest('created_at')->paginate(8);
         $products = $products->map(function ($query) {
             $query->image = json_decode($query->product_images->image)[0];
             $query->discount = 1;

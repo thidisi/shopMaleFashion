@@ -6,7 +6,9 @@ use App\Enums\MenuStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MenuUpdateRequest;
 use App\Models\About;
+use App\Models\AttributeValue;
 use App\Models\Category;
+use App\Models\Discount;
 use App\Models\Major_Category;
 use App\Models\Production;
 use Carbon\Carbon;
@@ -17,12 +19,13 @@ use Illuminate\Support\Str;
 
 class MenuController extends Controller
 {
-    private object $model;
-
-    public function __construct(Major_Category $major_category)
+    public function __construct(Major_Category $major_category, Discount $discount, AttributeValue $attributeValue, Production $product, Category $category)
     {
-        $this->table = (new Major_Category)->getTable();
         $this->major_category = $major_category;
+        $this->discount = $discount;
+        $this->product = $product;
+        $this->category = $category;
+        $this->attributeValue = $attributeValue;
     }
 
     public function index()
@@ -35,127 +38,84 @@ class MenuController extends Controller
 
     public function view(Major_Category $menu)
     {
-        $majorCategories = $this->major_category->where('status', '=', MenuStatusEnum::SHOW)->get('slug');
-        foreach ($majorCategories as $each) {
-            $data[] = $each->slug;
-        }
-        if (in_array($menu->slug, $data)) {
-            $menuId = $this->major_category->where('slug', '=', $menu->slug)->first()->id;
+        try {
+            $majorCategories = $this->major_category->whereStatus('show')->get('slug');
+            foreach ($majorCategories as $each) {
+                $data[] = $each->slug;
+            }
+            $breadCrumb = Major_Category::where('slug', '=', $menu->slug)->first();
 
-            $breadCrumb = $this->major_category->find($menuId);
+            if (in_array($menu->slug, $data)) {
+                $menu_id = $this->major_category->where('slug', '=', $menu->slug)->first()->id;
 
-            $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
-                ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
-                ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->where('categories.major_category_id', '=', "$menuId")
-                ->where('productions.status', '=', ACTIVE)
-                ->latest('productions.created_at')
-                ->select(
-                    'product_images.image as image',
-                    'product_images.status as statusImage',
-                    'categories.name as categoryName',
-                    'discounts.discount_price as discountPrice',
-                    'discounts.status as statusDiscount',
-                    'productions.*'
-                )->paginate(12);
-            $categories = Category::leftJoin('productions', 'categories.id', '=', 'productions.category_id')
-                ->where('categories.major_category_id', '=', "$menuId")
-                ->selectRaw('categories.id, categories.name, count(productions.category_id) AS `count`',)
-                ->groupBy('categories.name')
-                ->orderBy('count', 'DESC')
-                ->get();
+                $products = $this->product->with(['categories', 'product_images', 'discount_products'])
+                    ->whereHas('categories', function ($query) use ($menu_id) {
+                        $query->where('major_category_id', $menu_id);
+                    })
+                    ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
+                    ->latest('created_at')->paginate(16);
+            }
+
+            if ($menu->slug == PROMOTION) {
+                $products = $this->product->with(['categories', 'product_images', 'discount_products'])
+                    ->whereHas('discount_products', function ($query) {
+                        $query->whereNotNull('discount_id');
+                    })
+                    ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
+                    ->latest('created_at')->paginate(16);
+            }
+
+            if ($menu->slug == NEW_PRODUCTS) {
+                $date_end = Carbon::now()->addDays(-7);
+
+                $products = $this->product->with(['categories', 'product_images', 'discount_products'])
+                    ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
+                    ->where('created_at', '>=', $date_end)
+                    ->latest('created_at')->paginate(16);
+            }
+
             foreach ($products as $each) {
-                $each->image = json_decode($each->image)[0];
-                if ($each->statusDiscount == 'active') {
-                    $each->discountPrice = (100 - $each->discountPrice) / 100;
+                $each->image = json_decode($each->product_images->image)[0];
+                $each->discount = 1;
+                $each->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
+                if (!empty($each->discount_products)) {
+                    $each->discount = (100 - $this->discount->find($each->discount_products->discount_id)->discount_price) / 100;
+                    $each->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
                 }
-                $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
+                $each->review = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
             }
-        }
 
-        if ($menu->slug == PROMOTION) {
-            $breadCrumb = Major_Category::where('slug', '=', $menu->slug)->first();
+            $categories = $this->category->with('productions')->whereStatus(Category::CATEGORY_STATUS['ACTIVE'])->get();
+            $categories->map(function ($query) {
+                $query->count = $query->productions->count();
+                return $query;
+            });
 
-            $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
-                ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
-                ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->whereNotNull('discounts.discount_price')
-                ->where('discounts.status', 'active')
-                ->where('productions.status', '=', ACTIVE)
-                ->latest('productions.created_at')
-                ->select(
-                    'product_images.image as image',
-                    'product_images.status as statusImage',
-                    'categories.name as categoryName',
-                    'discounts.discount_price as discountPrice',
-                    'discounts.status as statusDiscount',
-                    'productions.*'
-                )->paginate(12);
-            foreach ($products as $each) {
-                $id[] = $each->id;
-            }
-            $categories = Category::leftJoin('productions', 'categories.id', '=', 'productions.category_id')
-                ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->selectRaw('categories.id, categories.name, count(productions.category_id) AS `count`',)
-                ->where('discounts.status', 'active')
-                ->groupBy('categories.name')
-                ->orderBy('count', 'DESC')
-                ->get();
-            foreach ($products as $each) {
-                $each->image = json_decode($each->image)[0];
-                $each->discountPrice = (100 - $each->discountPrice) / 100;
-                $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
-            }
-        }
+            $filter_price_list = [
+                '0-49000' => '0' . ' - ' . currency_format(49000),
+                '49000-99000' => currency_format(49000) . ' - ' . currency_format(99000),
+                '99000-199000' => currency_format(99000) . ' - ' . currency_format(199000),
+                '199000-299000' => currency_format(199000) . ' - ' . currency_format(299000),
+                '299000-399000' => currency_format(299000) . ' - ' . currency_format(399000),
+                '399000-599000' => currency_format(399000) . ' - ' . currency_format(599000),
+                '599000' => currency_format(599000) . ' +',
+            ];
 
-        if ($menu->slug == NEW_PRODUCTS) {
-            $breadCrumb = Major_Category::where('slug', '=', $menu->slug)->first();
+            $filter_color_list = $this->attributeValue->with('attributes')
+                ->whereHas('attributes', function ($query) {
+                    $query->whereNull('replace_id');
+                })->whereStatus('active')->get();
 
-            $date_end = Carbon::now()->addDays(-7);
-
-            $products = Production::Join('product_images', 'productions.id', '=', 'product_images.production_id')
-                ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
-                ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->where('productions.created_at', '>=', $date_end)
-                ->where('productions.status', ACTIVE)
-                ->latest('productions.created_at')
-                ->select(
-                    'product_images.image as image',
-                    'product_images.status as statusImage',
-                    'categories.name as categoryName',
-                    'discounts.discount_price as discountPrice',
-                    'discounts.status as statusDiscount',
-                    'productions.*'
-                )->paginate(12);
-
-            $categories = Category::leftJoin('productions', 'categories.id', '=', 'productions.category_id')
-                ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->selectRaw('categories.id, categories.name, count(productions.category_id) AS `count`',)
-                ->where('productions.created_at', '>=', $date_end)
-                ->groupBy('categories.name')
-                ->orderBy('count', 'DESC')
-                ->get();
-            foreach ($products as $each) {
-                $each->image = json_decode($each->image)[0];
-                $each->discountPrice = (100 - $each->discountPrice) / 100;
-                $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
-            }
-        }
-
-        if (!empty($products)) {
             return view('frontend.shops.index', [
                 'categories' => $categories,
                 'products' => $products,
                 'breadCrumb' => $breadCrumb->name,
+                'filter_price_list' => $filter_price_list,
+                'filter_color_list' => $filter_color_list,
             ]);
-            exit;
+        } catch (\Throwable $th) {
+            return view('frontend.errors.index');
         }
-        return view('frontend.errors.index');
     }
 
     public function create()
