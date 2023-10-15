@@ -102,7 +102,7 @@ class SlideController extends Controller
                 return redirect()->route('admin.slides')->with('SlideErrors', 'Edit Failed Slide table');
             }
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -112,7 +112,7 @@ class SlideController extends Controller
             $this->slide->destroy($slideId);
             return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 }

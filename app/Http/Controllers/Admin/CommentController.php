@@ -12,20 +12,20 @@ use Illuminate\Support\Facades\Storage;
 
 class CommentController extends Controller
 {
-    public function __construct(Comment $comment)
+    public function __construct(Comment $comment, Customer $customer)
     {
         $this->comment = $comment;
+        $this->customer = $customer;
     }
 
     public function index()
     {
         $comments = $this->comment->with(['customers', 'productions'])
-        // ->where('status', '!=', 4)
+            // ->where('status', '!=', 4)
             ->latest("created_at")
             ->get();
-            // dd($comments);
         foreach ($comments as $each) {
-            if($each->parent_id !== null){
+            if ($each->parent_id !== null) {
                 $each['product'] = $comments->find($each->parent_id)->productions['0'];
             }
         }
@@ -41,8 +41,8 @@ class CommentController extends Controller
         $arr['customer_id'] = 7;
         $arr['parent_id'] = $request->commentId;
         $arr['content'] = $request->content;
-        $arr['status'] = 4;
-        $this->comment->create($arr);
+        $arr['status'] = 'pending';
+        // $this->comment->create($arr);
         return response('You successfully feedback on the customer!!', 200);
     }
 
@@ -55,24 +55,24 @@ class CommentController extends Controller
 
     public function review_products(Request $request)
     {
-        $arr = [];
-        if ($request->customer_id !== null) {
-            $arr['customer_id'] = $request->customer_id;
-            $arr['parent_id'] = $request->parent_id ? $request->parent_id : null;
-            $arr['content'] = $request->review_content;
-            $arr['status'] = ACTIVE;
-            $id = $this->comment->create($arr)->id;
-        }
-        $check = DB::table('production_comments')
-            ->leftJoin('comments', 'comments.id', '=', 'production_comments.comment_id')
-            ->where('production_comments.production_id', '=', $request->product_id)
-            ->where('comments.customer_id', '=', $request->customer_id)->count();
+        $check = $this->comment->with('productions')
+            ->whereHas('productions', function ($query) use ($request) {
+                $query->whereId($request->product_id);
+                $query->whereNotNull('review');
+            })->where('customer_id', $request->customer_id)->count();
         if ($check === 0) {
+            $arr = [];
+            if ($request->customer_id !== null) {
+                $arr['customer_id'] = $request->customer_id;
+                $arr['parent_id'] = $request->parent_id ? $request->parent_id : null;
+                $arr['content'] = $request->review_content;
+                $arr['status'] = 'active';
+                $id = $this->comment->create($arr)->id;
+            }
             $comments = $this->comment->find($id);
             $product_id = $request->product_id;
             $review = $request->ratings;
             $images = null;
-
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
                 foreach ($images as $image) {
@@ -86,8 +86,9 @@ class CommentController extends Controller
                     $product_id => ['review' => $review, 'images' => $images],
                 ]
             );
+            return redirect()->back()->with('success', 'You evaluate the product successfully!!');
         }
-        return redirect()->back()->with('success', 'You evaluate the product successfully!!');
+        return redirect()->back()->with('error', 'You evaluate the product error!!');
     }
 
     public function add_comments(Request $request)
@@ -101,7 +102,7 @@ class CommentController extends Controller
                 $arr['parent_id'] = null;
             }
             $arr['content'] = $request->content;
-            $arr['status'] = NOT_ACTIVE;
+            $arr['status'] = 'pending';
             $id = $this->comment->create($arr)->id;
             if ($request->product_id !== null) {
                 $comments = $this->comment->find($id);
@@ -118,52 +119,55 @@ class CommentController extends Controller
 
     public function show_reviews($product_id)
     {
-        // $comments = $this->comment->with(['productions' => function ($query) use ($product_id) {
-        //     $query->where('id', $product_id);
-        // }])->get();
-        $comments = DB::table('production_comments')
-            ->leftJoin('comments', 'comments.id', '=', 'production_comments.comment_id')
-            ->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
-            ->select(
-                'production_comments.review as review',
-                'production_comments.images as images',
-                'comments.id as id',
-                'comments.customer_id as customer_id',
-                'customers.name as name',
-                'comments.content as content',
-                'comments.status as action',
-                'comments.created_at as created_at'
-            )
-            ->where('production_comments.production_id', '=', $product_id)
-            ->whereNull('comments.parent_id')
-            ->whereNotNull('production_comments.review')
-            ->whereNull('production_comments.deleted_at')
-            ->whereNull('comments.deleted_at')
-            ->get();
-        return $comments;
+        $reviews = $this->comment->with(['productions', 'customers'])
+            ->whereHas('productions', function ($query) use ($product_id) {
+                $query->whereId($product_id);
+                $query->whereNotNull('review');
+            })->whereNull(['deleted_at', 'parent_id'])->get();
+
+        $reviews->map(function ($query) {
+            $query->review = $query->productions->first()->pivot->review;
+            $query->images = json_decode($query->productions->first()->pivot->images)['0'];
+            $query->name = $query->customers->name;
+            return $query;
+        });
+        return $reviews;
     }
 
-    public function show_comments($product_id)
+    public function show_comments($product_id, $customer_id = null)
     {
-        $comments = $this->comment
-            ->leftJoin('production_comments', 'comments.id', '=', 'production_comments.comment_id')
-            ->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
-            ->where('production_comments.production_id', $product_id)
-            ->where('comments.status', '!=', CANCEL)
-            ->select(
-                'comments.*',
-                'customers.name as name',
-                'comments.created_at as created_at'
-            )
-            ->whereNull('production_comments.review')
-            ->whereNull('production_comments.images')
-            ->whereNull('production_comments.deleted_at')
-            ->whereNull('production_comments.deleted_at')
-            ->with(['parents' => function ($query) {
-                $query->from('comments')->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
-                    ->where('comments.status', '!=', CANCEL)
-                    ->select('comments.*', 'customers.name');
-            }])->latest('comments.created_at')->get();
+        $comments = $this->comment->with(['productions', 'customers', 'parents'])
+            ->whereHas('productions', function ($query) use ($product_id) {
+                $query->whereId($product_id);
+                $query->whereNull(['images', 'review']);
+            })->whereNull(['deleted_at', 'parent_id'])->where('status', '!=', 'inactive')->get();
+        $comments->map(function ($query) {
+            $query->name = $query->customers->name;
+            if (!empty($query->parents)) {
+                $query->parents->map(function ($queryTwo) {
+                    $queryTwo->name = $this->customer->find($queryTwo->customer_id)->name;
+                    return $queryTwo;
+                });
+            }
+            return $query;
+        });
+        $comments->each(function ($comment, $key) use (&$comments, $customer_id) {
+            if ($comment->status === 'pending') {
+                if ($comment->customer_id != $customer_id) {
+                    $comments->forget($key);
+                }
+            }
+            if (!empty($comment->parents)) {
+                $parents = $comment->parents;
+                $parents->each(function ($parent, $key_parent) use (&$parents, $customer_id) {
+                    if ($parent->status === 'pending') {
+                        if ($parent->customer_id != $customer_id) {
+                            $parents->forget($key_parent);
+                        }
+                    }
+                });
+            }
+        });
         return $comments;
     }
 }

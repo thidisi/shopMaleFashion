@@ -26,7 +26,7 @@ class AboutController extends Controller
 
     public function update(UpdateAboutRequest $request, $aboutId)
     {
-        // try {
+        try {
             $about = $this->about->findOrFail($aboutId);
 
             $about->title = $request->get('title');
@@ -61,8 +61,8 @@ class AboutController extends Controller
                 }
                 return redirect()->route('admin.abouts')->with('EditAboutErrors', 'Edit Failed Blog table');
             }
-        // } catch (\Throwable $th) {
-        //     return redirect()->route('index');
-        // }
+        } catch (\Throwable $th) {
+            return redirect()->route('errors');
+        }
     }
 }

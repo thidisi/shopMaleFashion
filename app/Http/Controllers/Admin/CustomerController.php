@@ -54,7 +54,7 @@ class CustomerController extends Controller
             $customer->save();
             return response('Updated successfully!!', 200);
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -67,7 +67,7 @@ class CustomerController extends Controller
 
             return response($arr, 200);
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 }

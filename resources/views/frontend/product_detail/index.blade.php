@@ -24,7 +24,7 @@
                                     <a class="nav-link @if (head(json_decode($each->image)) == $images) active @endif" data-toggle="tab"
                                         href="#tabImages-{{ $key + 1 }}" role="tab">
                                         <div class="product__thumb__pic set-bg"
-                                            @if ($each->statusImage == 'active') data-setbg="{{ asset("storage/$images") }}" @endif>
+                                            @if ($each->product_images->status == 'active') data-setbg="{{ asset("storage/$images") }}" @endif>
                                             @if (last(json_decode($each->image)) == $images)
                                                 <i class="fa fa-play"></i>
                                             @endif
@@ -40,7 +40,7 @@
                                 @if (last(json_decode($each->image)) == $images)
                                     <div class="tab-pane" id="tabImages-{{ $key + 1 }}" role="tabpanel">
                                         <div class="product__details__pic__item">
-                                            @if ($each->statusImage == 'active')
+                                            @if ($each->product_images->status == 'active')
                                                 <img src="{{ asset("storage/$images") }}" alt="product_img">
                                             @endif
                                             <a href="https://www.youtube.com/watch?v=3O19l0_la5M&list=RDMM3O19l0_la5M&start_radio=1"
@@ -51,7 +51,7 @@
                                 <div class="tab-pane @if (head(json_decode($each->image)) == $images) active @endif"
                                     id="tabImages-{{ $key + 1 }}" role="tabpanel">
                                     <div class="product__details__pic__item">
-                                        @if ($each->statusImage == 'active')
+                                        @if ($each->product_images->status == 'active')
                                             <img id="wishlist_productimage{{ $each->id }}"
                                                 src="{{ asset("storage/$images") }}" alt="product_img">
                                         @endif
@@ -69,8 +69,8 @@
                     <div class="col-lg-8">
                         <div class="product__details__text">
                             <h4>{{ $each->name }}
-                                @if ($each->statusDiscount == 'active')
-                                    (<em class="text-danger">Sale: {{ $each->discountPrice }}%</em>)
+                                @if ($each->discountStatus == 'active')
+                                    (<em class="text-danger">Sale: {{ 100 - ($each->discount * 100) }}%</em>)
                                 @endif
                             </h4>
                             <input type="hidden" id="wishlist_productname{{ $each->id }}" value="{{ $each->name }}">
@@ -82,15 +82,15 @@
                                 <span> - {{ $count_review }} Reviews / Purchases: {{ $each->count_view }}</span>
                             </div>
                             <h3>
-                                @if ($each->statusDiscount == 'active')
-                                    {{ currency_format(($each->price * (100 - $each->discountPrice)) / 100) }}
+                                @if ($each->discountStatus == 'active')
+                                    {{ currency_format($each->price * $each->discount) }}
                                     <span id="wishlist_productpriceold{{ $each->id }}"
                                         name="priceDiscount">{{ currency_format($each->price) }}</span>
                                 @else
                                     {{ currency_format($each->price) }}
                                 @endif
                                 <input type="hidden" id="wishlist_productprice{{ $each->id }}"
-                                    value="{{ currency_format(($each->price * (100 - $each->discountPrice)) / 100) }}">
+                                    value="{{ currency_format($each->price * $each->discount) }}">
                             </h3>
                             <form data-route="{{ route('cart.store') }}" id="cart-form">
                                 @csrf
@@ -98,13 +98,13 @@
                                 <div class="product__details__option">
                                     <div class="product__details__option__size">
                                         <span>Size:</span>
-                                        @foreach ($each->infos as $value)
+                                        @foreach ($each->infosSize as $value)
                                             @if ($value->status == 'active')
-                                                <label class="@if (head($each->infos)[0]->name == $value->name) active @endif"
+                                                <label class="@if (head($each->infosSize)['0']->name == $value->name) active @endif"
                                                     for="{{ $value->name }}">
                                                     {{ $value->name }}
                                                     <input type="radio" id="{{ $value->name }}"
-                                                        @if (head($each->infos)[0]->name == $value->name) checked @endif
+                                                        @if (head($each->infosSize)['0']->name == $value->name) checked @endif
                                                         value="{{ $value->name }}" name="size">
                                                     <input type="hidden" class="wishlist_productsize{{ $each->id }}"
                                                         value="{{ $value->name }}">
@@ -115,12 +115,11 @@
                                     </div>
                                     <div class="product__details__option__color">
                                         <span>Color:</span>
-
-                                        @foreach ($each->infos2 as $value)
+                                        @foreach ($each->infosColor as $value)
                                             @if ($value->status == 'active')
-                                                <label class="{{ $value->class }}" for="{{ $value->name }}">
+                                                <label class="{{ $value->slug }}" for="{{ $value->name }}">
                                                     <input type="radio" id="{{ $value->name }}"
-                                                        @if (head($each->infos2)[0]->name == $value->name) checked @endif
+                                                        @if (head($each->infosColor)['0']->name == $value->name) checked @endif
                                                         value="{{ $value->name }}" name="color">
                                                 </label>
                                                 <input type="hidden" id="wishlist_productcolor{{ $each->id }}"
@@ -317,7 +316,7 @@
                                                 <div class="boxReview-comment my-3 mx-2">
                                                     @if (count($show_reviews) > 0)
                                                         @foreach ($show_reviews as $value)
-                                                            @if ($value->action === 'active')
+                                                            @if ($value->status === 'active')
                                                                 <div class="boxReview-comment-item">
                                                                     <div
                                                                         class="boxReview-comment-item-title d-flex justify-content-between align-items-center">
@@ -330,12 +329,10 @@
                                                                         </div>
                                                                         <p class="date-time">{{ $value->created_at }}</p>
                                                                     </div>
-                                                                    @if ($value->images !== null)
-                                                                        @php $images_review = json_decode($value->images)['0'] @endphp
-
+                                                                    @if ($value->images != null)
                                                                         <div class="p-2"
                                                                             style="margin-left: 40px; width: 100px">
-                                                                            <img src="{{ asset("storage/$images_review") }}"
+                                                                            <img src="{{ asset("storage/$value->images") }}"
                                                                                 alt=""
                                                                                 style="display: block; width:100%;height:100%">
                                                                         </div>
@@ -403,7 +400,7 @@
                                                     @if (count($show_comments) > 0)
                                                         @foreach ($show_comments as $show_comment)
                                                             <div class="boxComment-item"
-                                                                @if ($show_comment->status === 'inactive') style="opacity: 0.7;" @endif>
+                                                                @if ($show_comment->status === 'pending') style="opacity: 0.7;" @endif>
                                                                 <div class="boxComment-content">
                                                                     <div
                                                                         class="boxReview-comment-item-title d-flex justify-content-between align-items-center my-3">
@@ -438,7 +435,7 @@
                                                                                 </svg></div>&nbsp;Reply
                                                                         </button>
                                                                     </div>
-                                                                    @if ($show_comment->status === 'inactive')
+                                                                    @if ($show_comment->status === 'pending')
                                                                         <span class="ml-3 p-1 d-block"
                                                                             style="font-size: 0.9rem;font-weight: 600;">->*This
                                                                             comment is currently pending
@@ -448,18 +445,18 @@
                                                                         @if (count($show_comment->parents) > 0)
                                                                             @foreach ($show_comment->parents as $comment_parent)
                                                                                 <div class="boxComment-list-item"
-                                                                                    @if ($comment_parent->status === 'inactive') style="opacity: 0.7;" @endif>
+                                                                                    @if ($comment_parent->status === 'pending') style="opacity: 0.7;" @endif>
                                                                                     <div
                                                                                         class="boxReview-comment-item-title d-flex justify-content-between align-items-center my-3">
                                                                                         <div
                                                                                             class="d-flex align-items-center">
                                                                                             <p class="mr-2 d-flex align-items-center justify-content-center name-letter text-uppercase"
-                                                                                                @if ($comment_parent->status === 4) style="color:#fa2f2f;" @endif>
+                                                                                                @if ($comment_parent->status === 'active') style="color:#fa2f2f;" @endif>
                                                                                                 {{ substr($comment_parent->name, 0, 1) }}
                                                                                             </p>
                                                                                             <span
                                                                                                 class="name_user text-capitalize"
-                                                                                                @if ($comment_parent->status === 4) style="color:#fa2f2f;" @endif>{{ $comment_parent->name }}</span>
+                                                                                                @if ($comment_parent->status === 'active') style="color:#fa2f2f;" @endif>{{ $comment_parent->name }}</span>
                                                                                         </div>
                                                                                         <p class="date-time">
                                                                                             {{ $comment_parent->created_at }}
@@ -468,7 +465,7 @@
                                                                                     <div class="boxComment-item-form">
                                                                                         <div class="comment-content">
                                                                                             <p
-                                                                                                @if ($comment_parent->status === 4) style="color:#00bcd4;" @endif>
+                                                                                                @if ($comment_parent->status === 'acitve') style="color:#00bcd4;" @endif>
                                                                                                 {{ $comment_parent->content }}
                                                                                             </p>
                                                                                         </div>
@@ -489,7 +486,7 @@
                                                                                             &nbsp;Reply
                                                                                         </button>
                                                                                     </div>
-                                                                                    @if ($comment_parent->status === 'inactive')
+                                                                                    @if ($comment_parent->status === 'pending')
                                                                                         <span class="ml-3 p-1 d-block"
                                                                                             style="font-size: 0.9rem;font-weight: 600;">-&gt;*This
                                                                                             comment is currently pending
@@ -557,21 +554,15 @@
                 @if (!empty($productRelated))
                     @foreach ($productRelated as $value)
                         @php
-                            $image = json_decode($value->image)[0];
-                            $productPrice = 1;
-                            if ($value->statusDiscount == 'active' && $value->discountPrice != null) {
-                                $productPrice = $value->discountPrice;
-                            }
-
                             $date = $value->created_at;
                             $date_end = Carbon\Carbon::now()->addDays(-7);
                         @endphp
                         <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
                             <div class="product__item">
                                 <div class="product__item__pic set-bg" id="wishlist_productimage{{ $value->id }}"
-                                    @if ($value->statusImage == 'active') data-setbg="{{ asset("storage/$image") }}" @endif>
-                                    @if ($value->discountPrice != null && $value->statusDiscount == 'active')
-                                        <span class="item-sale">-{{ (1 - $value->discountPrice) * 100 }}%</span>
+                                    @if ($value->product_images->status == 'active') data-setbg="{{ asset("storage/$value->image") }}" @endif>
+                                    @if ($value->discount != 1 && $value->discountStatus == 'active')
+                                        <span class="item-sale">-{{ (1 - $value->discount) * 100 }}%</span>
                                     @endif
                                     @if ($date >= $date_end)
                                         <span class="label">New</span>
@@ -606,14 +597,14 @@
                                         @endfor
                                     </div>
                                     <h5>
-                                        {{ currency_format($value->price * $productPrice) }}
-                                        @if ($value->discountPrice != null && $value->statusDiscount == 'active')
+                                        {{ currency_format($value->price * $value->discount) }}
+                                        @if ($value->discount != null && $value->discountStatus == 'active')
                                             <em id="wishlist_productpriceold{{ $value->id }}"
                                                 style="text-decoration:line-through">{{ currency_format($value->price) }}</em>
                                         @endif
                                     </h5>
                                     <input type="hidden" id="wishlist_productprice{{ $value->id }}"
-                                        value="{{ currency_format($value->price * $productPrice) }}">
+                                        value="{{ currency_format($value->price * $value->discount) }}">
                                 </div>
                             </div>
                         </div>
@@ -649,7 +640,7 @@
                 let size = $("input:radio[name=size]:checked").val();
                 let color = $("input:radio[name=color]:checked").val();
                 let quantity = $("input[name=quantity]").val();
-                let discount = "{{ $each->discountPrice }}";
+                let discount = "{{ $each->discount }}";
                 let image = "{{ head(json_decode($each->image)) }}";
                 let price = "{{ $each->price }}";
                 let name = "{{ $each->name }}";
@@ -662,7 +653,7 @@
                         size: size,
                         color: color,
                         quantity: quantity,
-                        discount: discount,
+                        discount: 100 - (discount * 100),
                         image: image,
                         price: price,
                         name: name,
@@ -686,7 +677,7 @@
                             });
 
                             $(".carts-price").each(function() {
-                                price = price * (100 - discount) / 100;
+                                price = price * discount;
                                 newPrice = (price * quantity) + $(this).data("price");
                                 $(this).data("price", newPrice);
                                 newPrice = newPrice.toLocaleString('vi', {

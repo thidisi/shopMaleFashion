@@ -118,7 +118,7 @@ class TicketController extends Controller
             $ticket = $this->ticket->findOrFail($id);
             $ticket->delete();
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 }

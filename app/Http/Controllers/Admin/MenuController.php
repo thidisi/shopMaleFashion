@@ -114,7 +114,7 @@ class MenuController extends Controller
                 'filter_color_list' => $filter_color_list,
             ]);
         } catch (\Throwable $th) {
-            return view('frontend.errors.index');
+            return redirect()->route('errors');
         }
     }
 
@@ -162,7 +162,7 @@ class MenuController extends Controller
             $majorCategory->update($arr);
             return redirect()->route('admin.major-categories')->with('EditMajorCategoryStatus', 'Edit successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 }

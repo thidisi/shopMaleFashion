@@ -32,7 +32,7 @@ class ProductionController extends Controller
     /**
      * Construct
      */
-    public function __construct(Production $product, Category $category, Attribute $attribute, AttributeValue $attributeValue, ProductImage $productImage, Discount $discount)
+    public function __construct(Production $product, Category $category, Attribute $attribute, AttributeValue $attributeValue, ProductImage $productImage, Discount $discount, Customer $customer, Comment $comment)
     {
         $this->product = $product;
         $this->category = $category;
@@ -40,6 +40,8 @@ class ProductionController extends Controller
         $this->attributeValue = $attributeValue;
         $this->productImage = $productImage;
         $this->discount = $discount;
+        $this->customer = $customer;
+        $this->comment = $comment;
     }
 
     public function index()
@@ -57,85 +59,43 @@ class ProductionController extends Controller
         ]);
     }
 
-    public function view(Production $production, CommentController $comments)
+    public function view($product_slug, CommentController $comments)
     {
-        if (!empty($production)) {
-            $product = $this->product->leftJoin('product_images', 'productions.id', '=', 'product_images.production_id')
-                ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->select('product_images.image as image', 'product_images.status as statusImage', 'discounts.discount_price as discountPrice', 'discounts.status as statusDiscount', 'productions.*')
-                ->where('productions.slug', '=', $production->slug)->first();
-            $infos = DB::table('production_attr_value')
-                ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
-                ->leftJoin('attribute_values', 'attribute_values.id', '=', 'production_attr_value.attribute_value_id')
-                ->leftJoin('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
-                ->select('production_attr_value.production_id as product_id', 'attribute_values.*')
-                ->where('attributes.replace_id', '=', NameAttrEnum::SIZE)
-                ->where('production_attr_value.production_id', '=', $product->id)
-                ->whereNull('production_attr_value.deleted_at')
-                ->get();
-            $infoColor = DB::table('production_attr_value')
-                ->leftJoin('productions', 'productions.id', '=', 'production_attr_value.production_id')
-                ->leftJoin('attribute_values', 'attribute_values.id', '=', 'production_attr_value.attribute_value_id')
-                ->select('production_attr_value.production_id as product_id', 'attribute_values.*')
-                ->where('attribute_values.attribute_id', '=', NameAttrEnum::COLOR)
-                ->where('production_attr_value.production_id', '=', $product->id)
-                ->whereNull('production_attr_value.deleted_at')
-                ->get();
-            $product['infos'] = $infos;
-            $product['infos2'] = $infoColor;
-
-            foreach ($product['infos2'] as $each) {
-                if (strtoupper($each->name) == ColorAttrEnum::getKey('c-1')) {
-                    $each->class = ColorAttrEnum::BLACK;
-                }
-                if (strtoupper($each->name) == ColorAttrEnum::getKey('c-2')) {
-                    $each->class = ColorAttrEnum::BLUE;
-                }
-                // if(strtoupper($each->name) == ColorAttrEnum::getKey('c-2')){
-                //     $each->class = ColorAttrEnum::DELFT_BLUE;
-                // }
-                if (strtoupper($each->name) == ColorAttrEnum::getKey('c-3')) {
-                    $each->class = ColorAttrEnum::PASTEL_ORANGE;
-                }
-                if (strtoupper($each->name) == ColorAttrEnum::getKey('c-4')) {
-                    $each->class = ColorAttrEnum::RED;
-                }
-                if (strtoupper($each->name) == ColorAttrEnum::getKey('c-9')) {
-                    $each->class = ColorAttrEnum::WHITE;
-                }
+        try {
+            $product = $this->product->with(['attribute_values', 'product_images', 'discount_products'])
+                ->whereStatus(Production::PRODUCTION_STATUS['ACTIVE'])
+                ->whereSlug($product_slug)->firstOrFail();
+            $product->image = $product->product_images->image;
+            $product->discount = 1;
+            $product->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
+            if ($product->discount_products) {
+                $product->discount = (100 - $this->discount->find($product->discount_products->discount_id)->discount_price) / 100;
+                $product->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
             }
+            $attrValues = $product->attribute_values->groupBy('attribute_id');
+            $product->infosColor = $attrValues->min();
+            $product->infosSize = $attrValues->max();
 
-            if ($product->statusDiscount != 'active') {
-                $product->discountPrice = 0;
-            }
+            $show_reviews = $comments->show_reviews($product->id);
+            $show_comments = $comments->show_comments($product->id, session('sessionIdCustomer'));
 
-            $show_reviews = $comments->show_reviews($production->id);
-            $show_comments = $comments->show_comments($production->id);
-
-            $productRelated = $this->product->Join('product_images', 'productions.id', '=', 'product_images.production_id')
-                ->leftJoin('categories', 'categories.id', '=', 'productions.category_id')
-                ->leftJoin('discount_product', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->where('productions.status', '=', ACTIVE)
-                ->where('categories.id', '=', $product->category_id)
-                ->where('productions.id', '!=', $product->id)
-                ->latest('productions.created_at')
-                ->select(
-                    'product_images.image as image',
-                    'product_images.status as statusImage',
-                    'categories.name as categoryName',
-                    'discounts.discount_price as discountPrice',
-                    'discounts.status as statusDiscount',
-                    'productions.*'
-                )->paginate(4);
+            $productRelated = $this->product->with(['categories', 'product_images', 'discount_products'])
+                ->where('id', '!=', $product->id)
+                ->whereCategoryId($product->category_id)
+                ->whereStatus(Production::PRODUCTION_STATUS['ACTIVE'])
+                ->latest('created_at')->paginate(4);
 
             foreach ($productRelated as $each) {
-                if ($each->statusDiscount == 'active') {
-                    $each->discountPrice = (100 - $each->discountPrice) / 100;
+                $each->image = json_decode($each->product_images->image)[0];
+                $each->discount = 1;
+                $each->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
+                if (!empty($each->discount_products)) {
+                    $each->discount = (100 - $this->discount->find($each->discount_products->discount_id)->discount_price) / 100;
+                    $each->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
                 }
-                $each['review'] = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
+                $each->review = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
             }
+
             $rating = DB::table('production_comments')->where('production_id', '=', $product->id)->whereNotNull('review')->avg('review');
             $count_review = DB::table('production_comments')->where('production_id', '=', $product->id)->whereNotNull('review')->count('production_id');
             $data_reviews = DB::table('production_comments')->selectRaw('review, count(production_id) as count_reviews')->where('production_id', '=', $product->id)->whereNotNull('review')->groupBy('review')->get();
@@ -156,15 +116,15 @@ class ProductionController extends Controller
 
             $rating = $rating ? number_format($rating, 1) : 0;
 
-            $check_review =  DB::table('production_comments')
-                ->leftJoin('comments', 'comments.id', '=', 'production_comments.comment_id')
-                ->leftJoin('customers', 'customers.id', '=', 'comments.customer_id')
-                ->select('comments.customer_id as customer_id', 'comments.id as id',)
-                ->where('production_comments.production_id', '=', $product->id)->get();
-
+            $check_review = Comment::query()->with('productions')
+                ->whereHas('productions', function ($query) use ($product) {
+                    $query->whereId($product->id);
+                    $query->whereNotNull('review');
+                })
+                ->get();
             $check['customer_id'] = [];
-            foreach ($check_review as $value) {
-                $check['customer_id']["$value->id"] = $value->customer_id;
+            foreach ($check_review as $key => $value) {
+                $check['customer_id']["$key"] = $value->customer_id;
             }
             return view('frontend.product_detail.index', [
                 'each' => $product,
@@ -177,13 +137,14 @@ class ProductionController extends Controller
                 'show_comments' => $show_comments,
                 'check_review' => $check,
             ]);
+        } catch (\Throwable $th) {
+            return redirect()->route('errors');
         }
-
-        return view('frontend.errors.index');
     }
 
     public function filter_list(Request $request)
     {
+        // if($request->ajax()){
         $products = $this->product->with(['categories', 'product_images', 'discount_products'])
             ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
             ->latest('created_at')->get();
@@ -201,9 +162,7 @@ class ProductionController extends Controller
         return response()->json([
             'products' => $products,
             'url' => config('app.url'),
-    ], 200);
-        // if($request->ajax()){
-
+        ], 200);
         // }
     }
 
@@ -245,19 +204,16 @@ class ProductionController extends Controller
             if ($this->attribute->find($key)->replace_id != null) {
                 $attrKey['size'] = $this->attribute->find($key);
             }
-            if ($key == '2') {
-                $attrKey['color'] = $each->first();
-            } else {
-                $attrValue[] = $each;
-            }
         }
+        $attrKey['color'] = $attrValues->min()->first();
+        $attrValue = $attrValues->max();
 
         return view('backend.productions.edit', [
             'each' => $production,
             'categories' => $categories,
             'attrs' => $attrs,
             'attrKey' => $attrKey,
-            'attrValue' => $attrValue['0'],
+            'attrValue' => $attrValue,
         ]);
     }
 
@@ -294,7 +250,7 @@ class ProductionController extends Controller
             $product->attribute_values()->sync($arr3);
             return redirect()->route('admin.productions')->with('addProductionStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -343,7 +299,7 @@ class ProductionController extends Controller
                 return redirect()->route('admin.productions')->with('ProductionErrors', 'Edit Failed Production table');
             }
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -361,7 +317,7 @@ class ProductionController extends Controller
                 ]);
             return redirect()->back()->with('deleteSuccess', 'Xóa thành công');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 }

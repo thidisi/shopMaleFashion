@@ -21,7 +21,7 @@
                     <div class="product__item">
                         <div class="product__item__pic set-bg" id="wishlist_productimage{{ $each->id }}"
                             @if ($each->product_images->status == 'active') data-setbg="{{ asset("storage/$each->image") }}" @endif>
-                            @if ($each->quantity <= 0 && $each->product_images->status == 'active')
+                            @if ($each->quantity <= 0 && $each->discountStatus == 'active')
                                 <div
                                     style="
                                 background-color: #ffffff5e;

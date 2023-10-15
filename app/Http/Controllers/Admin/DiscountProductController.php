@@ -27,19 +27,17 @@ class DiscountProductController extends Controller
     public function index()
     {
         try {
-            $discountProducts = $this->discountProduct->leftJoin('productions', 'productions.id', '=', 'discount_product.production_id')
-                ->leftJoin('discounts', 'discounts.id', '=', 'discount_product.discount_id')
-                ->get([
-                    'productions.name as product_name',
-                    'discounts.discount_price as discount_price',
-                    'discounts.date_end as date_end',
-                    'discount_product.*'
-                ]);
+            $discountProducts = $this->discountProduct->with(['productions', 'discounts'])->get();
+            $discountProducts->each(function ($query) {
+                $query->product_name = $query->productions->name;
+                $query->discount_price = $query->discounts->discount_price;
+                $query->date_end = $query->discounts->date_end;
+            });
             return view('backend.discountProducts.index', [
                 'discountProducts' => $discountProducts,
             ]);
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -54,7 +52,7 @@ class DiscountProductController extends Controller
                 'discounts' => $discounts,
             ]);
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -70,7 +68,7 @@ class DiscountProductController extends Controller
                 'each' => $discountProduct,
             ]);
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -95,7 +93,7 @@ class DiscountProductController extends Controller
             $this->discountProduct->insert($data);
             return redirect()->route('admin.discountProducts')->with('addDiscountProductStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -113,7 +111,7 @@ class DiscountProductController extends Controller
             $discountProduct->update($arr);
             return redirect()->route('admin.discountProducts')->with('editDiscountProductStatus', 'Add successfully!!');
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 

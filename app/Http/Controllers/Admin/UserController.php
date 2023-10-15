@@ -88,7 +88,7 @@ class UserController extends Controller
                 return redirect()->route('admin.users')->with('statusEdit', 'Edit Failed User table');
             }
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 
@@ -101,7 +101,7 @@ class UserController extends Controller
 
             return response($arr, 200);
         } catch (\Throwable $th) {
-            return redirect()->route('index');
+            return redirect()->route('errors');
         }
     }
 }
