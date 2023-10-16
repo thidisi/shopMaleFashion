@@ -32,10 +32,11 @@ class ProductionController extends Controller
     /**
      * Construct
      */
-    public function __construct(Production $product, Category $category, Attribute $attribute, AttributeValue $attributeValue, ProductImage $productImage, Discount $discount, Customer $customer, Comment $comment)
+    public function __construct(Production $product, Category $category, Attribute $attribute, AttributeValue $attributeValue, ProductImage $productImage, Discount $discount, Customer $customer, Comment $comment, Major_Category $major_category)
     {
         $this->product = $product;
         $this->category = $category;
+        $this->major_category = $major_category;
         $this->attribute = $attribute;
         $this->attributeValue = $attributeValue;
         $this->productImage = $productImage;
@@ -145,10 +146,74 @@ class ProductionController extends Controller
     public function filter_list(Request $request)
     {
         // if($request->ajax()){
-        $products = $this->product->with(['categories', 'product_images', 'discount_products'])
-            ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
-            ->latest('created_at')->get();
+        $products = $this->product->with(['categories', 'product_images', 'discount_products', 'attribute_values'])
+            ->where('status', Production::PRODUCTION_STATUS['ACTIVE']);
+        if (!empty($request->menu_slug)) {
+            $menu_id = $this->major_category->where('status', '!=', 'hide')->whereSlug($request->menu_slug)->first()->id;
+            if (!empty($menu_id)) {
+                $majorCategories = $this->major_category->whereStatus('show')->get('slug');
+                foreach ($majorCategories as $each) {
+                    $data[] = $each->slug;
+                }
 
+                if (in_array($request->menu_slug, $data)) {
+                    $products->whereHas('categories', function ($query) use ($menu_id) {
+                        $query->where('major_category_id', $menu_id);
+                    });
+                }
+                if ($request->menu_slug == PROMOTION) {
+                    $products->whereHas('discount_products', function ($query) {
+                        $query->whereNotNull('discount_id');
+                    });
+                }
+                if ($request->menu_slug == NEW_PRODUCTS) {
+                    $date_end = Carbon::now()->addDays(-7);
+                    $products->where('created_at', '>=', $date_end);
+                }
+            }
+        }
+        if (!empty($request->categories)) {
+            $products->whereIn('category_id', $request->categories);
+        }
+        if (!empty($request->price)) {
+            foreach ($request->price as $each) {
+                $price[] = explode('-', $each);
+            }
+            $price = array_unique(array_reduce($price, 'array_merge', array()));
+            $min_price = min($price);
+            $max_price = max($price);
+            $key_max_value = array_search('599000+', $price);
+            if ($key_max_value === 0) {
+                $products->where('price', '>=', '599000');
+            }
+            if ($key_max_value) {
+                $max_price = $price[$key_max_value - 1];
+                $products->where('price', '>=', '599000')->orwhereBetween('price', [$min_price, $max_price]);
+            } else {
+                $products->whereBetween('price', [$min_price, $max_price]);
+            }
+        }
+        if (!empty($request->size)) {
+            $products->whereHas('attribute_values', function ($query) use ($request) {
+                $query->whereIn('id', $request->size);
+            });
+        }
+        if (!empty($request->color)) {
+            $products->whereHas('attribute_values', function ($query) use ($request) {
+                $query->whereIn('slug', $request->color);
+            });
+        }
+        if (!empty($request->order_by)) {
+            if ($request->order_by == 'DESC') {
+                $products->latest('price');
+            } else {
+                $products->oldest('price');
+            }
+        } else {
+            $products->latest('created_at');
+        }
+
+        $products = $products->paginate(12);
         foreach ($products as $each) {
             $each->image = json_decode($each->product_images->image)[0];
             $each->discount = 1;
@@ -159,6 +224,7 @@ class ProductionController extends Controller
             }
             $each->review = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
         }
+
         return response()->json([
             'products' => $products,
             'url' => config('app.url'),

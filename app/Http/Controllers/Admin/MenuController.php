@@ -98,7 +98,7 @@ class MenuController extends Controller
                 '199000-299000' => currency_format(199000) . ' - ' . currency_format(299000),
                 '299000-399000' => currency_format(299000) . ' - ' . currency_format(399000),
                 '399000-599000' => currency_format(399000) . ' - ' . currency_format(599000),
-                '599000' => currency_format(599000) . ' +',
+                '599000+' => currency_format(599000) . ' +',
             ];
 
             $filter_color_list = $this->attributeValue->with('attributes')
@@ -109,7 +109,7 @@ class MenuController extends Controller
             return view('frontend.shops.index', [
                 'categories' => $categories,
                 'products' => $products,
-                'breadCrumb' => $breadCrumb->name,
+                'breadCrumb' => $breadCrumb,
                 'filter_price_list' => $filter_price_list,
                 'filter_color_list' => $filter_color_list,
             ]);

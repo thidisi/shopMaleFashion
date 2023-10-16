@@ -40,7 +40,7 @@ class CategoryController extends Controller
     {
         $products = $this->product->with(['categories', 'product_images', 'discount_products'])
             ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])
-            ->latest('created_at')->paginate(16);
+            ->latest('created_at')->paginate(12);
 
         foreach ($products as $each) {
             $each->image = json_decode($each->product_images->image)[0];
@@ -66,7 +66,7 @@ class CategoryController extends Controller
             '199000-299000' => currency_format(199000) . ' - ' . currency_format(299000),
             '299000-399000' => currency_format(299000) . ' - ' . currency_format(399000),
             '399000-599000' => currency_format(399000) . ' - ' . currency_format(599000),
-            '599000' => currency_format(599000) . ' +',
+            '599000+' => currency_format(599000) . ' +',
         ];
 
         $filter_color_list = $this->attributeValue->with('attributes')
