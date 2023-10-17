@@ -145,91 +145,102 @@ class ProductionController extends Controller
 
     public function filter_list(Request $request)
     {
-        // if($request->ajax()){
-        $products = $this->product->with(['categories', 'product_images', 'discount_products', 'attribute_values'])
-            ->where('status', Production::PRODUCTION_STATUS['ACTIVE']);
-        if (!empty($request->menu_slug)) {
-            $menu_id = $this->major_category->where('status', '!=', 'hide')->whereSlug($request->menu_slug)->first()->id;
-            if (!empty($menu_id)) {
-                $majorCategories = $this->major_category->whereStatus('show')->get('slug');
-                foreach ($majorCategories as $each) {
-                    $data[] = $each->slug;
-                }
+        if ($request->ajax()) {
+            $products = $this->product->with(['categories', 'product_images', 'discount_products', 'attribute_values'])
+                ->where('status', Production::PRODUCTION_STATUS['ACTIVE']);
+            if (!empty($request->menu_slug)) {
+                $menu_id = $this->major_category->where('status', '!=', 'hide')->whereSlug($request->menu_slug)->first()->id;
+                if (!empty($menu_id)) {
+                    $majorCategories = $this->major_category->whereStatus('show')->get('slug');
+                    foreach ($majorCategories as $each) {
+                        $data[] = $each->slug;
+                    }
 
-                if (in_array($request->menu_slug, $data)) {
-                    $products->whereHas('categories', function ($query) use ($menu_id) {
-                        $query->where('major_category_id', $menu_id);
-                    });
-                }
-                if ($request->menu_slug == PROMOTION) {
-                    $products->whereHas('discount_products', function ($query) {
-                        $query->whereNotNull('discount_id');
-                    });
-                }
-                if ($request->menu_slug == NEW_PRODUCTS) {
-                    $date_end = Carbon::now()->addDays(-7);
-                    $products->where('created_at', '>=', $date_end);
+                    if (in_array($request->menu_slug, $data)) {
+                        $products->whereHas('categories', function ($query) use ($menu_id) {
+                            $query->where('major_category_id', $menu_id);
+                        });
+                    }
+                    if ($request->menu_slug == PROMOTION) {
+                        $products->whereHas('discount_products', function ($query) {
+                            $query->whereNotNull('discount_id');
+                        });
+                    }
+                    if ($request->menu_slug == NEW_PRODUCTS) {
+                        $date_end = Carbon::now()->addDays(-7);
+                        $products->where('created_at', '>=', $date_end);
+                    }
                 }
             }
-        }
-        if (!empty($request->categories)) {
-            $products->whereIn('category_id', $request->categories);
-        }
-        if (!empty($request->price)) {
-            foreach ($request->price as $each) {
-                $price[] = explode('-', $each);
+            if (!empty($request->search)) {
+                $products = $products->where('name', 'LIKE', "%{$request->search}%");
             }
-            $price = array_unique(array_reduce($price, 'array_merge', array()));
-            $min_price = min($price);
-            $max_price = max($price);
-            $key_max_value = array_search('599000+', $price);
-            if ($key_max_value === 0) {
-                $products->where('price', '>=', '599000');
+            if (!empty($request->categories)) {
+                $products->whereIn('category_id', $request->categories);
             }
-            if ($key_max_value) {
-                $max_price = $price[$key_max_value - 1];
-                $products->where('price', '>=', '599000')->orwhereBetween('price', [$min_price, $max_price]);
+            if (!empty($request->price)) {
+                foreach ($request->price as $each) {
+                    $price[] = explode('-', $each);
+                }
+                $max_value_filter = false;
+                if (array_search('599000+', $price[0]) === 0) {
+                    $max_value_filter = true;
+                }
+                if ($max_value_filter) {
+                    $products->where('price', '>=', '599000');
+                } else {
+                    $products->whereBetween('price', $price);
+                }
+            }
+            if (!empty($request->size)) {
+                $products->whereHas('attribute_values', function ($query) use ($request) {
+                    $query->whereIn('id', $request->size);
+                });
+            }
+            if (!empty($request->color)) {
+                $products->whereHas('attribute_values', function ($query) use ($request) {
+                    $query->whereIn('slug', $request->color);
+                });
+            }
+            if (!empty($request->order_by)) {
+                if ($request->order_by == 'DESC') {
+                    $products->latest('price');
+                } else {
+                    $products->oldest('price');
+                }
             } else {
-                $products->whereBetween('price', [$min_price, $max_price]);
+                $products->latest('created_at');
             }
-        }
-        if (!empty($request->size)) {
-            $products->whereHas('attribute_values', function ($query) use ($request) {
-                $query->whereIn('id', $request->size);
-            });
-        }
-        if (!empty($request->color)) {
-            $products->whereHas('attribute_values', function ($query) use ($request) {
-                $query->whereIn('slug', $request->color);
-            });
-        }
-        if (!empty($request->order_by)) {
-            if ($request->order_by == 'DESC') {
-                $products->latest('price');
-            } else {
-                $products->oldest('price');
-            }
-        } else {
-            $products->latest('created_at');
-        }
 
-        $products = $products->paginate(12);
-        foreach ($products as $each) {
-            $each->image = json_decode($each->product_images->image)[0];
-            $each->discount = 1;
-            $each->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
-            if (!empty($each->discount_products)) {
-                $each->discount = (100 - $this->discount->find($each->discount_products->discount_id)->discount_price) / 100;
-                $each->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
+            $products = $products->paginate(12);
+            foreach ($products as $each) {
+                $each->image = json_decode($each->product_images->image)[0];
+                $each->discount = 1;
+                $each->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
+                if (!empty($each->discount_products)) {
+                    $each->discount = (100 - $this->discount->find($each->discount_products->discount_id)->discount_price) / 100;
+                    $each->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
+                }
+                $each->review = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
             }
-            $each->review = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
-        }
 
-        return response()->json([
-            'products' => $products,
-            'url' => config('app.url'),
-        ], 200);
-        // }
+            return response()->json([
+                'products' => $products,
+                'url' => config('app.url'),
+            ], 200);
+        }
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $search = $request->search;
+            return redirect()->route("shop", [
+                'search' => $search
+            ]);
+        } catch (\Throwable $th) {
+            return redirect()->route('errors');
+        }
     }
 
     public function create(Request $request)

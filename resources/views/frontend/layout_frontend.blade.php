@@ -89,8 +89,12 @@
     <div class="search-model">
         <div class="h-100 d-flex align-items-center justify-content-center">
             <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
+            <form class="search-model-form" action="{{ route('products.search') }}" method="post">
+                @csrf
+                <input type="text" id="search-input" name="search" placeholder="Search here.....">
+                <button
+                    style="background-color: initial;border: none;outline: none;padding: 4px;position: relative;left: -6%;"
+                    type="submit" id="search_btn"><span style="zoom:1.5;color:white;" class="icon_search"></span></button>
             </form>
         </div>
     </div>
@@ -165,7 +169,7 @@
         }
         $(document).ready(function() {
             updateWishList();
-            $('.button_wishlist').on('click', function(e) {
+            $("body").on("click", ".button_wishlist", function() {
                 let id = $(this).attr("data-id");
                 let name = $('#wishlist_productname' + id).val();
                 let image = $('#wishlist_productimage' + id).prop('src') ? $('#wishlist_productimage' + id)
@@ -213,22 +217,24 @@
                     localStorage.setItem('data', JSON.stringify(data_remove));
                 }
                 updateWishList();
-            });
-            $('.btn_favourite--close').on('click', function(e) {
+            })
+            $("body").on("click", ".btn_favourite--close", function() {
                 $('.favourite').hide();
                 e.stopPropagation();
-            });
-            $('.favourite-icon').on('click', function(e) {
+            })
+            $("body").on("click", ".favourite-icon", function() {
                 $('.favourite').show();
                 $('.favourite_box').addClass('show');
-            });
-            $('.favourite_box--chevron').on('click', function(e) {
+            })
+            $("body").on("click", ".favourite_box--chevron", function() {
                 $('.favourite_box').removeClass('show');
-            });
-            $('.logo_favourite').on('click', function(e) {
+            })
+            $("body").on("click", ".logo_favourite", function() {
                 $('.favourite_box').addClass('show');
-            });
-
+            })
+            $("body").on("click", ".logo_favourite", function() {
+                $('.favourite_box').addClass('show');
+            })
         });
     </script>
     @stack('js')

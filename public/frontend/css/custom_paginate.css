@@ -1,0 +1,54 @@
+.pagination > .page-item > .page-link {
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111111;
+    height: 30px;
+    width: 30px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    line-height: 30px;
+    text-align: center;
+}
+
+.pagination .page-item + .page-item {
+    margin-left: 5px;
+}
+
+.pagination .page-link:hover {
+    border-color: #111111;
+}
+
+.pagination .page-link.active {
+    border-color: #111111;
+}
+
+.pagination .page-link:focus {
+    box-shadow: none;
+}
+
+.shop__sidebar__price label,
+.shop__sidebar__categories label {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.shop__sidebar__price label.active a,
+.shop__sidebar__categories label.active a {
+    color: #111111;
+    text-decoration: underline;
+}
+
+.shop__sidebar__color label:first-child {
+    margin-left: 10px;
+}
+
+.shop__sidebar__color label.active:after {
+    left: -4px;
+    top: -6px;
+    height: 38px;
+    width: 38px;
+    box-shadow: rgba(0, 0, 0, 0.35) 6px 5px 12px 0px;
+}
