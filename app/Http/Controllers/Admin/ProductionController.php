@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\ColorAttrEnum;
-use App\Enums\MenuStatusEnum;
-use App\Enums\NameAttrEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -14,18 +11,14 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Customer;
 use App\Models\Discount;
-use App\Models\District;
 use App\Models\Major_Category;
 use App\Models\ProductImage;
 use App\Models\Production;
-use App\Models\Province;
-use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Darryldecode\Cart\Facades\CartFacade as Cart;
 
 class ProductionController extends Controller
 {
@@ -145,7 +138,7 @@ class ProductionController extends Controller
 
     public function filter_list(Request $request)
     {
-        if ($request->ajax()) {
+        // if ($request->ajax()) {
             $products = $this->product->with(['categories', 'product_images', 'discount_products', 'attribute_values'])
                 ->where('status', Production::PRODUCTION_STATUS['ACTIVE']);
             if (!empty($request->menu_slug)) {
@@ -212,8 +205,8 @@ class ProductionController extends Controller
                 $products->latest('created_at');
             }
 
-            $products = $products->paginate(12);
-            foreach ($products as $each) {
+            $products = $products->paginate(3);
+            $products->each(function ($each) {
                 $each->image = json_decode($each->product_images->image)[0];
                 $each->discount = 1;
                 $each->discountStatus = Discount::DISCOUNT_STATUS['CLOSE'];
@@ -222,13 +215,13 @@ class ProductionController extends Controller
                     $each->discountStatus = Discount::DISCOUNT_STATUS['ACTIVE'];
                 }
                 $each->review = DB::table('production_comments')->where('production_id', '=', $each->id)->avg('review');
-            }
+            });
 
             return response()->json([
                 'products' => $products,
                 'url' => config('app.url'),
             ], 200);
-        }
+        // }
     }
 
     public function search(Request $request)

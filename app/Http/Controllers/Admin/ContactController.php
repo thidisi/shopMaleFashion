@@ -3,15 +3,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\MenuStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendEmail;
-use App\Models\About;
 use App\Models\Contact;
-use App\Models\Customer;
-use App\Models\Major_Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {

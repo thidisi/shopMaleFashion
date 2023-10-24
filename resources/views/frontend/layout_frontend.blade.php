@@ -18,8 +18,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap.min.css') }}" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
         integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer" />
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('frontend/css/font-awesome.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/elegant-icons.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('frontend/css/magnific-popup.css') }}" type="text/css">
@@ -30,8 +29,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/styles.css') }}" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css"
         integrity="sha512-wJgJNTBBkLit7ymC6vvzM1EcSWeM9mmOu+1USHaRBbHkm6W9EgM0HY27+UtUaprntaYQJF75rc8gjxllKs5OIQ=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer" />
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     @stack('css')
 </head>
 
@@ -94,7 +92,8 @@
                 <input type="text" id="search-input" name="search" placeholder="Search here.....">
                 <button
                     style="background-color: initial;border: none;outline: none;padding: 4px;position: relative;left: -6%;"
-                    type="submit" id="search_btn"><span style="zoom:1.5;color:white;" class="icon_search"></span></button>
+                    type="submit" id="search_btn"><span style="zoom:1.5;color:white;"
+                        class="icon_search"></span></button>
             </form>
         </div>
     </div>
@@ -154,16 +153,9 @@
             $('.favourite_container--content').html('');
             if (Array.isArray(JSON.parse(localStorage.getItem('data')))) {
                 for (let each of JSON.parse(localStorage.getItem('data'))) {
-                    if (each.size) {
-                        $('.favourite_container--content').append(
-                            `<li><a href="${each.url}"><div class="" style="margin-right:12px;float: left;"><img src="${each.image}" alt="" width="62"></div><div class="" style="padding-top:0;height: 84px;display: flex;align-items: center;"><div style="padding-top:8px;"><h6 style="font-size:14px; margin-bottom:4px;">${each.name +  "(Size:"+ each.size + "," + each.color + ")"}</h6><h5 style="font-size:14px; "><span class="cart-price">${each.price}</span></h5></div></div><a></li>`
-                        );
-                    } else {
-                        $('.favourite_container--content').append(
-                            `<li><a href="${each.url}"><div class="" style="margin-right:12px;float: left;"><img src="${each.image}" alt="" width="62"></div><div class="" style="padding-top:0;height: 84px;display: flex;align-items: center;"><div style="padding-top:8px;"><h6 style="font-size:14px; margin-bottom:4px;">${each.name}</h6><h5 style="font-size:14px; "><span class="cart-price">${each.price}</span></h5></div></div><a></li>`
-                        );
-                    }
-
+                    $('.favourite_container--content').append(
+                        `<li><a href="${each.url}"><div class="" style="margin-right:12px;float: left;"><img src="${each.image}" alt="" width="62"></div><div class="" style="padding-top:0;height: 84px;display: flex;align-items: center;"><div style="padding-top:8px;"><h6 style="font-size:14px; margin-bottom:4px;">${each.name}</h6><h5 style="font-size:14px; "><span class="cart-price">${each.price}</span></h5></div></div><a></li>`
+                    );
                 }
             }
         }
@@ -176,10 +168,6 @@
                     .prop('src') : $('#wishlist_productimage' + id).attr("data-setbg");
                 let url = $('#wishlist_producturl' + id).prop('href') ? $('#wishlist_producturl' + id).prop(
                     'href') : location.href;
-                let size = $('.wishlist_productsize' + id).val() ? $('.wishlist_productsize' + id).val() :
-                    false;
-                let color = $('#wishlist_productcolor' + id).val() ? $('#wishlist_productcolor' + id)
-                    .val() : false;
                 let price = $('#wishlist_productprice' + id).val();
                 let priceOld = $('#wishlist_productpriceold' + id).text() ? $('#wishlist_productpriceold' +
                     id).text() : false;
@@ -189,8 +177,6 @@
                     'id': id,
                     'name': name,
                     'image': image,
-                    'size': size,
-                    'color': color,
                     'price': price,
                     'priceOld': priceOld,
                 };

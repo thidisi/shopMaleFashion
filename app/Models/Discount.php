@@ -23,7 +23,7 @@ class Discount extends Model
 
     const DISCOUNT_LIST = [
         '10%' => '10',
-        '20%'  => '19',
+        '19%'  => '19',
         '29%'  => '29',
         '49%'  => '49',
         '59%'  => '59',

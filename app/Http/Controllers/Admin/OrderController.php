@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\MenuStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Models\About;
 use App\Models\DiscountProduct;
 use App\Models\District;
-use App\Models\Major_Category;
 use App\Models\Order;
 use App\Models\ProductImage;
 use App\Models\Production;

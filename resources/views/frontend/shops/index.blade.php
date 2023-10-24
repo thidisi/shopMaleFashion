@@ -120,9 +120,7 @@
                     <div class="shop__product__option">
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6">
-                                {{-- <div class="shop__product__option__left">
-                                    <p>Showing 1–12 of 126 results</p>
-                                </div> --}}
+                                <div class="shop__product__option__left"></div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__right">
@@ -198,6 +196,12 @@
                 success: function(response) {
                     $('#productList').html('');
                     $('.product__pagination').html('');
+                    $('.shop__product__option__left').html('');
+                    if (response.products.total != 0) {
+                        $('.shop__product__option__left').append(
+                            `<p>Showing ${response.products.from}–${response.products.to} of ${response.products.total} results</p>`
+                            );
+                    }
                     response.products.data.forEach((element, index) => {
                         var url = response.url + '/' + element.slug + '.html';
                         var date = element.created_at;
@@ -314,13 +318,15 @@
             });
         }
 
-        function get_data(search) {
-            if(search != null){
+        function get_data(search, url) {
+            if (search != null) {
                 $("input[name='search']").val(search);
             }
             let resuft = get_data_filter_jobs();
-            api_data("{{ route('products.filter') }}", resuft['categories'], resuft['price'], resuft[
-                'color'], resuft['order_by'], resuft['menu_slug'], resuft['search']);
+            url = url ? url : "{{ route('products.filter') }}";
+            api_data(url, resuft['categories'], resuft['price'], resuft['color'], resuft['order_by'], resuft['menu_slug'],
+                resuft['search']);
+
         }
         $(document).ready(function() {
             let searchParams = new URLSearchParams(window.location.search)
@@ -330,7 +336,7 @@
             });
             $("body").on('click', '.pagination > li > button', function(event) {
                 event.preventDefault();
-                get_data();
+                get_data('', $(event.target).attr('data-page'));
                 let url = window.location.href;
                 url = url.split('?')[0];
                 history.pushState({}, '', url);

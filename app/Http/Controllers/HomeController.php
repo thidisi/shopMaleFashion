@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\MenuStatusEnum;
-use App\Enums\NameStatusEnum;
-use App\Enums\SortOrderSlideEnum;
 use App\Events\Customer\ForgotPassword;
-use App\Jobs\SendEmail;
-use App\Models\About;
 use App\Models\Blog;
+use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Discount;
 use App\Models\DiscountProduct;
-use App\Models\Major_Category;
 use App\Models\ProductImage;
 use App\Models\Production;
 use App\Models\Slide;
@@ -20,12 +15,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\View;
 
 class HomeController extends Controller
 {
-    public function __construct(Customer $customer, Slide $slide, Blog $blog, Production $product, DiscountProduct $discountProduct, ProductImage $productImage, Discount $discount)
+    public function __construct(Customer $customer, Slide $slide, Blog $blog, Production $product, DiscountProduct $discountProduct, ProductImage $productImage, Discount $discount, Category $category)
     {
         $this->customer = $customer;
         $this->slide = $slide;
@@ -34,6 +27,7 @@ class HomeController extends Controller
         $this->discount = $discount;
         $this->discountProduct = $discountProduct;
         $this->productImage = $productImage;
+        $this->category = $category;
     }
 
     public function errors()
@@ -59,7 +53,7 @@ class HomeController extends Controller
         $slides = $this->slide->with('major_categories')->where('slide.status', '=', Slide::SLIDE_STATUS['ACTIVE'])->get();
         $slideOrders = Slide::SLIDE_ORDER;
 
-        $blogs = $this->blog->where('status', '=', NameStatusEnum::ACTIVE)
+        $blogs = $this->blog->where('status', 'active')
             ->latest('created_at')
             ->paginate(3);
 
@@ -72,8 +66,14 @@ class HomeController extends Controller
             ->whereHas('productions', function ($query) {
                 $query->where('quantity', '>', 0);
             })
+            ->latest('created_at')
             ->first();
-        $discountProduct->productImage = json_decode($this->productImage->where('production_id', $discountProduct->productions->id)->first(['id', 'image', 'status'])->image)[0];
+        $discountProduct->menu = $this->category->with('major_categories')->whereHas('major_categories', function ($query) {
+            $query->whereStatus('show');
+        })->find($discountProduct->productions->category_id)->major_categories->slug;
+        if (!empty($discountProduct->productions)) {
+            $discountProduct->productImage = json_decode($this->productImage->where('production_id', $discountProduct->productions->id)->first(['id', 'image', 'status'])->image)[0];
+        }
 
         $products = $this->product->with(['categories', 'product_images', 'discount_products'])
             ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])

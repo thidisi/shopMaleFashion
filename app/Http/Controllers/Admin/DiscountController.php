@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\DiscountPriceEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDiscountRequest;
 use App\Http\Requests\UpdateDiscountRequest;
 use App\Models\Discount;
 use App\Models\DiscountProduct;
-use Illuminate\Http\Request;
-
 class DiscountController extends Controller
 {
     /**

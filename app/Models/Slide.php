@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\SortOrderSlideEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,16 +50,6 @@ class Slide extends Model
         'created_at' => 'date:d-m-Y',
         'updated_at' => 'date:d-m-Y'
     ];
-
-    public function getSortOrderNameAttribute()
-    {
-        return strtolower(SortOrderSlideEnum::getKeys($this->sort_order)[0]);
-    }
-
-    public function getStatusNameAttribute()
-    {
-        return ($this->status == 1) ? "Active" : "Not active";
-    }
 
     public function major_categories()
     {

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\NameStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Discount;
 use App\Models\DiscountProduct;

@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Enums\MenuStatusEnum;
-use App\Enums\NameStatusEnum;
 use App\Models\About;
 use App\Models\Discount;
 use App\Models\DiscountProduct;
@@ -34,13 +32,13 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
         Paginator::defaultView('vendor.pagination.bootstrap-4');
 
-        $menus = Major_Category::where('status', '=', MenuStatusEnum::SHOW)
-            ->orWhere('status', '=', MenuStatusEnum::HOT_DEFAULT)
+        $menus = Major_Category::query()->where('status', 'show')
+            ->orWhere('status', 'hot_default')
             ->get();
         $about = About::query()->first();
 
         $discount = Discount::where('date_end', '<', now());
-        if (count($discount->where('status', \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'])->get()) > 0) {
+        if (count($discount->where('status', Discount::DISCOUNT_STATUS['ACTIVE'])->get()) > 0) {
             foreach ($discount->get() as $each) {
                 $discount_prices[] = $each->discount_price . '%';
                 $discount_getId[] = json_encode((object)['id' =>  $each->id]);

@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\MenuStatusEnum;
-use App\Models\About;
 use App\Models\Customer;
 use App\Models\District;
-use App\Models\Major_Category;
 use App\Models\Production;
 use App\Models\Province;
 use App\Models\Ward;

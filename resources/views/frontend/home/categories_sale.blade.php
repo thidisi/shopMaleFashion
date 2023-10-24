@@ -5,7 +5,25 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="categories__text">
-                        <h2>Clothings Hot <br /> <span>Shoe Collection</span> <br /> Accessories</h2>
+                        <h2>
+                            @if ($discountProduct->menu != 'footwears' && $discountProduct->menu != 'accessories')
+                                <span>Clothings Hot</span>
+                            @else
+                                Clothings Hot
+                            @endif
+                            <br />
+                            @if ($discountProduct->menu == 'footwears')
+                                <span>Shoe Collection</span>
+                            @else
+                                Shoe Collection
+                            @endif
+                            <br />
+                            @if ($discountProduct->menu == 'accessories')
+                                <span>Accessories</span>
+                            @else
+                                Accessories
+                            @endif
+                        </h2>
                     </div>
                 </div>
                 <div class="col-lg-4">

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\UserRoleEnum;
-use App\Events\User\MailNotiUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterAdminRequest;
 use App\Models\User;

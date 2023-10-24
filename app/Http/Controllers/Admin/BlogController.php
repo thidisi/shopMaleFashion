@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\MenuStatusEnum;
-use App\Enums\NameStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
-use App\Models\About;
 use App\Models\Blog;
-use App\Models\Major_Category;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;

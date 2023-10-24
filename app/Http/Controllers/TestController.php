@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\NameAttrEnum;
-use App\Enums\NameStatusEnum;
 use App\Http\Controllers\Admin\CommentController;
 use App\Models\Category;
 use App\Models\Comment;

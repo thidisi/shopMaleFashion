@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\SortOrderSlideEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Major_Category;

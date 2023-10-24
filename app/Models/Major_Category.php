@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\MenuStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,10 +50,5 @@ class Major_Category extends Model
     public function slide()
     {
         return $this->hasMany(Slide::class, 'major_category_id');
-    }
-
-    public function getStatusNameAttribute()
-    {
-        return strtolower(MenuStatusEnum::getKeys($this->status)[0]);
     }
 }

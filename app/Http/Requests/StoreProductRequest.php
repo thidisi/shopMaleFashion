@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Category;
-use App\Models\AttributeValue;
 
 class StoreProductRequest extends FormRequest
 {

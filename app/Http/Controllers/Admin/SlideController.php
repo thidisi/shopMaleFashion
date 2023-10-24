@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\MenuStatusEnum;
-use App\Enums\SortOrderSlideEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSlideRequest;
 use App\Http\Requests\UpdateSlideRequest;
 use App\Models\Major_Category;
 use App\Models\Slide;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class SlideController extends Controller

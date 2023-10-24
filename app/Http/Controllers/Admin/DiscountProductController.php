@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\NameStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreDiscountProductRequest;
+use App\Http\Requests\UpdateDiscountProductRequest;
 use App\Models\Discount;
 use App\Models\DiscountProduct;
 use App\Models\Production;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-
 class DiscountProductController extends Controller
 {
     /**
@@ -44,8 +41,13 @@ class DiscountProductController extends Controller
     public function create()
     {
         try {
-            $products = $this->product->get();
-            $discounts = $this->discount->where('status', \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'])->get();
+            $discounts = $this->discount->where('status', Discount::DISCOUNT_STATUS['ACTIVE'])->get();
+            $discountProducts = $this->discountProduct->get('production_id');
+            $existsDiscountProduct = [];
+            foreach ($discountProducts as $each) {
+                $existsDiscountProduct[] = $each->production_id;
+            }
+            $products = $this->product->whereNotIn('id', $existsDiscountProduct)->get();
 
             return view('backend.discountProducts.create', [
                 'products' => $products,
@@ -59,9 +61,13 @@ class DiscountProductController extends Controller
     public function edit(DiscountProduct $discountProduct)
     {
         try {
-            $products = $this->product->get();
             $discounts = $this->discount->where('status', \App\Models\Discount::DISCOUNT_STATUS['ACTIVE'])->get();
-
+            $discountProducts = $this->discountProduct->whereNotIn('id', [$discountProduct->id])->get('production_id');
+            $existsDiscountProduct = [];
+            foreach ($discountProducts as $each) {
+                $existsDiscountProduct[] = $each->production_id;
+            }
+            $products = $this->product->whereNotIn('id', $existsDiscountProduct)->get();
             return view('backend.discountProducts.edit', [
                 'products' => $products,
                 'discounts' => $discounts,
@@ -72,16 +78,10 @@ class DiscountProductController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(StoreDiscountProductRequest $request)
     {
         try {
-            $arr = $request->validate([
-                'production_id' => [
-                    'required',
-                    'unique:discount_product,production_id'
-                ],
-                'discount_id' => 'required|exists:discounts,id',
-            ]);
+            $arr = $request->all();
             foreach ($arr['production_id'] as $each) {
                 $data[] = [
                     'production_id' => $each,
@@ -97,17 +97,11 @@ class DiscountProductController extends Controller
         }
     }
 
-    public function update(Request $request, $discountProductId)
+    public function update(UpdateDiscountProductRequest $request, $discountProductId)
     {
         try {
             $discountProduct = $this->discountProduct->find($discountProductId);
-            $arr = $request->validate([
-                'production_id' => [
-                    'required',
-                    'unique:productions,id,' . $discountProduct->production_id
-                ],
-                'discount_id' => 'required|exists:discounts,id',
-            ]);
+            $arr = $request->all();
             $discountProduct->update($arr);
             return redirect()->route('admin.discountProducts')->with('editDiscountProductStatus', 'Add successfully!!');
         } catch (\Throwable $th) {

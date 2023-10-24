@@ -106,8 +106,6 @@
                                                     <input type="radio" id="{{ $value->name }}"
                                                         @if (head($each->infosSize)['0']->name == $value->name) checked @endif
                                                         value="{{ $value->name }}" name="size">
-                                                    <input type="hidden" class="wishlist_productsize{{ $each->id }}"
-                                                        value="{{ $value->name }}">
                                                 </label>
                                             @endif
                                         @endforeach
@@ -122,8 +120,6 @@
                                                         @if (head($each->infosColor)['0']->name == $value->name) checked @endif
                                                         value="{{ $value->name }}" name="color">
                                                 </label>
-                                                <input type="hidden" id="wishlist_productcolor{{ $each->id }}"
-                                                    value="{{ $value->name }}">
                                             @endif
                                         @endforeach
                                     </div>

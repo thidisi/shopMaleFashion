@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\MenuStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MenuUpdateRequest;
-use App\Models\About;
 use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\Discount;
@@ -140,7 +138,7 @@ class MenuController extends Controller
 
     public function edit(Major_Category $majorCategory)
     {
-        $status = MenuStatusEnum::getKeys();
+        $status = Major_Category::MENU_STATUS;
         return view('backend.menu.edit', [
             'each' => $majorCategory,
             'status' => $status,
