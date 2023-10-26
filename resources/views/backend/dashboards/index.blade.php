@@ -149,7 +149,10 @@
                 type: "GET",
                 url: "{{ route('admin.api.dashboard') }}",
                 success: function(response) {
-                    $("#orders_latest-datatable").find("tbody").html("");
+                    if(response.orders_latest.length > 0) {
+                        $("#orders_latest-datatable").find("tbody").html("");
+                    }
+                    console.log(response.orders_latest.length);
                     $("#total_sales").text(response.sales_total);
                     $("#total_orders").text(response.orders_total);
                     $("#total_members").text(response.customers_total);

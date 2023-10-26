@@ -5,6 +5,11 @@ $(document).ready(function () {
         pageLength: 3,
         columns: [
             { orderable: !1 },
+            { orderable: !1 },
+            { orderable: !1 },
+            { orderable: !1 },
+            { orderable: !1 },
+            { orderable: !1 },
         ],
     });
 });
