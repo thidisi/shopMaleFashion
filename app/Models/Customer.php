@@ -12,7 +12,6 @@ class Customer extends Model
 {
     use HasFactory, Notifiable, SoftDeletes;
 
-
     /**
      * The table associated with the model.
      *

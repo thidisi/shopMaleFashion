@@ -10,9 +10,7 @@
     <title>{{ $title }}</title>
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('backend/images/favicon.ico') }}" />
-
     <!-- third party css -->
-    {{-- <link href="{{ asset('backend/css/vendor/jquery-jvectormap-1.2.2.css') }}" rel="stylesheet" type="text/css" /> --}}
     <!-- third party css end -->
     <link href="{{ asset('backend/css/vendor/dataTables.bootstrap4.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('backend/css/vendor/responsive.bootstrap4.css') }}" rel="stylesheet" type="text/css" />
@@ -81,8 +79,8 @@
     <script src="{{ asset('backend/js/helper.js') }}"></script>
 
     <!-- third party js -->
-    {{-- <script src="{{ asset('backend/js/vendor/apexcharts.min.js') }}"></script>
-        <script src="{{ asset('backend/js/vendor/jquery-jvectormap-1.2.2.min.js') }}"></script>
+    <script src="{{ asset('backend/js/vendor/apexcharts.min.js') }}"></script>
+        {{-- <script src="{{ asset('backend/js/vendor/jquery-jvectormap-1.2.2.min.js') }}"></script>
         <script src="{{ asset('backend/js/vendor/jquery-jvectormap-world-mill-en.js') }}"></script> --}}
 
     <!-- demo app -->

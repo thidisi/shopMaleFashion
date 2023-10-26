@@ -53,7 +53,7 @@
                                         class=" float-right">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $order->id }}" />
-                                        <button type="submit" class="btn btn-info">Browser</button>
+                                        <button type="submit" class="btn btn-info">Approve</button>
                                     </form>
                                     <form action="{{ route('admin.orders.action', 'inactive') }}" method="post"
                                         class="mr-2 float-right">

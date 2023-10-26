@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AttributeValue extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The table associated with the model.

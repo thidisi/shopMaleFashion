@@ -49,7 +49,7 @@ class HomeController extends Controller
 
     public function index()
     {
-        self::check_cookies();
+        $this->check_cookies();
         $slides = $this->slide->with('major_categories')->where('slide.status', '=', Slide::SLIDE_STATUS['ACTIVE'])->get();
         $slideOrders = Slide::SLIDE_ORDER;
 
@@ -68,12 +68,14 @@ class HomeController extends Controller
             })
             ->latest('created_at')
             ->first();
-        $discountProduct->menu = $this->category->with('major_categories')->whereHas('major_categories', function ($query) {
-            $query->whereStatus('show');
-        })->find($discountProduct->productions->category_id)->major_categories->slug;
-        if (!empty($discountProduct->productions)) {
-            $discountProduct->productImage = json_decode($this->productImage->where('production_id', $discountProduct->productions->id)->first(['id', 'image', 'status'])->image)[0];
-        }
+            if(!empty($discountProduct)) {
+                $discountProduct->menu = $this->category->with('major_categories')->whereHas('major_categories', function ($query) {
+                    $query->whereStatus('show');
+                })->find($discountProduct->productions->category_id)->major_categories->slug;
+                if (!empty($discountProduct->productions)) {
+                    $discountProduct->productImage = json_decode($this->productImage->where('production_id', $discountProduct->productions->id)->first(['id', 'image', 'status'])->image)[0];
+                }
+            }
 
         $products = $this->product->with(['categories', 'product_images', 'discount_products'])
             ->where('status', Production::PRODUCTION_STATUS['ACTIVE'])

@@ -67,11 +67,11 @@ $title = 'Orders detail';
                                         </td>
                                         <td class="align-middle text-center">
                                             @switch($value->action)
-                                                @case(ACTIVE)
+                                                @case('active')
                                                     <span class="text-success font-weight-bold text-center">Order approved</span>
                                                 @break
 
-                                                @case(CANCEL)
+                                                @case('inactive')
                                                     <span class="text-danger font-weight-bold text-center">Order has been
                                                         cancelled</span>
                                                 @break

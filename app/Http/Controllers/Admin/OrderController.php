@@ -34,14 +34,15 @@ class OrderController extends Controller
     public function index()
     {
         $orders = $this->order->with('customers')->latest('created_at')->get();
-        $date = Carbon::now()->addDays(10);
+        $date = Carbon::now()->addDays(7);
         $orders->map(function ($query) use ($date) {
-            if ($query->action == 'inactive' && $date == now()) {
+            if ($query->action == 'inactive'  && $date == now()) {
                 DB::table('order_detail')
                     ->where('order_id', '=', $query->id)
                     ->update(['deleted_at' => now()]);
                 $this->order->find($query->id)->delete();
             }
+            $query->total_money = currency_format($query->total_money);
             return $query;
         });
 
@@ -55,7 +56,10 @@ class OrderController extends Controller
         $order = $this->order->with(['tickets', 'productions'])->findOrFail($id);
         $order->productions->map(function ($query) {
             $query->image = json_decode($this->productImage->find($query->id)->image)[0];
-            $query->discount = $this->discountProduct->with('discounts')->find($query->id)->discounts;
+            if (!empty($query->discount)) {
+                $query->discount = $this->discountProduct->with('discounts')->find($query->id)->discounts;
+            }
+            $query->price = currency_format($query->price);
             return $query;
         });
         return view('backend.orders.show', [
@@ -133,9 +137,9 @@ class OrderController extends Controller
                 Cart::clear();
                 return redirect()->route('index')->with('success', 'Orders successfully!!');
             }
-            return redirect()->back()->with("Empty stock, can't order");
+            return redirect()->back()->with('error', "Empty stock, can't order");
         } catch (\Throwable $th) {
-            return redirect()->back()->with("Empty stock, can't order");
+            return redirect()->back()->with('error', "Empty stock, can't order");
         }
     }
 

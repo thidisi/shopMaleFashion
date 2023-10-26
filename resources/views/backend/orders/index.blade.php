@@ -1,6 +1,6 @@
 @extends('backend.layout_admin')
 @php
-$title = 'Orders';
+    $title = 'Orders';
 @endphp
 @section('container')
     <div class="container-fluid">
@@ -19,10 +19,10 @@ $title = 'Orders';
                                 <thead class="thead-light">
                                     <tr>
                                         <th>#</th>
-                                        <th class="all">Users</th>
-                                        {{-- <th>Info Receiver</th> --}}
+                                        <th class="all">Info Receiver</th>
                                         <th>Total Money</th>
                                         <th>Action</th>
+                                        <th>Created_at</th>
                                         <th>View</th>
                                     </tr>
                                 </thead>
@@ -33,9 +33,6 @@ $title = 'Orders';
                                                 {{ $value->id }}
                                             </td>
                                             <td>
-                                                <span class="d-inline-block text-truncate">{{ $value->customers->name }}</span>
-                                            </td>
-                                            {{-- <td>
                                                 Name: {{ $value->name_receiver }}
                                                 <br>
                                                 Phone: {{ $value->phone_receiver }}
@@ -43,12 +40,10 @@ $title = 'Orders';
                                                 Address: {{ $value->address_receiver }}
                                                 <br>
                                                 Note: {{ $value->note }}
-                                            </td> --}}
-
+                                            </td>
                                             <td>
                                                 {{ $value->total_money }}
                                             </td>
-
                                             <td>
                                                 @switch($value->action)
                                                     @case('active')
@@ -68,9 +63,12 @@ $title = 'Orders';
                                                     @default
                                                         <div>
                                                             <span class="text-warning font-weight-bold text-center"
-                                                            style="max-width: 100px;">Waiting for approval</span>
+                                                                style="max-width: 100px;">Waiting for approval</span>
                                                         </div>
                                                 @endswitch
+                                            </td>
+                                            <td>
+                                                {{ $value->created_at }}
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.orders.show', $value->id) }}" class="action-icon">
@@ -95,5 +93,4 @@ $title = 'Orders';
     <script src="{{ asset('backend/js/vendor/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/js/vendor/dataTables.checkboxes.min.js') }}"></script>
     <script src="{{ asset('backend/js/backend/demo.orders.js') }}"></script>
-
 @endpush

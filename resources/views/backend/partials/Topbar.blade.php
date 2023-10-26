@@ -143,7 +143,7 @@
             </div>
         </li>
 
-        <li class="dropdown notification-list d-none d-sm-inline-block">
+        {{-- <li class="dropdown notification-list d-none d-sm-inline-block">
             <a class="nav-link dropdown-toggle arrow-none" data-toggle="dropdown" href="#" role="button"
                 aria-haspopup="false" aria-expanded="false">
                 <i class="dripicons-view-apps noti-icon"></i>
@@ -196,7 +196,7 @@
                 </div>
 
             </div>
-        </li>
+        </li> --}}
 
         <li class="notification-list">
             <a class="nav-link right-bar-toggle" href="javascript: void(0);">
@@ -263,7 +263,7 @@
     <button class="button-menu-mobile open-left disable-btn">
         <i class="mdi mdi-menu"></i>
     </button>
-    <div class="app-search dropdown d-none d-lg-block">
+    {{-- <div class="app-search dropdown d-none d-lg-block">
         <form>
             <div class="input-group">
                 <input type="text" class="form-control dropdown-toggle" placeholder="Search..." id="top-search">
@@ -332,5 +332,5 @@
                 </a>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>

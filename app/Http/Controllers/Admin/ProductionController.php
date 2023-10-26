@@ -138,7 +138,7 @@ class ProductionController extends Controller
 
     public function filter_list(Request $request)
     {
-        // if ($request->ajax()) {
+        if ($request->ajax()) {
             $products = $this->product->with(['categories', 'product_images', 'discount_products', 'attribute_values'])
                 ->where('status', Production::PRODUCTION_STATUS['ACTIVE']);
             if (!empty($request->menu_slug)) {
@@ -221,7 +221,9 @@ class ProductionController extends Controller
                 'products' => $products,
                 'url' => config('app.url'),
             ], 200);
-        // }
+        } else {
+            abort(404);
+        }
     }
 
     public function search(Request $request)
