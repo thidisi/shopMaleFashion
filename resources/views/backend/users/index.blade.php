@@ -156,10 +156,10 @@
                         searchable: false,
                         visible: {{ checkPermissionToRedirect('manager') ? 'true' : 'false' }},
                         render: function(data, type, row, meta) {
-                            if (row.level != 'admin') {
-                                return `<a href="${data}" class="action-icon"><i class="mdi mdi-square-edit-outline"></i></a>`;
-                            } else {
+                            if (row.level == 'admin' && {{ auth()->user()->level == 'manager' ? 'true' : 'false' }} ) {
                                 return ''
+                            } else {
+                                return `<a href="${data}" class="action-icon"><i class="mdi mdi-square-edit-outline"></i></a>`;
                             }
                         }
                     },

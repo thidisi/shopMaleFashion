@@ -21,7 +21,6 @@ class CommentController extends Controller
     public function index()
     {
         $comments = $this->comment->with(['customers', 'productions'])
-            // ->where('status', '!=', 4)
             ->latest("created_at")
             ->get();
         foreach ($comments as $each) {
@@ -127,7 +126,9 @@ class CommentController extends Controller
 
         $reviews->map(function ($query) {
             $query->review = $query->productions->first()->pivot->review;
-            $query->images = json_decode($query->productions->first()->pivot->images)['0'];
+            if(!empty($query->productions->first()->pivot->images)){
+                $query->images = json_decode($query->productions->first()->pivot->images)['0'];
+            }
             $query->name = $query->customers->name;
             return $query;
         });
@@ -136,15 +137,16 @@ class CommentController extends Controller
 
     public function show_comments($product_id, $customer_id = null)
     {
-        $comments = $this->comment->with(['productions', 'customers', 'parents'])
+        $comments = $this->comment->with(['productions', 'customers', 'children'])
             ->whereHas('productions', function ($query) use ($product_id) {
                 $query->whereId($product_id);
                 $query->whereNull(['images', 'review']);
-            })->whereNull(['deleted_at', 'parent_id'])->where('status', '!=', 'inactive')->get();
+            })
+            ->whereNull(['deleted_at', 'parent_id'])->where('status', '!=', 'inactive')->get();
         $comments->map(function ($query) {
             $query->name = $query->customers->name;
-            if (!empty($query->parents)) {
-                $query->parents->map(function ($queryTwo) {
+            if (!empty($query->children)) {
+                $query->children->map(function ($queryTwo) {
                     $queryTwo->name = $this->customer->find($queryTwo->customer_id)->name;
                     return $queryTwo;
                 });
@@ -157,12 +159,12 @@ class CommentController extends Controller
                     $comments->forget($key);
                 }
             }
-            if (!empty($comment->parents)) {
-                $parents = $comment->parents;
-                $parents->each(function ($parent, $key_parent) use (&$parents, $customer_id) {
+            if (!empty($comment->children)) {
+                $children = $comment->children;
+                $children->each(function ($parent, $key_parent) use (&$children, $customer_id) {
                     if ($parent->status === 'pending') {
                         if ($parent->customer_id != $customer_id) {
-                            $parents->forget($key_parent);
+                            $children->forget($key_parent);
                         }
                     }
                 });

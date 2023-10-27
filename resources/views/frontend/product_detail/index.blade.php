@@ -70,7 +70,7 @@
                         <div class="product__details__text">
                             <h4>{{ $each->name }}
                                 @if ($each->discountStatus == 'active')
-                                    (<em class="text-danger">Sale: {{ 100 - ($each->discount * 100) }}%</em>)
+                                    (<em class="text-danger">Sale: {{ 100 - $each->discount * 100 }}%</em>)
                                 @endif
                             </h4>
                             <input type="hidden" id="wishlist_productname{{ $each->id }}" value="{{ $each->name }}">
@@ -438,8 +438,8 @@
                                                                             approval*</span>
                                                                     @endif
                                                                     <div class="boxComment-list-items">
-                                                                        @if (count($show_comment->parents) > 0)
-                                                                            @foreach ($show_comment->parents as $comment_parent)
+                                                                        @if (count($show_comment->children) > 0)
+                                                                            @foreach ($show_comment->children as $comment_parent)
                                                                                 <div class="boxComment-list-item"
                                                                                     @if ($comment_parent->status === 'pending') style="opacity: 0.7;" @endif>
                                                                                     <div
@@ -465,22 +465,6 @@
                                                                                                 {{ $comment_parent->content }}
                                                                                             </p>
                                                                                         </div>
-                                                                                        <button
-                                                                                            @if ($comment_parent->status === 'active') onclick="rep_cmt ({{ $comment_parent->parent_id }})" @endif
-                                                                                            class="btn-rep-cmt">
-                                                                                            <div><svg
-                                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                                    width="13"
-                                                                                                    height="12"
-                                                                                                    viewBox="0 0 12 10.8">
-                                                                                                    <path id="chat"
-                                                                                                        d="M3.48,8.32V4.6H1.2A1.2,1.2,0,0,0,0,5.8V9.4a1.2,1.2,0,0,0,1.2,1.2h.6v1.8l1.8-1.8h3A1.2,1.2,0,0,0,7.8,9.4V8.308a.574.574,0,0,1-.12.013H3.48ZM10.8,1.6H5.4A1.2,1.2,0,0,0,4.2,2.8V7.6H8.4l1.8,1.8V7.6h.6A1.2,1.2,0,0,0,12,6.4V2.8a1.2,1.2,0,0,0-1.2-1.2Z"
-                                                                                                        transform="translate(0 -1.6)"
-                                                                                                        fill="#fa2f2f">
-                                                                                                    </path>
-                                                                                                </svg></div>
-                                                                                            &nbsp;Reply
-                                                                                        </button>
                                                                                     </div>
                                                                                     @if ($comment_parent->status === 'pending')
                                                                                         <span class="ml-3 p-1 d-block"
@@ -496,7 +480,7 @@
                                                                 <form class="form-group mx-2 comment-form2"
                                                                     data-route="{{ route('addComments') }}">
                                                                     <input type="hidden" name="comment_id"
-                                                                        value="{{ $show_comment->id }}">
+                                                                        value="">
                                                                     <input type="hidden" name="user_id"
                                                                         value="{{ session('sessionIdCustomer') }}">
                                                                     <div id="comment-text-{{ $show_comment->id }}"
@@ -612,7 +596,7 @@
     <!-- Related Section End -->
 @endsection
 @push('js')
-    <script src="{{ asset('frontend/js/product_detail.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('frontend/js/productDetails.js') }}" type="text/javascript"></script>
     <script type="text/javascript">
         function remove_class(product_id) {
             for (var count = 0; count <= 5; count++) {
@@ -622,6 +606,7 @@
 
         function rep_cmt(id) {
             $('#comment-text-' + id).removeClass('d-none');
+            $("input[name=comment_id]").val(id);
             $('html, body').animate({
                 scrollTop: $('#comment-text-' + id).offset().top - $('#comment-text-' + id).prop("scrollHeight") *
                     2
@@ -716,6 +701,130 @@
                     $('#' + product_id + '-' + count).addClass('star');
                 }
                 $("input[name*='ratings']").val(index);
+            });
+            $("#comment-form").on("submit", function(e) {
+                e.preventDefault();
+                let userId = $("input[name=user_id]").val();
+                let productId = $("input[name=product_id]").val();
+                var content = $(this).find("textarea[name=content]").val();
+                var checkStr = content.length >= 6;
+                if (content.length === 0) {
+                    $(this).find(".text-danger").remove();
+                    $(this).append('<p class="text-danger ml-2 mt-1"></p>');
+                    $(this)
+                        .find(".text-danger")
+                        .text("Please enter content(*Required)")
+                        .show()
+                        .fadeOut(3000);
+                    return false;
+                }
+                if (!checkStr) {
+                    $(this).find(".text-danger").remove();
+                    $(this).append('<p class="text-danger ml-2 mt-1"></p>');
+                    $(this)
+                        .find(".text-danger")
+                        .text("Please enter more than 6 characters")
+                        .show()
+                        .fadeOut(3000);
+                    return false;
+                }
+                $(".button-comment").addClass("bg-secondary").prop("disabled", true);
+                setTimeout(function() {
+                    $(".button-comment")
+                        .removeClass("bg-secondary")
+                        .prop("disabled", false);
+                }, 3000);
+                $.ajax({
+                    type: "POST",
+                    url: $(this).data("route"),
+                    data: {
+                        customer_id: userId,
+                        product_id: productId,
+                        content: content,
+                    },
+                    success: function(response, textStatus, xhr) {
+                        $.toast({
+                            heading: "Add Comments success!",
+                            text: response,
+                            showHideTransition: "slide",
+                            position: "top-right",
+                            icon: "success",
+                        });
+                        $(".textarea-comment").find("textarea").val("");
+                        window.location.reload(true);
+                    },
+                    error: function(response) {
+                        $.toast({
+                            heading: "Add Comments Error!",
+                            text: response,
+                            showHideTransition: "slide",
+                            position: "top-right",
+                            icon: "error",
+                        });
+                    },
+                });
+            });
+
+            $(".comment-form2").on("submit", function(e) {
+                e.preventDefault();
+                let comment_id = $("input[name=comment_id]").val();
+                let user_id = $("input[name=user_id]").val();
+                var content = $(this).find("textarea[name=content]").val();
+                var checkStr = content.length >= 6;
+                if (content.length === 0) {
+                    $(this).find(".text-danger").remove();
+                    $(this).append('<p class="text-danger ml-2 mt-1"></p>');
+                    $(this)
+                        .find(".text-danger")
+                        .text("Please enter content(*Required)")
+                        .show()
+                        .fadeOut(3000);
+                    return false;
+                }
+                if (!checkStr) {
+                    $(this).find(".text-danger").remove();
+                    $(this).append('<p class="text-danger ml-2 mt-1"></p>');
+                    $(this)
+                        .find(".text-danger")
+                        .text("Please enter more than 6 characters")
+                        .show()
+                        .fadeOut(3000);
+                    return false;
+                }
+                $(".button-comment").addClass("bg-secondary").prop("disabled", true);
+                setTimeout(function() {
+                    $(".button-comment")
+                        .removeClass("bg-secondary")
+                        .prop("disabled", false);
+                }, 3000);
+                $.ajax({
+                    type: "POST",
+                    url: $(this).data("route"),
+                    data: {
+                        comment_id: comment_id,
+                        customer_id: user_id,
+                        content: content,
+                    },
+                    success: function (response, textStatus, xhr) {
+                        $.toast({
+                            heading: "Add Comments success!",
+                            text: response,
+                            showHideTransition: "slide",
+                            position: "top-right",
+                            icon: "success",
+                        });
+                        window.location.reload(true);
+                    },
+                    error: function (response) {
+                        $.toast({
+                            heading: "Add Comments Error!",
+                            text: response,
+                            showHideTransition: "slide",
+                            position: "top-right",
+                            icon: "error",
+                        });
+                    },
+                });
             });
         });
     </script>

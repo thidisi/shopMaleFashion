@@ -46,17 +46,21 @@ class Comment extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function parents()
+    public function children()
     {
         return $this->hasMany(self::class, 'parent_id', 'id');
+    }
+    public function parents()
+    {
+        return $this->belongsTo(self::class, 'parent_id');
     }
 
     public function productions()
     {
         return $this->belongsToMany(Production::class, 'production_comments', 'comment_id', 'production_id')
-        ->withPivot('review')
-        ->withPivot('images')
-        ->withTimestamps();
+            ->withPivot('review')
+            ->withPivot('images')
+            ->withTimestamps();
     }
 
     public function getStatusNameAttribute()

@@ -39,6 +39,9 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        if($user->level == 'admin' && auth()->user()->level =='manager'){
+            return redirect()->route('errors');
+        }
         $roles = User::USER_LEVEL;
         return view('backend.users.edit', [
             'each' => $user,
@@ -94,7 +97,6 @@ class UserController extends Controller
     {
         try {
             $this->user->destroy($userId);
-            $array = array();
             $arr['status'] = true;
 
             return response($arr, 200);

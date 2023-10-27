@@ -16,23 +16,26 @@ class BlogSeeder extends Seeder
     {
         Blog::insert([
             [
-                "title " => "The Health Benefits Of Sunglasses",
+                "title" => "The Health Benefits Of Sunglasses",
                 "slug" => "the-health-benefits-of-sunglasses",
-                "image" => "image",
+                "image" => "imageBlog/kEQ3K3kBp0aqQTd77dRMV5laoMFKU8jHsCG3JAXZ.jpg",
+                "content" => "<p>image</p>",
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                "title " => "Eternity Bands Do Last Forever",
+                "title" => "Eternity Bands Do Last Forever",
                 "slug" => "eternity-bands-do-last-forever",
-                "image" => "image",
+                "image" => "imageBlog/Kl9gUoqkNpghhBUPLrC2vtRZ0LxZCVHLSLJBFg03.jpg",
+                "content" => "<p>image</p>",
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                "title " => "What Curling Irons Are The Best Ones",
+                "title" => "What Curling Irons Are The Best Ones",
                 "slug" => "what-curling-irons-are-the-best-ones",
-                "image" => "image",
+                "image" => "imageBlog/2EV9ONlQWZgEYmHktko1LjsmXdg5yVcm0JGcOfEM.jpg",
+                "content" => "<p>image</p>",
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

@@ -14,14 +14,11 @@ class CheckLoginAdminPage
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $permission = 'manager')
     {
-        // $emailUser = $request->session()->get('sessionEmailUser');
-        // $checkEmail = filter_var(auth()->user()->email, FILTER_VALIDATE_EMAIL);
-        // $checkEmail = filter_var($emailUser, FILTER_VALIDATE_EMAIL);
-        // if($checkEmail) {
-        //     return redirect()->route('admin.login');
-        // }
-        // return $next($request);
+        if (auth()->user()->level == $permission) {
+            return abort('404');
+        }
+        return $next($request);
     }
 }
