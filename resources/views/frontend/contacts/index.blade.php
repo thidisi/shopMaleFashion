@@ -1,4 +1,4 @@
-@extends('frontend.layout_frontend')
+@extends('frontend.layouts')
 @php
     $title = 'Contact';
 @endphp
@@ -25,12 +25,12 @@
                         </div>
                         <ul>
                             <li>
-                                <h4>{{ $about->address }}</h4>
-                                <p>{{ $about->branch }} <br />{{ $about->phone }}</p>
+                                <h4>{{ isset($about->address) ? $about->address : '' }}</h4>
+                                <p>{{ isset($about->branch) ? $about->branch : '' }} <br />{{ isset($about->phone) ? $about->phone : '' }}</p>
                             </li>
                             <li>
-                                <h4>{{ $about->address_second }}</h4>
-                                <p>{{ $about->branch_second }} <br />{{ $about->phone_second }}</p>
+                                <h4>{{ isset($about->address_second) ? $about->address_second : '' }}</h4>
+                                <p>{{ isset($about->branch_second) ? $about->branch_second : '' }} <br />{{ isset($about->phone_second) ? $about->phone_second : '' }}</p>
                             </li>
                         </ul>
                     </div>

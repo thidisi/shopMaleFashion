@@ -4,9 +4,9 @@
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="footer__about">
                     <div class="footer__logo">
-                        <a href="#"><img src="{{ asset('frontend/img/footer-logo.png') }}" alt=""></a>
+                        <a href="#"><img src="{{ isset($about->logo) ? asset("storage/$about->logo") : '' }}" alt=""></a>
                     </div>
-                    <p>{{ $about->title }}</p>
+                    <p>{{ isset($about->title) ? $about->title : '' }}</p>
                     <a href="#"><img src="{{ asset('frontend/img/payment.png') }}" alt=""></a>
                 </div>
             </div>
@@ -14,9 +14,11 @@
                 <div class="footer__widget">
                     <h6>Shopping</h6>
                     <ul class="dropdown">
-                        @foreach ($menus as $each)
-                            <li><a href="{{ route('menu', $each->slug) }}"> {{ $each->name }} </a></li>
-                        @endforeach
+                        @if (!empty($menus))
+                            @foreach ($menus as $each)
+                                <li><a href="{{ route('menu', $each->slug) }}"> {{ $each->name }} </a></li>
+                            @endforeach
+                        @endif
                     </ul>
                 </div>
             </div>
@@ -26,8 +28,11 @@
                     <ul>
                         <li><a href="#">Contact Us</a></li>
                         <li><a href="#">Blogs</a></li>
-                        <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i> Email: {{ $about->email }}</a></li>
-                        <li><a href="#"><i class="fa fa-phone" aria-hidden="true"></i></i> Phone: 0{{ number_format($about->phone, 0, ',', '.') }}</a></li>
+                        <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i> Email:
+                                {{ isset($about->email) ? $about->email : '' }}</a></li>
+                        <li><a href="#"><i class="fa fa-phone" aria-hidden="true"></i></i> Phone:
+                                {{ isset($about->phone) ? '0' . number_format($about->phone, 0, ',', '.') : '' }}</a>
+                        </li>
                     </ul>
                 </div>
             </div>

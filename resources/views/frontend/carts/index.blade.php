@@ -1,4 +1,4 @@
-@extends('frontend.layout_frontend')
+@extends('frontend.layouts')
 @php
 $title = 'Carts';
 @endphp

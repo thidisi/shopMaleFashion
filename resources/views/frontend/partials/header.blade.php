@@ -5,8 +5,9 @@
                 <div class="col-lg-6 col-md-7">
                     <div class="header__top__left">
                         <p><i class="fa fa-phone" aria-hidden="true"></i> Hotline: <a class="text-light"
-                                href="tel:{{ $about->phone }}" title="Male fashion Hot Line"
-                                rel="nofollow">0{{ number_format($about->phone, 0, ',', '.') }}</a></p>
+                                href="tel:{{ isset($about->phone) ? $about->phone : '' }}" title="Male fashion Hot Line"
+                                rel="nofollow">{{ isset($about->phone) ? '0' . number_format($about->phone, 0, ',', '.') : '' }}</a>
+                        </p>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-5">
@@ -237,8 +238,8 @@
         <div class="row">
             <div class="col-lg-3 col-md-3 col-sm-12 header-mobi">
                 <div class="header__logo">
-                    <a href="{{ route('index') }}"><img src="{{ asset("storage/$about->logo") }}"
-                            alt=""></a>
+                    <a href="{{ route('index') }}"><img
+                            src="{{ isset($about->logo) ? asset("storage/$about->logo") : '' }}" alt=""></a>
                 </div>
                 <div class="canvas__open"><i class="fa fa-bars"></i></div>
             </div>
@@ -249,7 +250,8 @@
                 <div class="header__nav__option">
                     <a href="#" class="search-switch"><img src="{{ asset('frontend/img/icon/search.png') }}"
                             alt=""></a>
-                    <a href="#" class="favourite-icon"><img src="{{ asset('frontend/img/icon/heart.png') }}" alt=""></a>
+                    <a href="#" class="favourite-icon"><img src="{{ asset('frontend/img/icon/heart.png') }}"
+                            alt=""></a>
                     <a href="{{ route('cart') }}"><img src="{{ asset('frontend/img/icon/cart.png') }}"
                             alt="">
                         <span class="carts-total">{{ Cart::getTotalQuantity() }}</span></a>
@@ -521,13 +523,15 @@
                 if (token == '') {
                     $("#change_password").find('.form-error-code').append(
                         '<p class="text-left text-danger ml-2 mt-1"></p>');
-                    $("#change_password").find('.form-error-code').find('.text-danger').text('Vui lòng nhập code').show().fadeOut(
+                    $("#change_password").find('.form-error-code').find('.text-danger').text(
+                        'Vui lòng nhập code').show().fadeOut(
                         3000);
                 }
                 if (newPassword == '') {
                     $("#change_password").find('.form-error-pass').append(
                         '<p class="text-left text-danger ml-2 mt-1"></p>');
-                    $("#change_password").find('.form-error-pass').find('.text-danger').text('Vui lòng nhập password mới').show()
+                    $("#change_password").find('.form-error-pass').find('.text-danger').text(
+                            'Vui lòng nhập password mới').show()
                         .fadeOut(3000);
                 }
 

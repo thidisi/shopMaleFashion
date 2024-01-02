@@ -32,8 +32,9 @@
     </div>
     <div id="mobile-menu-wrap"></div>
     <div class="offcanvas__text ">
-        <p><i class="fa fa-phone" aria-hidden="true"></i> Hotline: <a class="text-dark" href="tel:{{ $about->phone }}"
-                title="Male fashion Hot Line" rel="nofollow">{{ $about->phone }}</a></p>
+        <p><i class="fa fa-phone" aria-hidden="true"></i> Hotline: <a class="text-dark"
+                href="tel:{{ isset($about->phone) ? $about->phone : '' }}" title="Male fashion Hot Line"
+                rel="nofollow">{{ isset($about->phone) ? $about->phone : '' }}</a></p>
 
         @if (session('sessionCustomerName') !== null)
             <button class="btn logout">
